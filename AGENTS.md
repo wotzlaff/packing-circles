@@ -45,5 +45,5 @@ Use Rust's built-in test framework with descriptive names such as `rejects_overl
 
 Commit each coherent step and push after each commit. Use short imperative commit subjects, such as `Add packing feasibility checks`.
 
-PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions and unresolved questions in Markdown. Delegate bounded tasks to cheaper subagents when reasonable.
+PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions and unresolved questions in Markdown. Use cheaper subagents for bounded implementation, tests, or reviews whenever reasonable; the primary agent integrates and verifies their work.
 
