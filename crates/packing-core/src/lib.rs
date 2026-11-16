@@ -7,6 +7,7 @@ mod config;
 mod error;
 mod geometry;
 mod io;
+pub mod numerics;
 
 pub use config::SolverConfig;
 pub use error::PackingError;

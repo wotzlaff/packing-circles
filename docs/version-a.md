@@ -1,4 +1,4 @@
-# Version A fidelity contract (before implementation)
+# Version A numerical components and fidelity contract
 
 ## Reference and scope
 
@@ -12,8 +12,9 @@ rolling initialization, dense BFGS, strong-Wolfe search, callback-driven penalty
 updates, restarts, feasibility scaling, and best repaired incumbent selection.
 `main.cpp`'s softmax formulation is a secondary benchmark, not the definition of A.
 
-No Rust optimizer is implemented yet. The following decisions constrain milestone
-3; record numerical experiments before accepting additional deviations.
+The numerical kernels are implemented in `crates/packing-core/src/numerics/`.
+End-to-end solving, restart/deadline orchestration, and CLI integration remain
+milestone 4. Record numerical experiments before accepting additional deviations.
 
 ## Historical behavior to retain
 
@@ -59,4 +60,38 @@ the measured, disclosed initialization difference.
    full A-versus-reference timing and quality qualification.
 
 Update this document with implemented policies, probe commands, and measured
-results as each component lands. A numerical-port gate has not passed yet.
+results as each component lands. Parity report archival is pending.
+
+## Implemented component policies
+
+- `objective.rs` evaluates the scalar objective or its analytic gradient, retaining
+  negative trial-radius semantics. It checks dimensions, coefficients, and finite
+  intermediate results before returning a defined error on overflow.
+- `line_search.rs` retains strong-Wolfe bracketing and bisection order. Bracketing
+  and zoom have explicit limits (100/50 by default); exhaustion, non-descent,
+  bad dimensions, and nonfinite trials are errors, never undefined step values.
+- `bfgs.rs` bounds attempted iterations and scalar/gradient calls separately.
+  Accepted iterates survive later evaluation errors. Nonpositive/nonfinite
+  curvature or an overflowing inverse-Hessian update resets the matrix; exact
+  zero gradient converges directly, avoiding the reference's zero-curvature path.
+  Callback refresh order, retained Hessian, previous objective, and stale squared
+  gradient norm after a penalty refresh intentionally match the reference.
+- `penalty.rs` doubles containment and overlap coefficients independently. The
+  gradient threshold uses strict `<`; equality does not update. Coincidence is
+  a zero separation ratio and increases the overlap weight without dividing by
+  zero. Weight overflow fails transactionally without changing the schedule.
+- `initialization.rs` uses injected `RandomSource` and specified SplitMix64/Fisher–
+  Yates defaults. Rejection sampling is bounded at 64 draws; pathological injected
+  sources fail explicitly. Rolling walks stop at twice the placed-circle count;
+  invalid candidates are filtered, with a counted tangent-right fallback when
+  none remain. Centering uses only placed prefixes and retains zero old momentum.
+  Multi-trial initialization deliberately retains the last trial.
+- `repair.rs` preserves ordinary radial scaling with an explicit factor. One
+  circle goes directly to the origin. Coincident centers report zero minimum
+  scale, while attempting radial repair of them fails explicitly. Final radius
+  is recomputed from actual geometry; serialization safety is checked separately.
+
+Regression coverage includes legacy centering, initializer prefixes across all 50
+development inputs with two seeds, zero/invalid work limits, cancellation,
+threshold equality, coincidence, diagonal rounding loss, line-search exhaustion,
+and subnormal curvature that would divide by zero in the original BFGS update.

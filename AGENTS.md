@@ -13,7 +13,7 @@ The GitHub Pages site should execute through WASM, visualize optimization, and p
 
 Work in the root repository. Keep `legacy/` as a separate reference checkout. Never add it to the root repository or as a submodule; avoid unrelated edits.
 
-`crates/packing-core/` owns geometry, validation, and I/O; `crates/packing-cli/` owns file commands. Rust integration tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent Python checks, frozen synthetic inputs, and archived results. Browser work is planned under `web/`. Record decisions and milestone evidence in `docs/`; follow `docs/PLAN.md`.
+`crates/packing-core/` owns geometry, I/O, and numerical kernels; `crates/packing-cli/` owns file commands. Rust integration tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent Python checks, frozen synthetic inputs, and archived results. Browser work is planned under `web/`. Record decisions and milestone evidence in `docs/`; follow `docs/PLAN.md`.
 
 ## Build, Test & Development Commands
 
@@ -27,7 +27,7 @@ Use stable Rust, Python 3.10+, and GCC; run from the root:
 - `python3 bench/generate_instances.py --check` — verify frozen data.
 - `python3 bench/legacy.py build --variant contest` — build the selected legacy reference outside its checkout.
 
-See `README.md` and `bench/README.md` for CLI examples and measurement commands. Optimization and WASM execution are not implemented yet.
+See `README.md` and `bench/README.md` for CLI examples and measurement commands. Full solvers and WASM execution are pending.
 
 ## Coding Style & Testing Guidelines
 

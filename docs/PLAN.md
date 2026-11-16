@@ -17,7 +17,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | --- | --- | --- |
 | 1. Legacy baseline | Complete | [Source map and findings](legacy-baseline.md); [750-run report](../bench/results/contest-development.md); committed datasets and sanitizer evidence |
 | 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
-| 3. Numerical components | Next | [Fidelity and safety contract](version-a.md) prepared; optimizer implementation and parity probes pending |
+| 3. Numerical components | In progress | Kernels, initialization, repair, fixed-state probes, and unit tests implemented; parity report archival pending |
 | 4–9 | Pending | No end-to-end Rust solver, improvement claims, WASM app, or deployment yet |
 
 Milestones 1–2 were completed on 2026-11-16. Foundation code was drafted while
@@ -136,9 +136,10 @@ snapshot frequency and document the measured tradeoff.
 ## 6. Develop and qualify version B
 
 **Deliver:** independently switchable experiments with hypotheses and ablations.
-Start with stabilized exponential evaluation and singularity handling, then test
-corrected/alternative initialization, adaptive penalties and restart allocation,
-and L-BFGS versus dense BFGS. Treat these as candidates, not predetermined wins.
+Start with corrected/alternative initialization and centering, then test adaptive
+penalties and restart allocation, and L-BFGS versus dense BFGS. The selected A
+objective has no exponentials; stabilization matters only if experimenting with
+the secondary softmax formulation. Treat candidates as experiments, not presumed wins.
 Keep A available and unchanged by B's algorithm choices.
 
 **Done when:** at least three candidates have recorded development-set results

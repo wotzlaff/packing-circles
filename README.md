@@ -3,8 +3,9 @@
 Rust reimplementation of a contest-winning circle-packing solver, with a measured
 improvement track and a planned interactive WASM visualization.
 
-The current Rust workspace provides geometry, contest-format I/O, and independent
-validation. Optimization algorithms A/B and the website are not implemented yet.
+The Rust workspace provides geometry, contest-format I/O, independent validation,
+and version A's numerical components. End-to-end A/B solvers and the website are
+not implemented yet.
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop
