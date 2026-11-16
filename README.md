@@ -4,9 +4,9 @@ Rust reimplementation of a contest-winning circle-packing solver, with a measure
 improvement track and a planned interactive WASM visualization.
 
 The Rust workspace provides a seeded version A solver, contest-format I/O, and
-independent validation. Version A's numerical components passed fixed-state C++
-comparisons; end-to-end qualification is in progress. Version B and the website
-are not implemented yet.
+independent validation. Version A passed component parity checks and the
+[750-run quality/runtime qualification](docs/version-a-results.md). Version B
+and the website are not implemented yet.
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop

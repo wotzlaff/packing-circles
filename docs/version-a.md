@@ -14,8 +14,8 @@ updates, restarts, feasibility scaling, and best repaired incumbent selection.
 
 The numerical kernels are implemented in `crates/packing-core/src/numerics/`.
 End-to-end solving, restart/deadline orchestration, and CLI integration are now
-implemented; milestone 4's timed qualification is pending. Record numerical
-experiments before accepting additional deviations.
+implemented and [passed timed qualification](version-a-results.md). Record
+numerical experiments before accepting additional deviations.
 
 ## Historical behavior to retain
 

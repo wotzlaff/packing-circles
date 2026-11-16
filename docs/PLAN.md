@@ -18,15 +18,21 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 1. Legacy baseline | Complete | [Source map and findings](legacy-baseline.md); [750-run report](../bench/results/contest-development.md); committed datasets and sanitizer evidence |
 | 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
 | 3. Numerical components | Complete | [426 fixed comparisons and 128 finite-difference states](numerical-parity.md); 49 Rust/21 Python tests; safe initialization and repair |
-| 4. Complete version A | In progress | Seeded solver/CLI, checked incumbents, work/deadline limits, cancellation, and summaries implemented; timed quality qualification pending |
-| 5–9 | Pending | No improvement claims, WASM app, or deployment yet |
+| 4. Complete version A | Complete | [750-run qualification](version-a-results.md): all valid/on time; 1.95 s mean radius ratio 1.001543, worst 1.008245; fixed-work/cancellation tests pass |
+| 5. Experiment harness and traces | Next | [Trace/session design](trace-design.md) prepared; observer, unified runner, replay, and overhead gate pending |
+| 6–9 | Pending | No version B improvement claims, WASM app, or deployment yet |
 
-Milestones 1–3 were completed on 2026-11-16. Foundation code was drafted while
+Milestones 1–4 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.
 The independent Python tooling initially had 18 passing tests. The Rust CLI also accepted
 all 750 archived packings independently. Held-out inputs remain unevaluated.
 Local checks and [GitHub Actions](https://github.com/wotzlaff/packing-circles/actions/runs/43847491218)
 passed for implementation commit `dd30185`.
+
+Version A assembly has 68 passing Rust tests and the independent Python tools have
+26 passing tests. Its implementation/harness [CI passed](https://github.com/wotzlaff/packing-circles/actions/runs/43852864197).
+The full timed qualification used five Rust seeds per instance, preserved the
+source/binary hashes throughout measurement, and left held-out inputs untouched.
 
 ## Measurement contract
 
@@ -213,5 +219,5 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. Next: milestone 4's solver orchestration,
-best feasible incumbent tracking, deadline/cancellation handling, and CLI.
+qualified A, a measured B status, and 8. Next: milestone 5's optional incumbent
+observer, versioned replayable traces, unified comparison runner, and overhead test.

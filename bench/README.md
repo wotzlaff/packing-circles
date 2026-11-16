@@ -81,3 +81,24 @@ python3 bench/check_numerical_parity.py --replay-report bench/results/numerical-
 Build the release Rust probe first. Replay checks every scalar and callback event,
 all input hashes/counts, and at least 100 independent finite-difference states.
 See [the numerical result summary](../docs/numerical-parity.md) for scope and limits.
+
+## Version A qualification
+
+```sh
+cargo build -p packing-cli --release --locked
+python3 bench/qualify_version_a.py run --output /tmp/new-version-a.jsonl
+python3 bench/qualify_version_a.py summarize bench/results/version-a-development.jsonl
+```
+
+Collection uses 50 development inputs, three budgets, and five Rust seeds (5–9),
+taking about 11 minutes. It requires the same CPU/OS recorded in the frozen legacy
+baseline; summarizing archived results works on other machines. Use a fresh output
+path: the raw archive and metadata are never overwritten. `--limit 1 --budgets 0.1
+--repetitions 1` is a smoke run and cannot qualify as a full benchmark.
+
+The runner preserves solutions, JSON diagnostics, crashes/timeouts, external
+elapsed time, source/binary hashes, and input provenance. Malformed summaries,
+wrong seeds, incomplete coverage, invalid output, or deadline violations cannot
+pass. Quality compares per-instance median radii before geometric aggregation.
+The [qualification report](../docs/version-a-results.md) states thresholds and
+limitations; the comparison uses the recorded legacy archive, not a fresh rerun.
