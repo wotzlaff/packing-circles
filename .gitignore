@@ -1,2 +1,4 @@
 # Separate reference checkout; never track it in this repository.
 /legacy/
+/bench/build/
+__pycache__/
