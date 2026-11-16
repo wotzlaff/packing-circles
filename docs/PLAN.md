@@ -19,7 +19,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
 | 3. Numerical components | Complete | [426 fixed comparisons and 128 finite-difference states](numerical-parity.md); 49 Rust/21 Python tests; safe initialization and repair |
 | 4. Complete version A | Complete | [750-run qualification](version-a-results.md): all valid/on time; 1.95 s mean radius ratio 1.001543, worst 1.008245; fixed-work/cancellation tests pass |
-| 5. Experiment harness and traces | Next | [Trace/session design](trace-design.md) prepared; observer, unified runner, replay, and overhead gate pending |
+| 5. Experiment harness and traces | In progress | Observer, versioned JSONL, independent replay, and configured runner implemented; fixed-work invariance/overhead collection pending |
 | 6–9 | Pending | No version B improvement claims, WASM app, or deployment yet |
 
 Milestones 1–4 were completed on 2026-11-16. Foundation code was drafted while

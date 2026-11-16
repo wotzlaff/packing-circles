@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "instance_paths": [
+    "bench/data/development/10_01.txt",
+    "bench/data/development/20_01.txt",
+    "bench/data/development/30_01.txt",
+    "bench/data/development/40_01.txt",
+    "bench/data/development/50_01.txt"
+  ],
+  "budgets_seconds": [
+    0.1,
+    0.5
+  ],
+  "seeds": [
+    5,
+    6
+  ],
+  "repetitions": 2,
+  "traces": true,
+  "solvers": [
+    {
+      "name": "legacy",
+      "kind": "legacy",
+      "legacy_variant": "contest",
+      "executable": "bench/build/contest",
+      "source_paths": [
+        "legacy/circles-hackbfgs.tr.cpp"
+      ],
+      "build_flags": [
+        "-O2",
+        "-std=c++17"
+      ]
+    },
+    {
+      "name": "rust-a",
+      "kind": "rust",
+      "algorithm": "a",
+      "executable": "target/release/packing-cli",
+      "source_paths": [
+        "Cargo.toml",
+        "Cargo.lock",
+        "crates/packing-cli/Cargo.toml",
+        "crates/packing-core/Cargo.toml",
+        "crates/packing-cli/src/main.rs",
+        "crates/packing-core/src/config.rs",
+        "crates/packing-core/src/error.rs",
+        "crates/packing-core/src/geometry.rs",
+        "crates/packing-core/src/io.rs",
+        "crates/packing-core/src/lib.rs",
+        "crates/packing-core/src/solver.rs",
+        "crates/packing-core/src/numerics/bfgs.rs",
+        "crates/packing-core/src/numerics/initialization.rs",
+        "crates/packing-core/src/numerics/line_search.rs",
+        "crates/packing-core/src/numerics/mod.rs",
+        "crates/packing-core/src/numerics/objective.rs",
+        "crates/packing-core/src/numerics/penalty.rs",
+        "crates/packing-core/src/numerics/repair.rs"
+      ],
+      "build_profile": "release"
+    }
+  ]
+}

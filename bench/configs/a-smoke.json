@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "instance_paths": [
+    "tests/fixtures/two_unit_circles.in"
+  ],
+  "budgets_seconds": [
+    0.1
+  ],
+  "seeds": [
+    5
+  ],
+  "repetitions": 1,
+  "traces": true,
+  "solvers": [
+    {
+      "name": "rust-a",
+      "kind": "rust",
+      "algorithm": "a",
+      "executable": "target/release/packing-cli",
+      "source_paths": [
+        "Cargo.toml",
+        "Cargo.lock",
+        "crates/packing-cli/Cargo.toml",
+        "crates/packing-core/Cargo.toml",
+        "crates/packing-cli/src/main.rs",
+        "crates/packing-core/src/config.rs",
+        "crates/packing-core/src/error.rs",
+        "crates/packing-core/src/geometry.rs",
+        "crates/packing-core/src/io.rs",
+        "crates/packing-core/src/lib.rs",
+        "crates/packing-core/src/solver.rs",
+        "crates/packing-core/src/numerics/bfgs.rs",
+        "crates/packing-core/src/numerics/initialization.rs",
+        "crates/packing-core/src/numerics/line_search.rs",
+        "crates/packing-core/src/numerics/mod.rs",
+        "crates/packing-core/src/numerics/objective.rs",
+        "crates/packing-core/src/numerics/penalty.rs",
+        "crates/packing-core/src/numerics/repair.rs"
+      ],
+      "build_profile": "release"
+    }
+  ]
+}

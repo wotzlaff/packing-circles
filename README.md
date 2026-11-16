@@ -65,6 +65,23 @@ iteration, or restart cap. Identical seeds and work limits reproduce output and
 counts within the same build; timed runs may differ. Evaluation counts cover
 scalar or value/gradient calls, excluding initialization and validation.
 
+## Record and replay progress
+
+```sh
+target/release/packing-cli solve bench/data/development/30_01.txt --fixed-work --evaluations 50000 --trace /tmp/packing-trace.jsonl > /tmp/packing-solution.txt
+python3 bench/replay_trace.py /tmp/packing-trace.jsonl --solution /tmp/packing-solution.txt
+```
+
+Use a new trace filename; existing files are never overwritten. Each versioned
+JSONL trace contains checked feasible incumbents and enough coordinates to replay
+them without solving again. Ordinary snapshots are at least 100 ms apart; initial
+and final snapshots are always recorded. Tracing preserves fixed-work output and
+counters. An observer's runtime counts toward a timed solve.
+
+`bench/compare.py` runs configured legacy/Rust solvers sequentially and regenerates
+comparison tables from raw records. See [benchmark commands](bench/README.md).
+True optimizer pause/resume and the browser visualization remain future milestones.
+
 ## Legacy baseline
 
 `legacy/` stays a separate ignored checkout; it is never part of this repository

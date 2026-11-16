@@ -1,8 +1,8 @@
 # Run and optimization trace design
 
-The milestone 5 observer and CLI trace writer are implemented. Independent replay,
-the unified comparison harness, and measured overhead qualification are being
-verified. This document defines their format and acceptance criteria. Interrupted
+The milestone 5 observer, CLI trace writer, independent replay, and configured
+comparison harness are implemented. Overhead qualification is pending. This
+document defines their format and acceptance criteria. Interrupted
 searches still cannot resume their optimizer state; that remains milestone 7.
 
 ## Run record
@@ -22,6 +22,11 @@ internal feasibility, reparsed-output feasibility, maximum overlap and containme
 violation, objective evaluation count, iterations, restarts, initialization
 fallbacks, numerical failures, and elapsed seconds. Invalid or failed runs remain
 in JSONL and cannot be counted as improvements.
+
+The current runner accepts descriptors for unmodified legacy executables and Rust
+algorithms A/B. B remains unimplemented; configuring it against the current CLI
+records a failed run. Legacy executables expose no progress, so their trace is
+explicitly unavailable rather than synthesized.
 
 ## Incumbent events
 

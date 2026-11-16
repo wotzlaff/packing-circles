@@ -30,3 +30,21 @@ jobs:
         run: cargo build -p packing-core --release --example numerical_probe --locked
       - name: Replay archived C++ numerical reference
         run: python3 bench/check_numerical_parity.py --replay-report bench/results/numerical-parity.json
+      - name: Build trace-capable CLI
+        run: cargo build -p packing-cli --release --locked
+      - name: Validate a real trace through the unified runner
+        run: |
+          python3 bench/compare.py run --config bench/configs/a-smoke.json --output "$RUNNER_TEMP/circles-trace-smoke.jsonl"
+          python3 - <<'PY'
+          import json, os, sys
+          from pathlib import Path
+          sys.path.insert(0, 'bench')
+          from replay_trace import replay_trace, validate_run_summary
+          raw=Path(os.environ['RUNNER_TEMP'])/'circles-trace-smoke.jsonl'
+          rows=[json.loads(line) for line in raw.read_text().splitlines()]
+          assert len(rows)==1 and rows[0]['successful']
+          row=rows[0]
+          replay=replay_trace(raw.parent/row['trace_path'], row['stdout'])
+          validate_run_summary(replay,row['summary'])
+          # Shared CI runners are integration tests, not the benchmark machine.
+          PY
