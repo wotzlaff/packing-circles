@@ -1,7 +1,7 @@
 # Run and optimization trace design
 
 The milestone 5 observer, CLI trace writer, independent replay, and configured
-comparison harness are implemented. Overhead qualification is pending. This
+comparison harness are implemented and [qualified](tracing-results.md). This
 document defines their format and acceptance criteria. Interrupted
 searches still cannot resume their optimizer state; that remains milestone 7.
 
@@ -39,6 +39,10 @@ from the four-decimal exported solution. Initial and final snapshots are always
 allowed; ordinary snapshots are separated by at least 100 ms. Keep coordinates so a
 viewer can replay the packing without rerunning the solver.
 
+The runner's `trace_run_id` links its run record to the CLI-generated header ID;
+the runner also has its own unique `run_id`. Trace paths are relative to the raw
+archive for portability. Each snapshot stores its exact exported text too.
+
 Record only independently validated feasible incumbents. Their radii must be
 monotonic nonincreasing. The penalized optimization objective is a separate series:
 penalty weights change during the search, so its raw value can rise and values from
@@ -50,6 +54,10 @@ Tracing is opt-in and disabled by default. Enabling it must preserve fixed-work
 output and work counts. Measure trace overhead in fixed-work runs on
 the development set; the median runtime increase must remain below 5%. Keep raw
 traces alongside summaries so figures can be regenerated and failed runs audited.
+
+Only the feasible-incumbent series is implemented. Recording penalized working
+states/objectives is future work for the mathematical views; it must remain a
+separate series with explicit phase/weight metadata.
 
 ## Unified comparison and resumable execution
 

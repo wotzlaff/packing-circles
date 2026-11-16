@@ -78,6 +78,10 @@ them without solving again. Ordinary snapshots are at least 100 ms apart; initia
 and final snapshots are always recorded. Tracing preserves fixed-work output and
 counters. An observer's runtime counts toward a timed solve.
 
+The [trace study](docs/tracing-results.md) passed the 5% overhead gate: 150
+fixed-work pairs preserved output/work exactly, with a measured median process
+runtime increase of 3.25% on the recorded machine.
+
 `bench/compare.py` runs configured legacy/Rust solvers sequentially and regenerates
 comparison tables from raw records. See [benchmark commands](bench/README.md).
 True optimizer pause/resume and the browser visualization remain future milestones.

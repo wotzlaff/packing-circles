@@ -102,3 +102,39 @@ wrong seeds, incomplete coverage, invalid output, or deadline violations cannot
 pass. Quality compares per-instance median radii before geometric aggregation.
 The [qualification report](../docs/version-a-results.md) states thresholds and
 limitations; the comparison uses the recorded legacy archive, not a fresh rerun.
+
+## Traces and unified comparisons
+
+```sh
+cargo build -p packing-cli --release --locked
+python3 bench/compare.py run --config bench/configs/a-smoke.json --output /tmp/new-a-run.jsonl
+python3 bench/compare.py summarize bench/results/unified-legacy-a.jsonl
+python3 bench/replay_trace.py bench/results/trace-overhead.traces/50_01-rep0.jsonl
+```
+
+`bench/configs/legacy-a-smoke.json` runs both executables across five development
+inputs and two budgets; build the separate legacy reference first. The Rust-only
+configuration needs no legacy checkout. Configured paths may select other
+executables/source files, so a new machine can collect its own comparison. Future
+algorithm B is an explicit descriptor; the current CLI rejects it and the runner
+retains that failure. Legacy progress is unavailable and is labeled accordingly.
+
+Each raw record preserves its command, input/output and executable hashes, source
+fingerprints, timing, diagnostics, geometry validation, and trace linkage. The
+independent replayer checks schema, counters, rate limit, monotone radius, strict
+geometry/export validity, and final output agreement. Failed, changed-artifact,
+or late runs remain visible. Incomplete/failed repetitions cannot enter comparative
+radius ratios. Markdown tables regenerate solely from the raw JSONL.
+
+Measure opt-in trace cost with a fresh report/trace-directory name:
+
+```sh
+python3 bench/measure_trace_overhead.py --output /tmp/new-trace-overhead.json
+```
+
+The full protocol runs 150 pairs: 50 frozen development inputs × three seeds,
+50,000 evaluations per run, alternating plain/traced order. It preserves all raw
+outcomes and checkpoints after each pair. Warmups are unmeasured. `--limit` creates
+a smoke cohort and cannot pass the complete-set gate. The target is below 5%
+median runtime increase, with identical output/counts and every trace valid.
+See [the measured results](../docs/tracing-results.md) for the exact aggregation.

@@ -1,0 +1,663 @@
+{
+  "schema_version": 1,
+  "created_utc": "2026-11-16T12:06:00.544532+00:00",
+  "root_commit": "22ee4d0efb95150c9bb6fd16b657e13ba9037d22",
+  "old_source_commit": "4d39933",
+  "old_binary_sha256": "52d9a3910386b514d38624c364c3e8ba9b822c53ee0ca5219031633156385d0b",
+  "new_binary_sha256": "2320dc9dbd8510b568c171be278dc2bda960add3c044abeed921bb95ff326923",
+  "seed": 5,
+  "evaluation_limit": 5000,
+  "identical_outputs_and_counts": true,
+  "instances": [
+    {
+      "instance": "bench/data/development/10_01.txt",
+      "input_sha256": "a86c06e2c5e4891817a533b953b55e88a62be04ed94d9f052837a51bbcaf4b52",
+      "output_sha256": "f472b3e11b74ed1b4447b6ad514120c0eede90310ac84163515f81fe1fa39a8e",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1114,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_02.txt",
+      "input_sha256": "6cf4305b16297129babc0863ea5ce3d4b1bb16800691b3d1ccd7d7e8784ad6fc",
+      "output_sha256": "f982ee70163c646bbd569fddd198d77389b93a1294a3749d1944c13e9545b46f",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1105,
+        "restarts": 5,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_03.txt",
+      "input_sha256": "25e7086725c032620924958e0c5614dd62bb9ae0fe186d99e35a219df1a21f93",
+      "output_sha256": "0b344ac7a6fb23c39e0184bb104ed7d7a865f37d805eb6c79ffae2d494229702",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1134,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_04.txt",
+      "input_sha256": "c99733a5e45995fbbae52a61e556a894981d412b819b29a8b107e8aba986edb0",
+      "output_sha256": "f83c78c11dd84861fbae3cca7a8a18c0c121c9b3758af2d94fe287111bd30ca1",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1115,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_05.txt",
+      "input_sha256": "b5bff5ac211547aa1b27b76dfab7f1253e443ac01573a7124109e1a0c6904307",
+      "output_sha256": "97dacd368b1851f7bd67d169ab217d9d52a763e94aed4cd5df4dbb7532df032a",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1086,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_06.txt",
+      "input_sha256": "2a2959f9941a4f1dcd6ed7987034039ec9618324e3397d36904127504af485f9",
+      "output_sha256": "e6e5cd4a985ebc423114168f158f33796933724194619130e35c0edbf376941f",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1118,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_07.txt",
+      "input_sha256": "900ea5bab76763de7de89089244a8a49e83f525b9f160a6f955632734a26e4d4",
+      "output_sha256": "9beb80fe6906b95f0d032198edf305a9584000c67c2a6ab32e494677924bdfc5",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1111,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_08.txt",
+      "input_sha256": "1726c5eefe44dc6f47d433f704bb053366ff81fcf0b0071b26fa7ec9f73d9a8f",
+      "output_sha256": "043291de2d55320a911c1604142565f94fa6a4f23e9d617be16ac48b3d896196",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1119,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_09.txt",
+      "input_sha256": "ff480585f78ae6fba31cc94752c8437f15129f763a38ede5a3cbb52be3b84182",
+      "output_sha256": "0437590e339a1cf9ef00e4daabd18d11e18d073176047342fa73677d54b47b02",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1106,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/10_10.txt",
+      "input_sha256": "73940061ea85c8faf8fe619f5adf1db1c79a849b7e07183db9b37c5266123c69",
+      "output_sha256": "301714d7cd804c98ac76231ccccdf4ddf5b54dfe367c433e3a090620599fb531",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1116,
+        "restarts": 4,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_01.txt",
+      "input_sha256": "6cb1acd277e25e78d2ca5d4d5fd3c698ab1322c2d1a622424a3df37b8922ed90",
+      "output_sha256": "c2042490a0c743a88bc0d587751263274e094162da5d2bd13243500dbdc61f83",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1131,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_02.txt",
+      "input_sha256": "8645b238a5c0e2867a49e43556fac026b67a92b04fa8de3aaad903350c7eb8fc",
+      "output_sha256": "303793834b99dbd553eb06ba58910dc8b514546f76248c546d37c15ad41a473c",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1125,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_03.txt",
+      "input_sha256": "30f4c549527519bbf38a3da768496a6d1786261751a01f9584f199e672a8d95f",
+      "output_sha256": "93b42a5bdbaadf27e29ee019e759c307aa2888e9155d9602b49012fa89c63a37",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1124,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_04.txt",
+      "input_sha256": "8199d23e622fdbcce7a5fc80b3246fb94598ae8b38da2b2a683c2087d621a1b5",
+      "output_sha256": "b4a508280a4b3821089a0b761806045d1fa2d86d4ebc1160d6f1bb18051e8094",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1126,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_05.txt",
+      "input_sha256": "7db9d6a8176637661bf828bcd4613dc78d1021f61b1bbd041d46a996c56b6b71",
+      "output_sha256": "34f02f90817f2780ebe15fcf48ab5a1b771892e1b2bfa79d2bb3662c6a51230b",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1118,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_06.txt",
+      "input_sha256": "a3c4775aa484964a4e7252ed7b6b124d645c814511abaf57311de86d1cd58102",
+      "output_sha256": "47828f4d4bab698c17f94bf61b60109088f3515053b0b5c4a2bfb20c6c9ce7e8",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1120,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_07.txt",
+      "input_sha256": "219d570024774ad26fb1071a2cffde879f60bf74684f7c9146f509ce669c3df7",
+      "output_sha256": "ae80d7ede9a4df9df6487e6fcb4211f07c3365cf74c61929873e8d6b9affef0b",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1121,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_08.txt",
+      "input_sha256": "69b8cb6aff89259ca061328136ab07fff3b840b0fee11913a98c687e92d07976",
+      "output_sha256": "1e9bde2f180d4cd3f5cef85ee6a4f068fd75bb254418ed27c7089a1bb753c84c",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1132,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_09.txt",
+      "input_sha256": "59f2235477eb1f355a788bb267ea6847f15c71713d6e40d6febf16863d119f67",
+      "output_sha256": "77d741ea32419b650067b0e45f7157bfd08194a2c3a4978ccdd807f21e9f209d",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1138,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/20_10.txt",
+      "input_sha256": "556aaecfd92d54c72785c403e495312e2120eae185e5df64f39c33f5fc54919b",
+      "output_sha256": "6b45cbf3fddca09e50ba01f249dfa0d741d6b99addd12f011326619228b19f8f",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1128,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_01.txt",
+      "input_sha256": "d7487926c8cb2968afa4690d2fd8f97660d0d6f0e751d45d65cd0e57e417f198",
+      "output_sha256": "5dc7351b57a90e236c35ec0a2a8002c698d38aa2b3328b4481875f34a0391cc0",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1152,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_02.txt",
+      "input_sha256": "39448263190673a6a02ad6ebcc03e5619ea9653066ceac2a8cf28fb651d8978a",
+      "output_sha256": "f5e318bd388e1ddf2521383f4d4a3b37bfc7567276b55d5b895d57b924a83158",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1138,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_03.txt",
+      "input_sha256": "cbcde6555ebda2d24c572cbabeecfb7bead4becf356b708e6cfafec3029531c9",
+      "output_sha256": "d32c821fa10dede027519124028765c428195cbc5562eaf19af0c405e059fc1a",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1152,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_04.txt",
+      "input_sha256": "09f5038fe834a7ba00622274c0bf25cff5bde7e41bf8dfa20a3976be044b5774",
+      "output_sha256": "19b55edab7db17047851d210d723bddb66487b6e6140f3e0e8ec34437fb94bc8",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1141,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_05.txt",
+      "input_sha256": "322d4f550a374144ac758b1347e8a66ccd68a84780c5848fd57af8393f3437f3",
+      "output_sha256": "93cce8075d34f2eebf07d9e62c6ed7bdea64b369dd25bee23c8d12c56afa5ec1",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1162,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_06.txt",
+      "input_sha256": "a9ceb5eb7722a89305935258456668162868c7b2f0bb12f14de960727c0aadef",
+      "output_sha256": "1a61e14a95bdddce9a578d044e91321c77b22990a2c09f0c35c0ec097f9593b9",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1156,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_07.txt",
+      "input_sha256": "016211761c3cb0451a37fc378a386df576046e2c4b18a98fcc5d00d50706b72e",
+      "output_sha256": "bb0b21f632a6f227ed456e11ca4082e7d27759acd6e42a7524b7d9cba9fa5fa9",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1155,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_08.txt",
+      "input_sha256": "5cea99ab4edbba3e085a86cadc16aaeb2e17e4241571572a0b1bf14e3e6a8b89",
+      "output_sha256": "28d9332024d67daa436e27b450567bda147299dd8f51b1bd2ec15b9310dcb193",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1144,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_09.txt",
+      "input_sha256": "9a254f07085df874d5b082484751f3e61c4560a45277524d23d837541a8a9943",
+      "output_sha256": "f8a8339947219dadd3411b70a5f33849e27e67f389b79fc4ee2460fb464effbd",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1148,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/30_10.txt",
+      "input_sha256": "173449662febb052a0b4f6e371435898d7fe1ee011077cafe381630d1dedc073",
+      "output_sha256": "29478ea4d98609ebdd2c0f36445c926729f6a6386758580d5b601db05d08334a",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1153,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_01.txt",
+      "input_sha256": "6c9d528fd99fefef3b280601bab0d6249bdf04262d82852ae3d29d4e3d21efc1",
+      "output_sha256": "aee0beb6ccbee69141a9bf9d64544cdf931c255aeda68adb634376b7e1a09cac",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1173,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_02.txt",
+      "input_sha256": "0308d2601e2a5c4a7d500e7b22d054bf82cc7c34362a031447b398c5e9de9ee9",
+      "output_sha256": "52d17a894258b18945c7904995c0922edc1ca94036f767118de292a9665d34a3",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1160,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_03.txt",
+      "input_sha256": "f08c5cff305b5924471e3edf1a7380ab6610c9b3dd6b0fa956d52a3e5bdac7db",
+      "output_sha256": "bb355e3892788396feb3e3b36aeece54a6c347b177e280ca11fee63b703b00f6",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1170,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_04.txt",
+      "input_sha256": "9e8065771ee4b46c126d7cd7c4352f4037d3e65c54cdb7e33ddc1ce56ac79445",
+      "output_sha256": "60efb61bf91d2d0e8bf0e277236628dc2164dc01fd530388c044d5adb0e963a1",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1148,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_05.txt",
+      "input_sha256": "6b8099026cc660440a026a7b0a9f91f0fbad8ba4fc58c6c580645045d189ad77",
+      "output_sha256": "e234483cfbbfcc7a4ddecd099f23e850510cdacc97eb781bea873e554fdbc625",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1168,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_06.txt",
+      "input_sha256": "bf0e2a88671969270ac148d6e8b179a7452305a62a8c1b9768e68f94fdb80ae6",
+      "output_sha256": "135263898b9aec31df03a561cb5c134ed1bca34c60ff1da2e026bd070a0162d9",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1142,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_07.txt",
+      "input_sha256": "f02fb1526b89d7941590a7daba7e2b8ef3276ed3c0a528016db3b8f90fe9bf25",
+      "output_sha256": "1fd0c8d65e7637aac14453cdc6f252cbfe6897a416170c057c35bf1eecc091b1",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1156,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_08.txt",
+      "input_sha256": "70516c5466159cf50c36fb080249d7c10c49641cd1f300a0e9a20f25dc1d7055",
+      "output_sha256": "83360b30650dd1fdaa803aef1b3a8adc3ef04f6da9d28b2da24724121fd80b19",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1161,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_09.txt",
+      "input_sha256": "1c3fc3ad8281f949c3068a125850c258d0cf993faa20cb50dea7fcdb81325bea",
+      "output_sha256": "83a87d2d1aaac24e73709a25c08cb03c35cb0d5342d2a85574aa2abc2d97435f",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1171,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/40_10.txt",
+      "input_sha256": "851dc9a4fa4f512c83509025a32591c30cd450bc1a656d764255089730c28e83",
+      "output_sha256": "ad8ca6ba8c5ad0b730a0df795bf11d6949a27bc2ffebcaded68c81ddf4c9891c",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1164,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_01.txt",
+      "input_sha256": "f4bccca42e157fbb2b0f1a27f923bbbac72b2e1f7f40bd125d57ab28127fee52",
+      "output_sha256": "f40eb6faee034b64aa2b028eac6289fb30d6550c6cbbcff0fc3c93bb65d34f22",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1161,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_02.txt",
+      "input_sha256": "7930127b0469b81ed4d721077e71165837e710f8fd5452a54ca5ed1c898096bc",
+      "output_sha256": "35b146c0c34eee873f0e89b03e6a5b454c40746952b5a9d0a28cacee8d371756",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1160,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_03.txt",
+      "input_sha256": "d37f546a0f8f36b939fdedc813538e9bc9f5bf4d9239f5438e981f18d8ac01fe",
+      "output_sha256": "3b86f2318710b35ffed45d935f9419d5dafaf45dfa9618c0ccfbcd4cf1d092c9",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1160,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_04.txt",
+      "input_sha256": "e97bb7358870ea68e6de9dc0b02a88c27e466e5674eb9d4759afe0cb4f8652a8",
+      "output_sha256": "6adb59baf8c7734034f5c6236a278e1387f18f3c5e3be19230cf024a92f0dd93",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1148,
+        "restarts": 1,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_05.txt",
+      "input_sha256": "74b9cd416c768e14b277a3b599cdd92634c581cac517041df35b65ece9e63453",
+      "output_sha256": "16d03bb3a1e7c55ba3aa4d3b5ae28c3498c7ec98a5fc6009528bcc8841f290f3",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1177,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_06.txt",
+      "input_sha256": "7f879fe83f77ff16d7986cd21421590569bc8b9a3871ce9c4895b83e2ff0d050",
+      "output_sha256": "1e5baabc430f188ac2a9d003caf356166037045869a04b93fd264fffeae54a61",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1167,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_07.txt",
+      "input_sha256": "853e34e89dce8d152ea4b0440578a1687b914139f33178880a67efc9550a0f82",
+      "output_sha256": "ce3c73b2a7cd80345b79d4c2e2b95efe770d8fd117805e5efa549666bc086877",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1182,
+        "restarts": 1,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_08.txt",
+      "input_sha256": "95a4eb0907518a51bc856758300e13de8a7010906093f5d2e90df45e30ab9914",
+      "output_sha256": "13ee47e50bd5f8d427a4defb50e36a7194cc15f3f35568cedbd2db9c801e17f9",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1157,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_09.txt",
+      "input_sha256": "5dccbd2cef62c5294c2f61f6a95c7ba8521285824b724296a7352a242f8ec77c",
+      "output_sha256": "dc9fe83d16a246c96c4eb52dde6ca243f2d3f6f09f7c8fa588147cf5be3371f6",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1168,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    },
+    {
+      "instance": "bench/data/development/50_10.txt",
+      "input_sha256": "9a2e2fc4ca2afa91490997abf727db78510a2aeba248afa6c99e674bd5d7ee08",
+      "output_sha256": "458dc627f5469bbe12964a29acd6ca87235476689d9f46a1965e94f22f1d9e6a",
+      "counts": {
+        "evaluations": 5000,
+        "iterations": 1164,
+        "restarts": 2,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "termination": "evaluation_limit"
+      }
+    }
+  ]
+}

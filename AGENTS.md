@@ -27,7 +27,7 @@ Use stable Rust, Python 3.10+, and GCC; run from the root:
 - `python3 bench/generate_instances.py --check` — verify frozen data.
 - `python3 bench/legacy.py build --variant contest` — build the selected legacy reference outside its checkout.
 
-See `README.md` and `bench/README.md` for solving and measurement commands. Version A runs natively; B/WASM are pending.
+See `README.md` and `bench/README.md` for solving, tracing, and measurement commands. A is native; B/WASM are pending.
 
 ## Coding Style & Testing Guidelines
 

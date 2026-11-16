@@ -19,10 +19,11 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
 | 3. Numerical components | Complete | [426 fixed comparisons and 128 finite-difference states](numerical-parity.md); 49 Rust/21 Python tests; safe initialization and repair |
 | 4. Complete version A | Complete | [750-run qualification](version-a-results.md): all valid/on time; 1.95 s mean radius ratio 1.001543, worst 1.008245; fixed-work/cancellation tests pass |
-| 5. Experiment harness and traces | In progress | Observer, versioned JSONL, independent replay, and configured runner implemented; fixed-work invariance/overhead collection pending |
-| 6–9 | Pending | No version B improvement claims, WASM app, or deployment yet |
+| 5. Experiment harness and traces | Complete | [150 paired trace runs](tracing-results.md): output/work invariant, median runtime +3.25%; 40-run unified demonstration and exact summary reproduction |
+| 6. Develop version B | Next | Select at least three independent candidates, run development ablations, then freeze a candidate before held-out qualification |
+| 7–9 | Pending | No WASM app or deployment yet |
 
-Milestones 1–4 were completed on 2026-11-16. Foundation code was drafted while
+Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.
 The independent Python tooling initially had 18 passing tests. The Rust CLI also accepted
 all 750 archived packings independently. Held-out inputs remain unevaluated.
@@ -33,6 +34,11 @@ Version A assembly has 68 passing Rust tests and the independent Python tools ha
 26 passing tests. Its implementation/harness [CI passed](https://github.com/wotzlaff/packing-circles/actions/runs/43852864197).
 The full timed qualification used five Rust seeds per instance, preserved the
 source/binary hashes throughout measurement, and left held-out inputs untouched.
+
+Trace support has 73 passing Rust tests and 45 passing Python tests. Measurement
+covered all 50 development instances with three fixed-work pairs each. All 150
+traces replayed; an additional 40-run legacy/A demonstration also passed. No
+held-out inputs were used. Optimizer pause/resume remains milestone 7.
 
 ## Measurement contract
 
@@ -219,5 +225,5 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. Next: milestone 5's optional incumbent
-observer, versioned replayable traces, unified comparison runner, and overhead test.
+qualified A, a measured B status, and 8. Next: milestone 6's measured candidate
+experiments and ablations, retaining qualified A as the baseline.

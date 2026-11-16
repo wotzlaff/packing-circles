@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-11-16T12:09:34.721544+00:00",
+  "config_sha256": "72417b296f17f5fa45ce88e11f63257d51946a97252f16fbb39d982a9dc81525",
+  "config": {
+    "schema_version": 1,
+    "instance_paths": [
+      "bench/data/development/10_01.txt",
+      "bench/data/development/20_01.txt",
+      "bench/data/development/30_01.txt",
+      "bench/data/development/40_01.txt",
+      "bench/data/development/50_01.txt"
+    ],
+    "budgets_seconds": [
+      0.1,
+      0.5
+    ],
+    "seeds": [
+      5,
+      6
+    ],
+    "repetitions": 2,
+    "traces": true,
+    "solvers": [
+      {
+        "name": "legacy",
+        "kind": "legacy",
+        "legacy_variant": "contest",
+        "executable": "bench/build/contest",
+        "source_paths": [
+          "legacy/circles-hackbfgs.tr.cpp"
+        ],
+        "build_flags": [
+          "-O2",
+          "-std=c++17"
+        ]
+      },
+      {
+        "name": "rust-a",
+        "kind": "rust",
+        "algorithm": "a",
+        "executable": "target/release/packing-cli",
+        "source_paths": [
+          "Cargo.toml",
+          "Cargo.lock",
+          "crates/packing-cli/Cargo.toml",
+          "crates/packing-core/Cargo.toml",
+          "crates/packing-cli/src/main.rs",
+          "crates/packing-core/src/config.rs",
+          "crates/packing-core/src/error.rs",
+          "crates/packing-core/src/geometry.rs",
+          "crates/packing-core/src/io.rs",
+          "crates/packing-core/src/lib.rs",
+          "crates/packing-core/src/solver.rs",
+          "crates/packing-core/src/numerics/bfgs.rs",
+          "crates/packing-core/src/numerics/initialization.rs",
+          "crates/packing-core/src/numerics/line_search.rs",
+          "crates/packing-core/src/numerics/mod.rs",
+          "crates/packing-core/src/numerics/objective.rs",
+          "crates/packing-core/src/numerics/penalty.rs",
+          "crates/packing-core/src/numerics/repair.rs"
+        ],
+        "build_profile": "release"
+      }
+    ]
+  },
+  "git_root": "/home/nico/circles",
+  "platform": "Linux-6.1.0-44-amd64-x86_64-with-glibc2.36",
+  "cpu": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
+  "python": "3.11.2",
+  "root_commit": "22ee4d0efb95150c9bb6fd16b657e13ba9037d22",
+  "toolchains": {
+    "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "g++": "g++ (Debian 12.2.0-14+deb12u1) 12.2.0"
+  },
+  "source_hashes": {
+    "compare.py": "8d32b47769920a52703a2f240944b739d5d6fa591d666d4a1e2c645b89bb408a",
+    "check_solution.py": "14536a64e2ef6cacb5d8670ebb38a3ff6f169dbceb4c14423c2953773ee85391",
+    "run_baseline.py": "d3d04b745a19e39638b6d447f824787dae6a3a65b7ad1b2705ba0b0b3e6d6a1f",
+    "legacy.py": "92177d1206d1345589f476438400672d5641cb7dd47dffefbfef687bb6d9c79a",
+    "replay_trace.py": "4ddd32f1cb4d7dfe2de0ee55f034d4934eddbbc5621a1e6bd2f65771f59e9f81"
+  }
+}

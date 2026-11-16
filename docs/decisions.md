@@ -68,3 +68,20 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   Disclose that this is an archived baseline with undefined behavior and uncontrolled
   external load, not a contemporary paired-seed experiment. Rust uses seeds 5–9;
   the unmodified C++ executable uses its fixed seed sequence on each invocation.
+
+## Trace and comparison implementation
+
+- Put progress observation outside numerical kernels, at existing checked-incumbent
+  updates. A compile-time disabled path avoids extra validation/allocation when
+  tracing is off. Enabling observation adds no random draws/objective calls.
+- Borrow snapshots during callbacks; serialize/copy only in the caller. Always
+  emit initial/final frames, and separate ordinary improvements by at least 100 ms.
+- Link trace headers and final counters to run summaries. Validate all geometry
+  independently and require actual formatter rounding, including floating values
+  just above a four-decimal boundary. Rounding allowances never qualify a frame.
+- Keep a configured comparison runner separate from the predeclared version A
+  qualification gate. Preserve failed observations; require complete valid
+  repetitions before reporting comparative per-instance medians.
+- Compare traced/plain runs at fixed work, alternating pair order, with both
+  outputs/counters and runtime audited. Keep timings, metadata, and all traces;
+  do not infer an optimization speedup from timing noise.
