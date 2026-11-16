@@ -140,3 +140,18 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   solver compiled on the same CI host, alongside numerical oracle replay and
   portable native/WASM checks. Preserve the failed job evidence; retain the
   original archive command and unchanged numerical/quality thresholds.
+
+## Make the early search visible
+
+- The 100 ms worker heartbeat skipped most early search positions. Batch at most
+  64 early feasible-incumbent and accepted-trial checkpoints, probing at most
+  256 bounded steps during the first 250 ms. Reporting adds no optimizer
+  evaluations or random draws; recording overhead counts toward active time.
+- Expand the time axis near zero by default and zoom the vertical range past
+  the starting line fallback. Keep the original values and elapsed-time mode
+  available, and label the clipped fallback explicitly.
+- Pace replay by recorded checkpoints, with at least eight seconds and roughly
+  100 ms per checkpoint at normal pace. Share actual elapsed time between runs,
+  hold recorded geometry between checkpoints, and provide previous/next controls
+  for changes sharing a rounded timestamp. Preserve the first 64 checkpoints
+  when the bounded history evicts later intermediate frames.

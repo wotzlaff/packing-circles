@@ -618,3 +618,9 @@ input[type="checkbox"] {
     gap: 9px;
   }
 }
+
+.history-controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin: 12px 0; font-size: 12px; }
+.history-controls label { display: flex; align-items: center; gap: 6px; }
+.history-controls select { width: auto; padding: 6px; }
+.timeline { flex-wrap: wrap; }
+.timeline input { min-width: 100px; }

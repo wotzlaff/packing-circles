@@ -71,7 +71,8 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Test worker and site
         run: |
-          node --test web/tests/data.test.mjs
+          node --test web/tests/data.test.mjs web/tests/timeline.test.mjs
+          node web/tests/early-worker.mjs
           node web/tests/browser.mjs --report "$RUNNER_TEMP/wasm-browser.json"
           node web/tests/site.mjs --stress-seconds 3 --report "$RUNNER_TEMP/site.json" --screenshots "$RUNNER_TEMP/site-screenshots"
       - uses: actions/configure-pages@v5

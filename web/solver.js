@@ -11,8 +11,13 @@ export class PackingWorker extends EventTarget {
     this.#worker = new Worker(new URL('./solver-worker.js', import.meta.url), {type: 'module'});
     this.#worker.onmessage = ({data}) => {
       if (data.runId !== undefined && data.runId !== this.#runId) return;
-      if (data.snapshot && ['progress', 'done'].includes(data.type)) {
-        const snapshot = structuredClone(data.snapshot);
+      const frames = [...(data.history ?? [])];
+      if (data.snapshot && ['progress', 'done', 'paused', 'resumed'].includes(data.type)) frames.push(data.snapshot);
+      for (const frame of frames) {
+        const last = this.#trace.at(-1)?.snapshot;
+        if (last && last.elapsed_seconds === frame.elapsed_seconds &&
+            last.evaluations === frame.evaluations && last.radius === frame.radius) continue;
+        const snapshot = structuredClone(frame);
         const bytes = new TextEncoder().encode(JSON.stringify(snapshot)).length;
         this.#trace.push({snapshot, bytes});
         this.#traceBytes += bytes;

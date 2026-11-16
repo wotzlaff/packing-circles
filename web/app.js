@@ -1,14 +1,16 @@
 import {PackingWorker} from './solver.js';
 import {drawPacking, drawHistory} from './render.js';
 import {presets} from './presets.js';
+import {timeFraction, fractionTime, replayDuration} from './timeline.js';
 import {parseInput, validateSnapshot, validateConfig, appendSnapshot, traceStats, parseRecording,
   MAX_INPUT_BYTES, MAX_IMPORT_BYTES, names} from './data.js';
 
 const $ = id => document.getElementById(id);
-const state = {phase: 'idle', runs: [], activeIndex: -1, selectedIndex: 0, selectedTime: 0};
+const state = {phase: 'idle', runs: [], activeIndex: -1, selectedIndex: 0, selectedTime: 0, selectedFrameIndex: null};
 let worker, ready = false, activeId = null, framePending = false, preview = null;
 let instance, buildInfo = {version: '0.1.0', math_profile: 'portable-libm-0.2.16'};
 let importedSolver = null, pendingControl = null, replayStart = null, generation = 0;
+let replayCheckpoints = [], replayFraction = 0;
 let inputError = false;
 const performanceStats = {frames: [], controls: []};
 const active = () => ['running', 'paused'].includes(state.phase);
@@ -38,12 +40,13 @@ function connectWorker() {
     if (data.runId !== activeId || state.activeIndex < 0) return;
     try {
       const run = state.runs[state.activeIndex];
+      for (const frame of data.history ?? []) recordFrame(state.activeIndex, frame);
       if (data.snapshot) validateSnapshot(data.snapshot, instance.radii);
-      if (['progress', 'done'].includes(data.type)) appendSnapshot(state.runs, state.activeIndex, data.snapshot);
+      if (['progress', 'done'].includes(data.type)) recordFrame(state.activeIndex, data.snapshot);
       if (data.type === 'paused') {
         state.phase = 'paused'; run.status = 'paused';
         // The acknowledgement includes a current clock and possibly a final repair.
-        appendSnapshot(state.runs, state.activeIndex, data.snapshot);
+        recordFrame(state.activeIndex, data.snapshot);
       } else if (data.type === 'resumed') {
         state.phase = 'running'; run.status = 'running';
       }
@@ -52,6 +55,7 @@ function connectWorker() {
         pendingControl = null;
       }
       state.selectedTime = data.snapshot.elapsed_seconds;
+      state.selectedFrameIndex = null;
       preview = null;
       if (data.type === 'done') {
         const cancelled = data.snapshot.termination === 'cancelled';
@@ -63,12 +67,20 @@ function connectWorker() {
         } else {
           state.phase = 'complete'; state.activeIndex = -1;
           state.selectedTime = maximumTime();
-          $('status').textContent = cancelled ? 'Cancelled. The best checked packing is retained.' : 'Experiment complete. Explore the history or export your results.';
+          $('status').textContent = cancelled ? 'Cancelled. The best checked packing is retained.' : 'Experiment complete. Replay expands the early steps so you can watch the search.';
         }
       }
       updateControls(); scheduleRender();
     } catch (error) { showError(error); }
   });
+}
+
+function recordFrame(index, snapshot) {
+  validateSnapshot(snapshot, instance.radii);
+  const last = state.runs[index].snapshots.at(-1);
+  if (last && last.elapsed_seconds === snapshot.elapsed_seconds && last.evaluations === snapshot.evaluations &&
+      last.iterations === snapshot.iterations && last.radius === snapshot.radius && last.finished === snapshot.finished) return;
+  appendSnapshot(state.runs, index, snapshot);
 }
 
 function showError(error) {
@@ -92,6 +104,10 @@ function updateControls() {
   $('variant').disabled ||= $('compare').value === 'a';
   $('timeline').disabled = busy || state.runs.every(r => !r.snapshots.length);
   $('replay').disabled = busy || state.runs.every(r => !r.snapshots.length);
+  const frames = state.runs[state.selectedIndex]?.snapshots ?? [];
+  const frameIndex = selectedFrameIndex();
+  $('previous-frame').disabled = busy || frameIndex <= 0;
+  $('next-frame').disabled = busy || frameIndex < 0 || frameIndex >= frames.length - 1;
   const selected = selectedSnapshot();
   $('export-solution').disabled = !selected || busy || preview != null;
   $('export-run').disabled = busy || !state.runs.some(r => ['complete', 'cancelled'].includes(r.status) && r.snapshots.at(-1)?.finished);
@@ -108,14 +124,27 @@ function renderTabs() {
     button.type = 'button'; button.textContent = `${run.name} · ${run.status}`;
     button.setAttribute('aria-pressed', String(index === state.selectedIndex));
     button.disabled = !run.snapshots.length;
-    button.onclick = () => { state.selectedIndex = index; updateControls(); scheduleRender(); };
+    button.onclick = () => { state.selectedIndex = index; state.selectedFrameIndex = state.phase === 'replaying' ? visitedReplayFrame(index) : null; updateControls(); scheduleRender(); };
   });
 }
 
 function selectedSnapshot() {
   const frames = state.runs[state.selectedIndex]?.snapshots;
   if (!frames?.length) return preview;
-  return frames.findLast(s => s.elapsed_seconds <= state.selectedTime) ?? frames[0];
+  return frames[selectedFrameIndex()];
+}
+
+function selectedFrameIndex() {
+  const frames = state.runs[state.selectedIndex]?.snapshots ?? [];
+  if (!frames.length) return -1;
+  if (Number.isInteger(state.selectedFrameIndex)) return Math.max(0, Math.min(frames.length - 1, state.selectedFrameIndex));
+  return Math.max(0, frames.findLastIndex(s => s.elapsed_seconds <= state.selectedTime));
+}
+
+function visitedReplayFrame(run) {
+  const current = Math.floor(replayFraction * Math.max(0, replayCheckpoints.length - 1));
+  for (let i = current; i >= 0; i--) if (replayCheckpoints[i].run === run) return replayCheckpoints[i].frame;
+  return 0;
 }
 
 function scheduleRender() {
@@ -133,18 +162,25 @@ function render() {
   framePending = false;
   const start = performance.now();
   if (state.phase === 'replaying') {
-    state.selectedTime = Math.min(maximumTime(), (start - replayStart) / 1000);
-    if (state.selectedTime >= maximumTime()) { state.phase = 'complete'; replayStart = null; updateControls(); }
+    const fraction = Math.min(1, (start - replayStart) / (1000 * replayDuration(maximumTime(), Number($('replay-pace').value), replayCheckpoints.length)));
+    replayFraction = fraction;
+    const position = fraction * Math.max(0, replayCheckpoints.length - 1);
+    const checkpoint = replayCheckpoints[Math.floor(position)];
+    const next = replayCheckpoints[Math.min(replayCheckpoints.length - 1, Math.floor(position) + 1)];
+    state.selectedTime = checkpoint.time + (next.time - checkpoint.time) * (position % 1);
+    state.selectedFrameIndex = visitedReplayFrame(state.selectedIndex);
+    if (fraction >= 1) { state.phase = 'complete'; replayStart = null; updateControls(); }
   }
   const snapshot = selectedSnapshot();
   const run = state.runs[state.selectedIndex];
   const geometry = drawPacking($('packing'), snapshot ? {...snapshot, algorithm: run?.algorithm ?? 0} : null,
     {contacts: $('contacts').checked, trial: $('trial').checked});
-  drawHistory($('history'), state.runs, state.selectedTime, {objective: $('objective').checked});
+  drawHistory($('history'), state.runs, state.selectedTime, {objective: $('objective').checked,
+    timeScale: $('time-scale').value, zoom: $('zoom-improvements').checked});
   if (snapshot) {
     $('radius').textContent = number(snapshot.radius);
     $('area-ratio').textContent = number(snapshot.radius / instance.lowerBound, 3);
-    $('elapsed').textContent = number(snapshot.elapsed_seconds, 2);
+    $('elapsed').textContent = snapshot.elapsed_seconds < 0.1 ? `${number(snapshot.elapsed_seconds * 1000, 1)} ms` : `${number(snapshot.elapsed_seconds, 2)} s`;
     $('work').textContent = new Intl.NumberFormat('en').format(snapshot.evaluations);
     $('solution').textContent = snapshot.output;
     const raw = $('trial').checked && snapshot.diagnostics;
@@ -160,7 +196,9 @@ function render() {
   const stats = traceStats(state.runs);
   $('trace-info').textContent = `${stats.snapshotCount} retained frames · ${(stats.traceBytes / 1024).toFixed(0)} KiB / 4096 KiB history · ${stats.dropped} frames evicted. Replay uses recorded feasible frames without interpolating geometry.`;
   const max = maximumTime();
-  $('timeline').value = max ? Math.round(state.selectedTime / max * 1000) : 1000;
+  $('timeline').value = max ? Math.round(timeFraction(state.selectedTime, max, $('time-scale').value) * 1000) : 1000;
+  const frames = state.runs[state.selectedIndex]?.snapshots ?? [];
+  $('frame-status').textContent = frames.length ? `Checkpoint ${selectedFrameIndex() + 1} / ${frames.length}` : 'No recorded checkpoints';
   $('history-summary').textContent = state.runs.filter(r => r.snapshots.length).map(r => `${r.name}: ${r.snapshots.length} retained frames, latest feasible radius ${number(r.snapshots.at(-1).radius)} at ${number(r.snapshots.at(-1).elapsed_seconds, 2)} seconds.`).join(' ') || 'No run history yet.';
   const rows = document.createDocumentFragment();
   for (const r of state.runs) for (const s of r.snapshots.slice(-12)) {
@@ -187,6 +225,7 @@ function reset({clear = true} = {}) {
   activeId = null; replayStart = null; pendingControl = null;
   if (worker) worker.cancel();
   state.phase = 'idle'; state.activeIndex = -1; state.selectedIndex = 0; state.selectedTime = 0;
+  state.selectedFrameIndex = null;
   state.runs = []; importedSolver = null;
   inputError = false;
   if (clear) { performanceStats.frames = []; performanceStats.controls = []; }
@@ -266,28 +305,56 @@ $('import-run').onchange = async () => {
     state.phase = 'complete'; state.selectedIndex = Math.min(data.view?.selectedIndex ?? 0, state.runs.length - 1);
     if (!Number.isInteger(state.selectedIndex) || state.selectedIndex < 0) state.selectedIndex = 0;
     state.selectedTime = Number.isFinite(data.view?.selectedTime) ? Math.max(0, Math.min(maximumTime(), data.view.selectedTime)) : maximumTime();
+    const frameIndex = data.view?.selectedFrameIndex;
+    state.selectedFrameIndex = Number.isInteger(frameIndex) && frameIndex >= 0 ? Math.min(frameIndex, state.runs[state.selectedIndex].snapshots.length - 1) : null;
     $('status').textContent = 'Validated recording loaded. Replay and export are available.';
     updateControls(); scheduleRender();
   } catch (error) { state.runs = []; showError(error); }
   finally { $('import-run').value = ''; }
 };
 $('timeline').oninput = () => {
+  if (active()) return;
   replayStart = null; state.phase = 'complete';
-  state.selectedTime = Number($('timeline').value) / 1000 * maximumTime();
+  state.selectedFrameIndex = null;
+  state.selectedTime = fractionTime(Number($('timeline').value) / 1000, maximumTime(), $('time-scale').value);
   updateControls(); scheduleRender();
 };
 $('replay').onclick = () => {
+  if (active()) return;
   if (state.phase === 'replaying') { state.phase = 'complete'; replayStart = null; }
-  else { state.phase = 'replaying'; state.selectedTime = 0; replayStart = performance.now(); }
+  else {
+    replayCheckpoints = state.runs.flatMap((run, index) => run.snapshots.map((s, frame) => ({time: s.elapsed_seconds, run: index, frame})))
+      .sort((a, b) => a.time - b.time || a.run - b.run || a.frame - b.frame);
+    state.phase = 'replaying'; state.selectedTime = 0; state.selectedFrameIndex = null; replayFraction = 0; replayStart = performance.now();
+  }
   updateControls(); scheduleRender();
 };
 for (const id of ['contacts', 'trial', 'objective']) $(id).onchange = scheduleRender;
+for (const id of ['time-scale', 'replay-pace']) $(id).onchange = () => {
+  if (state.phase === 'replaying') replayStart = performance.now() - replayFraction * replayDuration(maximumTime(), Number($('replay-pace').value), replayCheckpoints.length) * 1000;
+  scheduleRender();
+};
+$('zoom-improvements').onchange = scheduleRender;
+function stepFrame(direction) {
+  if (active()) return;
+  const index = selectedFrameIndex();
+  const frames = state.runs[state.selectedIndex]?.snapshots;
+  if (!frames?.length) return;
+  state.phase = 'complete'; replayStart = null;
+  state.selectedFrameIndex = Math.max(0, Math.min(frames.length - 1, index + direction));
+  state.selectedTime = frames[state.selectedFrameIndex].elapsed_seconds;
+  updateControls(); scheduleRender();
+}
+$('previous-frame').onclick = () => stepFrame(-1);
+$('next-frame').onclick = () => stepFrame(1);
 $('export-solution').onclick = () => download(selectedSnapshot().output, 'packing-solution.txt', 'text/plain');
 $('export-run').onclick = () => {
   const runs = state.runs.filter(r => r.snapshots.at(-1)?.finished);
+  const selected = runs.indexOf(state.runs[state.selectedIndex]);
   download(JSON.stringify({schema_version: 1, kind: 'circle-packing-run', created_at: new Date().toISOString(),
     input: instance.input, solver: importedSolver ?? buildInfo, runs,
-    view: {selectedIndex: Math.min(state.selectedIndex, runs.length - 1), selectedTime: state.selectedTime}}), 'packing-run.json', 'application/json');
+    view: {selectedIndex: Math.max(0, selected), selectedTime: selected >= 0 ? state.selectedTime : runs[0].snapshots.at(-1).elapsed_seconds,
+      selectedFrameIndex: selected >= 0 ? state.selectedFrameIndex : null}}), 'packing-run.json', 'application/json');
 };
 
 new ResizeObserver(scheduleRender).observe($('packing').parentElement);

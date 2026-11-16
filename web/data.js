@@ -88,7 +88,7 @@ export function traceStats(runs) {
     snapshotCount: runs.reduce((n, run) => n + run.snapshots.length, 0), dropped: runs.reduce((n, run) => n + run.dropped, 0)};
 }
 
-/** Keep the first and latest frame; disclose evicted intermediate history. */
+/** Keep early detail and the latest frame; disclose evicted middle history. */
 export function appendSnapshot(runs, index, snapshot) {
   const run = runs[index];
   const last = run.snapshots.at(-1);
@@ -97,12 +97,13 @@ export function appendSnapshot(runs, index, snapshot) {
     for (const key of ['evaluations', 'iterations', 'restarts', 'initialization_fallbacks', 'numerical_failures']) require(snapshot[key] >= last[key], 'Progress work counters decreased.');
   }
   run.snapshots.push(snapshot);
-  while (run.snapshots.length > MAX_FRAMES) { run.snapshots.splice(1, 1); run.dropped++; }
+  const evictionIndex = candidate => candidate.snapshots.length > 65 ? 64 : 1;
+  while (run.snapshots.length > MAX_FRAMES) { run.snapshots.splice(evictionIndex(run), 1); run.dropped++; }
   let stats = traceStats(runs);
   while (stats.traceBytes > MAX_TRACE_BYTES) {
     const candidate = runs.filter(r => r.snapshots.length > 2).sort((a, b) => b.snapshots.length - a.snapshots.length)[0];
     require(candidate, 'Recording exceeds the trace memory limit.');
-    candidate.snapshots.splice(1, 1); candidate.dropped++;
+    candidate.snapshots.splice(evictionIndex(candidate), 1); candidate.dropped++;
     stats = traceStats(runs);
   }
 }

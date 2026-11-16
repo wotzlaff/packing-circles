@@ -1,3 +1,5 @@
+import { timeFraction } from "./timeline.js";
+
 const colors = { a: "#df806e", b: "#59b5ac", ink: "#20384e", red: "#c34e41" };
 const finite = (x) => Number.isFinite(x);
 
@@ -130,7 +132,7 @@ export function drawHistory(
   svg,
   runs,
   selectedTime,
-  { objective = false } = {},
+  { objective = false, timeScale = "early", zoom = true } = {},
 ) {
   svg.replaceChildren();
   const width = Math.max(
@@ -170,14 +172,20 @@ export function drawHistory(
     return;
   }
   const all = series.flatMap((r) => r.snapshots),
-    maxX = Math.max(...all.map((s) => s.elapsed_seconds), 0.001);
-  let minY = Math.min(...all.map((s) => s.radius)),
-    maxY = Math.max(...all.map((s) => s.radius));
+    maxX = Math.max(...all.map((s) => s.elapsed_seconds), 0);
+  const detail = zoom
+    ? series.flatMap((run) => {
+        const real = run.snapshots.filter((s) => !(s.evaluations === 0 && s.restarts === 0));
+        return real.length ? real : run.snapshots;
+      })
+    : all;
+  let minY = Math.min(...detail.map((s) => s.radius)),
+    maxY = Math.max(...detail.map((s) => s.radius));
   const pad = Math.max((maxY - minY) * 0.15, Math.abs(maxY) * 0.01, 0.001);
   minY -= pad;
   maxY += pad;
   const right = width - (objective ? 85 : 26);
-  const x = (t) => 56 + (t / maxX) * (right - 56),
+  const x = (t) => 56 + timeFraction(t, maxX, timeScale) * (right - 56),
     y = (v) => bottom - ((v - minY) / (maxY - minY)) * 145;
   for (let i = 0; i <= 3; i++) {
     const v = minY + ((maxY - minY) * i) / 3,
@@ -195,22 +203,35 @@ export function drawHistory(
       v.toPrecision(3),
     );
   }
-  add(
-    "text",
-    { x: 56, y: bottom + 35, fill: "#84928d", "font-size": 10 },
-    "0 s",
-  );
-  add(
-    "text",
-    {
-      x: right,
-      y: bottom + 35,
-      "text-anchor": "end",
-      fill: "#84928d",
-      "font-size": 10,
-    },
-    `${maxX.toFixed(2)} s`,
-  );
+  const ticks = [0];
+  if (timeScale === "linear") {
+    for (let i = 1; i <= 4; i++) ticks.push((maxX * i) / 4);
+  } else {
+    for (let t = 0.001; t < maxX && Number.isFinite(t); t *= 10) ticks.push(t);
+    if (maxX > 0) ticks.push(maxX);
+  }
+  let lastTickX = -Infinity;
+  ticks.forEach((t, i) => {
+    const xx = x(t);
+    if (i && xx - lastTickX < 48) return;
+    lastTickX = xx;
+    add("line", { x1: xx, y1: bottom, x2: xx, y2: bottom + 4, stroke: "#abb7b0" });
+    add("text", {
+      x: xx, y: bottom + 20,
+      "text-anchor": i === 0 ? "start" : i === ticks.length - 1 ? "end" : "middle",
+      fill: "#84928d", "font-size": 10,
+    }, `${Number(t.toPrecision(3))} s`);
+  });
+  const clipId = `${svg.id || 'history'}-plot-clip`;
+  const defs = add("defs", {});
+  const clip = element("clipPath", { id: clipId });
+  clip.append(element("rect", { x: 56, y: top, width: right - 56, height: 145 }));
+  defs.append(clip);
+  const plot = add("g", { "clip-path": `url(#${clipId})` });
+  if (all.some((s) => s.radius < minY || s.radius > maxY)) {
+    add("text", { x: 56, y: bottom + 36, fill: "#84928d", "font-size": 10 },
+      "Starting fallback outside detail range");
+  }
   series.forEach((run, index) => {
     const color = run.algorithm === 0 ? colors.a : colors.b;
     let best = Infinity,
@@ -221,7 +242,7 @@ export function drawHistory(
         ? ` H ${x(s.elapsed_seconds)} V ${y(best)}`
         : `M ${x(s.elapsed_seconds)} ${y(best)}`;
     });
-    add("path", { d: path, fill: "none", stroke: color, "stroke-width": 2.5 });
+    plot.append(element("path", { d: path, fill: "none", stroke: color, "stroke-width": 2.5 }));
     add(
       "text",
       {

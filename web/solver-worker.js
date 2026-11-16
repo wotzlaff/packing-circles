@@ -3,6 +3,8 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', {fatal: true});
 let wasm, runId, timer, active = false, paused = false;
 let started = 0, pausedAt = 0, pausedDuration = 0, lastProgress = 0;
+let history = [], earlyCalls = 0, earlyFrames = 0, earlyBest = Infinity;
+let lastTrialIteration = -1, lastTrialObjective, lastTrialRadius;
 const loaded = (async () => {
   const response = await fetch(new URL('./packing_wasm.wasm', import.meta.url));
   if (!response.ok) throw new Error(`WASM load failed: ${response.status}`);
@@ -22,7 +24,10 @@ function check(status) {
   return status;
 }
 
-function emit(type) { postMessage({type, runId, snapshot: snapshot()}); }
+function emit(type) {
+  postMessage({type, runId, snapshot: snapshot(), history});
+  history = [];
+}
 function elapsed() { return (performance.now() - started - pausedDuration) / 1000; }
 
 function fail(error) {
@@ -37,7 +42,30 @@ function pump() {
   try {
     const until = performance.now() + 8;
     do {
-      if (check(wasm.session_step(64, elapsed())) === 1) {
+      // Probe early incumbents without changing the solver's work or random stream.
+      // The first single transition preserves the rolling initializer candidate.
+      const probe = earlyCalls < 256 && earlyFrames < 64 && elapsed() < 0.25;
+      const status = check(wasm.session_step(probe ? (earlyCalls === 0 ? 1 : 8) : 64, elapsed()));
+      if (probe) {
+        earlyCalls++;
+        const frame = snapshot();
+        const trial = frame.diagnostics;
+        const trialChanged = trial && (trial.objective !== lastTrialObjective ||
+          trial.trial_radius !== lastTrialRadius);
+        const trialMilestone = trialChanged &&
+          (lastTrialIteration < 0 || frame.iterations >= lastTrialIteration + 4);
+        if (frame.feasible && (frame.radius < earlyBest || trialMilestone)) {
+          history.push(frame);
+          earlyFrames++;
+          earlyBest = frame.radius;
+          if (trial) {
+            lastTrialIteration = frame.iterations;
+            lastTrialObjective = trial.objective;
+            lastTrialRadius = trial.trial_radius;
+          }
+        }
+      }
+      if (status === 1) {
         active = false;
         emit('done');
         return;
@@ -62,6 +90,13 @@ function start(options) {
   active = false;
   paused = false;
   clearTimeout(timer);
+  history = [];
+  earlyCalls = 0;
+  earlyFrames = 0;
+  earlyBest = Infinity;
+  lastTrialIteration = -1;
+  lastTrialObjective = undefined;
+  lastTrialRadius = undefined;
   if (options?.validationError) throw new Error(options.validationError);
   if (!options || typeof options.input !== 'string') throw new Error('Input must be text');
   // Check before encoding, then enforce bytes as well for multibyte text.

@@ -73,7 +73,9 @@ jobs:
       - name: Check worker execution and native agreement
         run: node web/tests/browser.mjs --report "$RUNNER_TEMP/wasm-browser.json"
       - name: Check input and recording validation
-        run: node --test web/tests/data.test.mjs
+        run: node --test web/tests/data.test.mjs web/tests/timeline.test.mjs
+      - name: Check early search capture
+        run: node web/tests/early-worker.mjs
       - name: Check interactive site
         run: node web/tests/site.mjs --stress-seconds 3 --report "$RUNNER_TEMP/site-browser.json" --screenshots "$RUNNER_TEMP/site-screenshots"
       - uses: actions/upload-artifact@v5

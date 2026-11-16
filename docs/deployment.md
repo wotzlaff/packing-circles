@@ -32,7 +32,7 @@ tolerances or quality targets were changed.
 `tools/build_wasm.py` generates the binary and `web/build-info.json`, including
 the source commit, working-tree state, Rust compiler, portable numerical profile
 and WASM SHA-256. `tools/package_site.py --output DIRECTORY` verifies the source
-commit and hash and refuses a nonempty output directory. It copies only ten
+commit and hash and refuses a nonempty output directory. It copies only eleven
 explicitly listed public files. Tests, `node_modules`, benchmark raw records,
 repository metadata, and the separate ignored legacy checkout are excluded.
 

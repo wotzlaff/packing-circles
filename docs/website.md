@@ -30,14 +30,21 @@ tangencies; red trial outlines mark overlaps or containment violations. The
 displayed ratio is `R / sqrt(sum(r_i²))`, at least one for a feasible packing;
 it is not a certificate of optimality.
 
-The history plots feasible radius against active elapsed time. Optional dashed
+The history plots feasible radius against active elapsed time. Its default
+early-detail scale expands the first milliseconds; elapsed-time mode restores
+a linear axis. Zoom improvements excludes the initial line fallback from the
+vertical range, with an explicit off-scale note; the fallback remains recorded.
+Optional dashed
 curves show the penalized objective on a separately labeled signed-log axis.
 Penalty weights can change, so decreases across weight changes are not comparable
 to radius improvements. Trial objective, coordinates, and weights come from the
 same accepted evaluation; pending refreshes have no diagnostic snapshot.
 
-After completion, the shared timeline and replay select each run's last recorded
-frame at or before the same active time. Coordinates are never interpolated:
+After completion, replay lasts at least eight seconds at normal pace, allocating
+roughly 100 ms to each recorded checkpoint. Slow/fast controls change presentation
+pace without rerunning optimization. Previous/next controls inspect individual
+checkpoints, including changes with identical timestamps. The shared timeline
+selects each run's frame at the same active time. Coordinates are never interpolated:
 intermediate interpolation could collide even between two feasible packings.
 Canvas and chart have textual equivalents, a recent history table, and native
 keyboard controls. Chart labels adapt to narrow screens.
@@ -52,7 +59,8 @@ monotonic time/radius. Invalid imports clear prior runs instead of showing stale
 results as a newly imported recording. Import files are limited to 8 MiB.
 
 The app retains at most two runs, 512 frames per run and 4 MiB of serialized
-snapshot payload. It preserves first/latest frames, evicts intermediate frames
+snapshot payload. It preserves early detail (up to the first 64 frames) and the
+latest frame, evicts later intermediate frames
 when necessary and displays the eviction count. The worker client retains at
 most another 1 MiB; WASM linear memory is capped at 64 MiB. These are payload
 bounds, not a claim about total browser heap. Source presets are synthetic
@@ -84,6 +92,8 @@ keyboard controls, and layouts at 360 px and 1440 px.
 
 On Linux 6.1.0-44, Intel i7-8700, Node 24.22.1 and Playwright 1.64.1:
 
+The initial milestone-8 measurements were:
+
 | Browser | Measurement | Control operations | Control response p95 | Render function p95 | Retained trace |
 | --- | ---: | ---: | ---: | ---: | ---: |
 | Chromium 156.0.8078.4 | 30 s | 98 | 20.6 ms | 0.9 ms | 316 frames / 1,810,880 bytes |
@@ -96,13 +106,36 @@ GPU compositing. Tests include repeated pause/resume operations during the
 50-circle run. These measurements apply to this reference machine and these
 browser builds, not every device.
 
+The early-detail update passed a new 30-second run in each browser, including
+the denser checkpoint history and the same control/render gates:
+
+| Browser | Control response p95 | Render function p95 | Retained trace |
+| --- | ---: | ---: | ---: |
+| Chromium 156.0.8078.4 | 19.3 ms | 1.2 ms | 377 frames / 2,154,337 bytes |
+| Firefox 157.0 | 15 ms | 4 ms | 379 frames / 2,165,528 bytes |
+
+[Chromium early-detail report](../bench/results/early-detail-chromium.json) and
+[Firefox early-detail report](../bench/results/early-detail-firefox.json) include
+the measured source hashes. The focused worker test retains multiple distinct
+accepted trial positions before 100 ms. The
+[40-case worker/native regression](../bench/results/early-worker-regression.json)
+still matches final radii and work counters. Additional UI cases verify slow
+replay and distinct checkpoints sharing timestamps across both runs.
+[Updated mobile view](assets/early-detail-mobile.png).
+
 Raw reports retain timing samples, memory where available, browser/device
 versions, WASM and frontend source hashes:
 [Chromium](../bench/results/site-chromium.json),
 [Firefox](../bench/results/site-firefox.json).
 [Desktop screenshot](assets/site-desktop.png) · [Mobile screenshot](assets/site-mobile.png).
 
-The Rust suite has 85 passing tests, Node validation has six, and Python has 47.
+Early recording additionally samples up to 64 incumbent/trial checkpoints during
+at most 256 small worker probes in the first 250 ms. Batched delivery preserves
+the regular heartbeat, and recording overhead counts toward the time budget.
+Search geometry is shown by default so accepted trial movement is visible even
+before a new feasible incumbent is saved; the metric remains best feasible radius.
+
+The Rust suite has 85 passing tests, Node validation/timeline has nine, and Python has 47.
 All 50 archived native-A fixed-work outputs/counters and 426 numerical reference
 cases still pass. The original 40-case worker/native browser regression also
 passes with the additional read-only diagnostics.

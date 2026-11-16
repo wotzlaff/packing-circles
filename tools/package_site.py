@@ -10,7 +10,7 @@ import subprocess
 ROOT = Path(__file__).resolve().parents[1]
 WEB = ROOT / "web"
 ASSETS = (
-    "index.html", "styles.css", "app.js", "data.js", "presets.js", "render.js",
+    "index.html", "styles.css", "app.js", "data.js", "presets.js", "render.js", "timeline.js",
     "solver.js", "solver-worker.js", "packing_wasm.wasm", "build-info.json",
 )
 

@@ -49,7 +49,8 @@ try {
     await page.goto(`http://127.0.0.1:${port}/web/`);
     await page.locator('#run').waitFor({ state: 'visible' });
     await page.waitForFunction(() => !document.querySelector('#run').disabled);
-    const state = () => page.evaluate(async () => (await import('./app.js')).getAppState());
+    await page.evaluate(async () => { window.__packingState = (await import('./app.js')).getAppState; });
+    const state = () => page.evaluate(() => window.__packingState());
     const stats = () => page.evaluate(async () => (await import('./app.js')).getPerformanceStats());
     const wait = (predicate, timeout = 30000) => page.waitForFunction(predicate, null, { timeout });
     async function test(name, fn) {
@@ -146,9 +147,9 @@ try {
         assert.match(await page.locator('#packing-summary').innerText(), /\S/);
         assert.match(await page.locator('#history-summary').innerText(), /\S/);
         await page.locator('#replay').click();
-        await page.waitForFunction(async () => (await import('./app.js')).getAppState().phase === 'replaying');
-        const replayStart = (await state()).selectedTime;
-        await page.waitForFunction(async time => (await import('./app.js')).getAppState().selectedTime > time + 0.05, replayStart);
+        await page.waitForFunction(() => window.__packingState().phase === 'replaying');
+        const replayStart = await page.locator('#frame-status').textContent();
+        await page.waitForFunction(text => document.querySelector('#frame-status').textContent !== text, replayStart);
         await page.locator('#replay').click();
         assert.equal((await state()).phase, 'complete');
     });
@@ -170,7 +171,7 @@ try {
         for (const bad of ['{invalid', JSON.stringify(malicious)]) {
             await reset();
             await page.locator('#import-run').setInputFiles({ name: 'run.json', mimeType: 'application/json', buffer: Buffer.from(json) });
-            await page.waitForFunction(async () => (await import('./app.js')).getAppState().phase === 'complete');
+            await page.waitForFunction(() => window.__packingState().phase === 'complete');
             await page.locator('#import-run').setInputFiles({ name: 'bad.json', mimeType: 'application/json', buffer: Buffer.from(bad) });
             await page.locator('[role=alert]').filter({ hasText: /\S/ }).waitFor();
             assert.notEqual((await state()).phase, 'running');
@@ -210,6 +211,7 @@ try {
         assert.ok(candidate, 'expected a retained diagnostic snapshot');
         const index = frames.indexOf(candidate);
         const next = frames[index + 1]?.elapsed_seconds ?? maxTime;
+        await page.locator('#time-scale').selectOption('linear');
         await page.locator('#timeline').fill(String(Math.round((candidate.elapsed_seconds + next) / 2 / maxTime * 1000)));
         await page.locator('#contacts').check();
         const bestRadius = await page.locator('#radius').innerText();
@@ -237,8 +239,42 @@ try {
         await upload(input10); await page.locator('#compare').selectOption('b');
         await page.locator('#variant').selectOption('3'); await page.locator('#budget').fill('0.1');
         await page.locator('#run').click();
-        await page.waitForFunction(async () => (await import('./app.js')).getAppState().phase === 'complete', null, { timeout: 30000 });
+        await page.waitForFunction(() => window.__packingState().phase === 'complete', null, { timeout: 30000 });
         const s = await state(); assert.equal(s.runs.length, 1); assert.equal(Number(s.runs[0].algorithm), 3);
+    });
+    await test('early search detail and slow checkpoint replay', async () => {
+        const recorded = await state();
+        const early = recorded.runs[0].snapshots.filter(s => s.elapsed_seconds < 0.1 && s.diagnostics);
+        assert.ok(early.length >= 2, `early accepted search positions must be retained: ${JSON.stringify({phase: recorded.phase, activeIndex: recorded.activeIndex, config: recorded.runs[0].config, status: recorded.runs[0].status, frames: recorded.runs[0].snapshots.map(s => ({t: s.elapsed_seconds, iterations: s.iterations, diagnostics: !!s.diagnostics, finished: s.finished, termination: s.termination}))})}`);
+        assert.ok(new Set(early.map(s => s.diagnostics.objective)).size >= 2);
+        await page.locator('#time-scale').selectOption('early');
+        await page.locator('#replay').click();
+        await page.waitForTimeout(500);
+        assert.equal((await state()).phase, 'replaying', 'a short solve needs a watchable replay');
+        await page.locator('#replay').click();
+        const original = await download('#export-run');
+        const duplicateTimes = JSON.parse(original);
+        duplicateTimes.runs[0].snapshots.forEach(s => { s.elapsed_seconds = 0; });
+        const referenceRun = structuredClone(duplicateTimes.runs[0]); referenceRun.algorithm = 0; referenceRun.config.algorithm = 0;
+        duplicateTimes.runs.unshift(referenceRun);
+        duplicateTimes.view = {selectedIndex: 1, selectedTime: 0, selectedFrameIndex: 0};
+        await page.locator('#import-run').setInputFiles({name: 'same-millisecond.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(duplicateTimes))});
+        await page.waitForFunction(() => window.__packingState().selectedIndex === 1 && window.__packingState().selectedFrameIndex === 0);
+        await page.locator('#replay').click();
+        await page.waitForTimeout(300);
+        assert.equal((await state()).selectedFrameIndex, 0, 'replay must not jump ahead to future equal-time checkpoints in the other run');
+        await page.locator('#replay').click();
+        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 0.0001, duplicateTimes.runs[1].snapshots[0].radius);
+        const first = await page.locator('#radius').textContent();
+        await page.locator('#next-frame').click();
+        assert.equal((await state()).selectedFrameIndex, 1);
+        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 0.0001, duplicateTimes.runs[1].snapshots[1].radius);
+        assert.notEqual(await page.locator('#radius').textContent(), first, 'same-time checkpoints must remain separately inspectable');
+        await page.locator('#previous-frame').click();
+        assert.equal((await state()).selectedFrameIndex, 0);
+        const restored = JSON.parse(original); restored.view = {selectedIndex: 0, selectedTime: recorded.runs[0].snapshots.at(-1).elapsed_seconds};
+        await page.locator('#import-run').setInputFiles({name: 'original.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(restored))});
+        await page.waitForFunction(() => window.__packingState().selectedFrameIndex === null);
     });
     await test('accessible responsive controls', async () => {
         await mkdir(screenshotPath, { recursive: true });

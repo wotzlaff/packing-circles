@@ -72,6 +72,7 @@ test('retains first and latest frames and accounts for bounded history', () => {
   }
   assert.equal(run.snapshots.length, MAX_FRAMES);
   assert.equal(run.snapshots[0].elapsed_seconds, 0);
+  assert.deepEqual(run.snapshots.slice(0, 64).map(s => s.elapsed_seconds), Array.from({length: 64}, (_, i) => i));
   assert.equal(run.snapshots.at(-1).elapsed_seconds, MAX_FRAMES + 6);
   assert.equal(run.dropped, 7);
   assert.deepEqual(traceStats([run]), {traceBytes: run.snapshots.reduce((sum, s) => sum + bytes(s), 0), snapshotCount: MAX_FRAMES, dropped: 7});

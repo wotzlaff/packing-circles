@@ -50,6 +50,19 @@ async function smoke(driver, label) {
     for (let i = 0; i < 2; i++) { await driver.evaluate(i => document.querySelectorAll('#run-tabs button')[i].click(), i); const output = await driver.download(); checkSolution(output, input); }
     return result;
   });
+  await test(`${label}: early-detail replay and checkpoint stepping`, async () => {
+    const controls = await driver.evaluate(() => ({scale: document.querySelector('#time-scale').value,
+      zoom: document.querySelector('#zoom-improvements').checked, steps: document.querySelector('#frame-status').textContent}));
+    assert.equal(controls.scale, 'early'); assert.equal(controls.zoom, true);
+    await driver.evaluate(() => document.querySelector('#replay').click());
+    await sleep(500);
+    assert.match(await driver.evaluate(() => document.querySelector('#replay').textContent), /Stop replay/);
+    await driver.evaluate(() => document.querySelector('#replay').click());
+    const previous = await driver.evaluate(() => document.querySelector('#frame-status').textContent);
+    await driver.evaluate(() => document.querySelector('#next-frame').click());
+    await waitFor(async () => (await driver.evaluate(() => document.querySelector('#frame-status').textContent)) !== previous, 'next checkpoint');
+    return controls;
+  });
 }
 let browser, gecko, geckoEndpoint, session, downloadDir;
 try {
