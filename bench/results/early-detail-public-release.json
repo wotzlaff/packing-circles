@@ -1,0 +1,79 @@
+{
+  "url": "https://wotzlaff.github.io/packing-circles/",
+  "measured_at": "2026-11-16T20:25:16.544Z",
+  "passed": true,
+  "cases": [
+    {
+      "name": "published build metadata and WASM hash",
+      "passed": true,
+      "details": {
+        "source_commit": "ed0c7f3e0364bd2400ae8b3f0dbf3d62a0d8adce",
+        "wasm_sha256": "4fc7da442f4c9219e975543fe3d370c507da57ba59d33d3b28ea23c2993ac475"
+      }
+    },
+    {
+      "name": "Chrome: first load and reload",
+      "passed": true
+    },
+    {
+      "name": "Chrome: sequential A and explicit B",
+      "passed": true,
+      "details": {
+        "seen": [
+          "A · legacy is running · comparison runs use equal budgets, one after another.",
+          "B · tight penalty is running · comparison runs use equal budgets, one after another."
+        ],
+        "tabs": [
+          "A · legacy · complete",
+          "B · tight penalty · complete"
+        ]
+      }
+    },
+    {
+      "name": "Chrome: early-detail replay and checkpoint stepping",
+      "passed": true,
+      "details": {
+        "scale": "early",
+        "zoom": true,
+        "steps": "Checkpoint 70 / 70"
+      }
+    },
+    {
+      "name": "Firefox: first load and reload",
+      "passed": true
+    },
+    {
+      "name": "Firefox: sequential A and explicit B",
+      "passed": true,
+      "details": {
+        "seen": [
+          "A · legacy is running · comparison runs use equal budgets, one after another.",
+          "B · tight penalty is running · comparison runs use equal budgets, one after another."
+        ],
+        "tabs": [
+          "A · legacy · complete",
+          "B · tight penalty · complete"
+        ]
+      }
+    },
+    {
+      "name": "Firefox: early-detail replay and checkpoint stepping",
+      "passed": true,
+      "details": {
+        "scale": "early",
+        "steps": "Checkpoint 70 / 70",
+        "zoom": true
+      }
+    }
+  ],
+  "build_info": {
+    "version": "0.1.0",
+    "source_commit": "ed0c7f3e0364bd2400ae8b3f0dbf3d62a0d8adce",
+    "dirty": false,
+    "math_profile": "portable-libm-0.2.16",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "wasm_sha256": "4fc7da442f4c9219e975543fe3d370c507da57ba59d33d3b28ea23c2993ac475"
+  },
+  "chrome_version": "157.0.8103.78",
+  "firefox_version": "160.0"
+}

@@ -23,7 +23,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
 | 7. Resumable WASM | Complete | [Session/worker architecture and browser measurements](wasm.md); 40 native/WASM comparisons in each of Chromium/Firefox, identical radii; cancellation 30.7/15 ms |
 | 8. Interactive comparison site | Complete | [Behavior, screenshots and 30-second browser measurements](website.md); all acceptance flows pass; control p95 20.6/13 ms, render p95 0.9/5 ms in Chromium/Firefox |
-| 9. GitHub Pages | Complete | [Public lab](https://wotzlaff.github.io/packing-circles/), [release evidence](deployment.md); release `3cf0f1e` verified in stable Chrome 157 and Firefox 160, including reload, A/B worker runs and checked exports |
+| 9. GitHub Pages | Complete | [Public lab](https://wotzlaff.github.io/packing-circles/), [release evidence](deployment.md); early-detail release `ed0c7f3` verified in stable Chrome 157 and Firefox 160, including reload, A/B runs, replay, stepping and checked exports |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.

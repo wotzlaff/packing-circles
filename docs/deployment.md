@@ -92,6 +92,13 @@ records zero differences on all 50 development inputs. The original
 [platform-specific failure log](../bench/results/pages-native-platform-mismatch.txt)
 is preserved alongside it.
 
+The early-detail update is deployed as `ed0c7f3e0364bd2400ae8b3f0dbf3d62a0d8adce`.
+Its [Checks](https://github.com/wotzlaff/packing-circles/actions/runs/43949038270)
+and [deployment](https://github.com/wotzlaff/packing-circles/actions/runs/43949038072)
+passed. [Public verification](../bench/results/early-detail-public-release.json)
+passed in stable Chrome 157 and Firefox 160, including expanded early-time
+controls, slow replay, checkpoint stepping, A/B runs and checked downloads.
+
 The browser uses portable software math. Native A's benchmark qualification is
 preserved, and B remains explicitly experimental; publication does not claim
 that a B release target or portable timed-quality qualification has passed.
