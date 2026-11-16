@@ -44,3 +44,40 @@ bench/build/contest-asan 1e-7 1e-5 1e-5 1e-5 1 0.1 < bench/data/development/10_0
 ```
 
 See [the algorithm map](../docs/legacy-baseline.md) for the safe-port implications.
+
+## Numerical component parity
+
+The fixed-state probe includes the existing C++ source with its `main` renamed;
+it calls numerical kernels directly without executing the unsafe initializer.
+Build and rerun the complete comparison with a new output filename:
+
+```sh
+g++ -O2 -std=c++17 bench/reference_probe.cpp -o bench/build/reference-probe
+cargo build -p packing-core --release --example numerical_probe --locked
+python3 bench/check_numerical_parity.py --output /tmp/new-numerical-parity.json
+```
+
+Create `bench/build/` first if no legacy binary has been built. Both probes consume
+the same packets: count, radii, two weights, `[R,x,y,...]` state and direction,
+previous-value flag/value, Wolfe constants, iteration limit, gradient tolerance,
+callback gradient tolerance, violation tolerance, and sample squared gradient.
+Modes are `objective`, `line-search`, `bfgs`, `adaptive`, `schedule`, and `repair`.
+The scheduler wrapper reproduces the callback from the reference `main`; the
+other modes invoke the original C++ helpers. Its single-circle scale is normalized
+to one for reporting; the archived repair comparisons use at least ten circles.
+
+The [archived report](results/numerical-parity.json) contains exact input packets,
+both outputs, callback traces, input/source/binary hashes, toolchain versions,
+activation coverage, and finite-difference errors. Failed comparisons exit nonzero
+and remain in the report. Random states use development radii only and explicitly
+avoid penalty kinks. Semantic scheduler cases assert each intended branch.
+
+CI can replay all C++ oracles without a legacy checkout or compiler:
+
+```sh
+python3 bench/check_numerical_parity.py --replay-report bench/results/numerical-parity.json
+```
+
+Build the release Rust probe first. Replay checks every scalar and callback event,
+all input hashes/counts, and at least 100 independent finite-difference states.
+See [the numerical result summary](../docs/numerical-parity.md) for scope and limits.

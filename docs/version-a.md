@@ -59,8 +59,8 @@ the measured, disclosed initialization difference.
 4. Integrate initialization, repair, cancellation, and the CLI. Only then run
    full A-versus-reference timing and quality qualification.
 
-Update this document with implemented policies, probe commands, and measured
-results as each component lands. Parity report archival is pending.
+The component gate passed: see [the numerical results](numerical-parity.md) and
+[reproduction commands](../bench/README.md#numerical-component-parity).
 
 ## Implemented component policies
 

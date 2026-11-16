@@ -35,3 +35,19 @@ Before implementing A, specify handling of the initializer bounds bug, the
 missing best-trial update, degenerate rolling geometry, finite line-search
 failure, and BFGS curvature breakdown. Separate safety guards from improvements
 that belong in B. See the full source map in `legacy-baseline.md`.
+
+## Numerical component implementation
+
+- Preserve C++ scalar/gradient loop order, strong-Wolfe bracket/zoom order, dense
+  BFGS update, and callback refresh ordering. Intentionally retain the old squared
+  gradient norm immediately after a callback refresh for scheduling fidelity.
+- Treat finite work limits, explicit failed searches, matrix resets for invalid
+  curvature, and prefix-safe initialization as necessary defined behavior. Tests
+  cover these cases; do not emulate invalid C++ reads or uninitialized steps.
+- The minimum pair scale is mathematically zero for coincident centers. Scheduling
+  can use that fact to raise penalties, while radial repair must reject it.
+- Store full fixed-state C++ oracles and replay them in CI. This checks fidelity
+  without importing the legacy checkout into the repository or CI environment.
+- Correct B's experiment shortlist to reflect the chosen explicit-radius objective:
+  it has no exponential term. Softmax stabilization is only relevant to a future
+  alternative objective, not a presumed improvement to the selected solver.
