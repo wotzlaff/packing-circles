@@ -4,9 +4,11 @@ import json
 from pathlib import Path
 import tempfile
 import unittest
+from unittest.mock import patch
+import subprocess
 
 from generate_instances import expected_files, radius_stream
-from legacy import command_for
+from legacy import command_for, run
 from run_baseline import check_output, summarize
 
 
@@ -38,6 +40,24 @@ class BaselineTests(unittest.TestCase):
         report = check_output("1\n1 1.7e308 1.7e308", [1])
         self.assertFalse(report["feasible"])
         json.dumps(report, allow_nan=False)
+
+    def test_wrapper_retains_crash_output(self):
+        failure = subprocess.CompletedProcess([], -11, stdout="partial output", stderr="failure detail")
+        with patch("legacy.subprocess.run", return_value=failure):
+            result = run("contest", "1\n1\n", 0.1)
+        self.assertEqual(result["returncode"], -11)
+        self.assertEqual(result["stdout"], "partial output")
+        self.assertEqual(result["stderr"], "failure detail")
+        self.assertFalse(result["timeout"])
+
+    def test_wrapper_retains_partial_bytes_on_timeout(self):
+        failure = subprocess.TimeoutExpired([], 2, output=b"partial", stderr=b"diagnostic")
+        with patch("legacy.subprocess.run", side_effect=failure):
+            result = run("contest", "1\n1\n", 0.1)
+        self.assertTrue(result["timeout"])
+        self.assertIsNone(result["returncode"])
+        self.assertEqual(result["stdout"], "partial")
+        self.assertEqual(result["stderr"], "diagnostic")
 
     def test_summary_excludes_invalid_radius_from_quality(self):
         common = {"variant": "contest", "budget_seconds": 0.1, "circle_count": 10,
