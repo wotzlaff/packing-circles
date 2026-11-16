@@ -554,6 +554,8 @@ impl SolverSession {
                             .collect();
                         let n = l.x.len();
                         let mut product = vec![0.; n];
+                        // Keep the indexed scalar order aligned with the reference BFGS kernel.
+                        #[allow(clippy::needless_range_loop)]
                         for i in 0..n {
                             for j in 0..n {
                                 product[i] += l.h[i * n + j] * change[j];
