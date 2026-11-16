@@ -11,9 +11,9 @@ The eventual GitHub Pages site should execute through WASM, visualize optimizati
 
 ## Project Structure & Module Organization
 
-`legacy/` is currently a separate Git checkout containing C++ solvers, Python benchmark utilities, and exploratory notebooks. Treat it as reference material; avoid unrelated edits.
+Work in the root repository. Keep `legacy/` in place as a separate reference checkout of C++ solvers, Python utilities, and notebooks. Never add it to the root repository or as a submodule; avoid unrelated edits.
 
-The root has no Rust package, website, dedicated test directory, or asset pipeline yet. When introducing these, document their actual locations and commands. Keep solver logic independent of browser rendering, and record implementation decisions and known issues in Markdown under `docs/`.
+Rust, website, tests, and assets belong in the root repository; none exist yet. Document locations and commands when introducing them. Keep solver logic independent of browser rendering; record decisions and issues in Markdown under `docs/`.
 
 ## Build, Test & Development Commands
 
@@ -43,7 +43,7 @@ Use Rust's built-in test framework with descriptive names such as `rejects_overl
 
 ## Commit, Review & Agent Workflow
 
-Commit each coherent step and push after each commit. The root has no commit history; proposed subjects use short imperative wording, such as `Add packing feasibility checks`.
+Commit each coherent step and push after each commit. Use short imperative commit subjects, such as `Add packing feasibility checks`.
 
 PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions and unresolved questions in Markdown. Delegate bounded tasks to cheaper subagents when reasonable.
 

@@ -1,0 +1,2 @@
+# Separate reference checkout; never track it in this repository.
+/legacy/
