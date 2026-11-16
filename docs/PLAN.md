@@ -21,7 +21,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 4. Complete version A | Complete | [750-run qualification](version-a-results.md): all valid/on time; 1.95 s mean radius ratio 1.001543, worst 1.008245; fixed-work/cancellation tests pass |
 | 5. Experiment harness and traces | Complete | [150 paired trace runs](tracing-results.md): output/work invariant, median runtime +3.25%; 40-run unified demonstration and exact summary reproduction |
 | 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
-| 7. Resumable WASM | In progress | Owned session and raw WASM bridge implemented; browser worker validation underway |
+| 7. Resumable WASM | Complete | [Session/worker architecture and browser measurements](wasm.md); 40 native/WASM comparisons in each of Chromium/Firefox, identical radii; cancellation 5.2/5 ms |
 | 8–9 | Pending | Interactive comparison site and deployment remain |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
@@ -36,10 +36,11 @@ Version A assembly has 68 passing Rust tests and the independent Python tools ha
 The full timed qualification used five Rust seeds per instance, preserved the
 source/binary hashes throughout measurement, and left held-out inputs untouched.
 
-Trace support has 73 passing Rust tests and 45 passing Python tests. Measurement
+Trace support had 73 passing Rust tests and 45 passing Python tests. Measurement
 covered all 50 development instances with three fixed-work pairs each. All 150
 traces replayed; an additional 40-run legacy/A demonstration also passed. No
-held-out inputs were used. Optimizer pause/resume remains milestone 7.
+held-out inputs were used. Milestone 7 now adds resumable optimizer execution;
+the workspace has 84 passing Rust tests and 47 passing Python tests.
 
 ## Measurement contract
 
@@ -226,4 +227,6 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. Next: develop a stronger B candidate and repeat development ablations before held-out qualification, retaining qualified A as the baseline.
+qualified A, a measured B status, and 8. Next: build the interactive comparison
+site in milestone 8. Stronger B candidates can proceed separately through
+development ablations before held-out qualification; keep B explicitly experimental.

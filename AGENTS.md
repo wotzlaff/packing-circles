@@ -13,11 +13,11 @@ The GitHub Pages site should execute through WASM, visualize optimization, and p
 
 Work in the root repository. Keep `legacy/` as a separate reference checkout. Never add it to the root repository or as a submodule; avoid unrelated edits.
 
-`crates/packing-core/` owns geometry, I/O, and numerical kernels; `crates/packing-cli/` owns file commands. Rust integration tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent Python checks, frozen synthetic inputs, and archived results. Browser work is planned under `web/`. Record decisions and milestone evidence in `docs/`; follow `docs/PLAN.md`.
+`crates/packing-core/` owns geometry, numerical kernels, and resumable sessions; `crates/packing-cli/` owns file commands; `crates/packing-wasm/` exposes the worker ABI. Rust tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent checks, frozen inputs, and archived results. `web/` contains the worker and development harness. Record decisions and evidence in `docs/`; follow `docs/PLAN.md`.
 
 ## Build, Test & Development Commands
 
-Use stable Rust, Python 3.10+, and GCC; run from the root:
+Use stable Rust, Python 3.10+, and GCC from the root:
 
 - `cargo build --workspace --locked` — compile Rust tools.
 - `cargo test --workspace --locked` — run unit and integration tests.
@@ -27,17 +27,17 @@ Use stable Rust, Python 3.10+, and GCC; run from the root:
 - `python3 bench/generate_instances.py --check` — verify frozen data.
 - `python3 bench/legacy.py build --variant contest` — build the selected legacy reference outside its checkout.
 
-See `README.md` and `bench/README.md` for solving, tracing, and measurement commands. A is native; B/WASM are pending.
+`python3 tools/build_wasm.py` builds WASM; `npm test --prefix web` runs browser checks after dependency/browser installation. See `README.md`, `docs/wasm.md`, and `bench/README.md`. B remains experimental.
 
 ## Coding Style & Testing Guidelines
 
 Use rustfmt, four-space indentation, `snake_case` functions/modules, and `PascalCase` types. Document APIs, mathematical assumptions, tolerances, and stopping criteria.
 
-Use Rust's built-in tests with descriptive names such as `rejects_overlapping_circles`. Cover containment, separation, objective calculation, and numerical edge cases. Use fixed seeds and explicit tolerances. Compare A against legacy behavior and benchmark B under equal time budgets. Preserve raw failures; document necessary safe departures from legacy undefined behavior. No coverage percentage is established.
+Use Rust's built-in tests with names such as `rejects_overlapping_circles`. Cover containment, separation, objectives, and numerical edges. Use fixed seeds and explicit tolerances. Compare A against legacy behavior and benchmark B under equal budgets. Preserve failures; document safe departures from legacy undefined behavior. No coverage percentage is established.
 
 ## Commit, Review & Agent Workflow
 
-Commit each coherent step and push after each commit. Use short imperative commit subjects, such as `Add packing feasibility checks`.
+Commit each step and push after each commit. Use short imperative subjects, such as `Add packing feasibility checks`.
 
 PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions in Markdown. Use cheaper subagents for bounded implementation, tests, or reviews whenever reasonable; the primary agent integrates and verifies results.
 

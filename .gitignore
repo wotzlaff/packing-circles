@@ -3,3 +3,5 @@
 /bench/build/
 __pycache__/
 /target/
+/web/packing_wasm.wasm
+/web/node_modules/

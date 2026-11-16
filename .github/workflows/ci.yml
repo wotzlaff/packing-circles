@@ -48,3 +48,32 @@ jobs:
           validate_run_summary(replay,row['summary'])
           # Shared CI runners are integration tests, not the benchmark machine.
           PY
+
+  wasm-browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Select stable Rust and WASM target
+        run: |
+          rustup default stable
+          rustup target add wasm32-unknown-unknown
+      - name: Build bounded WASM binary
+        run: python3 tools/build_wasm.py
+      - name: Install browser test dependencies
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Check worker execution and native agreement
+        run: node web/tests/browser.mjs --report "$RUNNER_TEMP/wasm-browser.json"
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: wasm-browser-report
+          path: ${{ runner.temp }}/wasm-browser.json

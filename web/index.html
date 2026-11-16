@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dense Packing of Circles into a Circle of Minimal Radius</title>
+<style>
+  body { font: 1rem/1.5 system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
+  label { display: block; margin-top: 1rem; }
+  textarea { box-sizing: border-box; width: 100%; }
+  button, select, textarea { font: inherit; }
+  button { margin: .5rem .3rem .5rem 0; }
+  pre { overflow: auto; padding: 1rem; background: #f1f4f6; }
+</style>
+<h1>Dense Packing of Circles into a Circle of Minimal Radius</h1>
+<p>WASM development harness. Optimization runs in a background worker. The interactive comparison and visualization are the next milestone.</p>
+<label for="input">Circle count followed by radii (maximum 50 circles, 16 KiB)</label>
+<textarea id="input" rows="4">10
+20 30 40 50 60 70 80 90 25 45</textarea>
+<label for="algorithm">Algorithm</label>
+<select id="algorithm">
+  <option value="0">A — qualified baseline</option>
+  <option value="1">B — early penalty (experimental)</option>
+  <option value="2">B — tight penalty (experimental)</option>
+  <option value="3">B — short restarts (experimental)</option>
+</select>
+<p>B candidates have not met the improvement target.</p>
+<button id="run" disabled>Run 5 seconds</button>
+<button id="pause" disabled>Pause</button>
+<button id="resume" disabled>Resume</button>
+<button id="cancel" disabled>Cancel</button>
+<p id="status" role="status">Loading solver…</p>
+<pre id="solution" aria-label="Checked solution"></pre>
+<script type="module" src="harness.js"></script>
+</html>

@@ -3,10 +3,12 @@
 Rust reimplementation of a contest-winning circle-packing solver, with a measured
 improvement track and a planned interactive WASM visualization.
 
-The Rust workspace provides a seeded version A solver, contest-format I/O, and
-independent validation. Version A passed component parity checks and the
-[750-run quality/runtime qualification](docs/version-a-results.md). Version B
-and the website are not implemented yet.
+The Rust workspace provides seeded solvers, contest-format I/O, independent
+validation, and resumable WASM execution in a Web Worker. Native version A passed
+component parity checks and the [750-run quality/runtime qualification](docs/version-a-results.md).
+Three [version B experiments](docs/version-b-experiments.md) remain experimental;
+none met the improvement target. A browser development harness is available;
+the interactive comparison site and GitHub Pages deployment remain planned.
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop
@@ -20,8 +22,35 @@ cargo fmt --all --check
 cargo clippy --workspace --all-targets --locked -- -D warnings
 ```
 
-No external Rust crates are required. GitHub Actions runs these checks together
-with the Python benchmark tests and dataset verification.
+The portable WASM numerical profile uses pinned `libm`; browser tests use Node.js
+20+ and Playwright. GitHub Actions runs Rust, independent Python checks, and
+Chromium worker tests.
+
+## Run WASM locally
+
+```sh
+rustup target add wasm32-unknown-unknown
+python3 tools/build_wasm.py
+python3 -m http.server 8000 --bind 127.0.0.1 --directory web
+```
+
+Open `http://127.0.0.1:8000`. The harness runs A or an explicit B experiment with
+pause, resume, cancellation, and checked solution output. Optimization executes
+entirely in a worker. Input is limited to 50 circles and 16 KiB; retained history
+is bounded. The binary is generated locally and ignored by Git.
+
+```sh
+npm ci --prefix web
+cd web
+npx playwright install chromium firefox
+npm test
+npm test -- --browser firefox
+```
+
+See [WASM architecture and measured results](docs/wasm.md). The browser and native
+session probe use portable software math for cross-target agreement; they can
+follow different trajectories from the platform-math CLI. Native timed quality
+qualification does not automatically apply to this numerical profile.
 
 ## Inspect a packing
 
@@ -84,7 +113,9 @@ runtime increase of 3.25% on the recorded machine.
 
 `bench/compare.py` runs configured legacy/Rust solvers sequentially and regenerates
 comparison tables from raw records. See [benchmark commands](bench/README.md).
-True optimizer pause/resume and the browser visualization remain future milestones.
+`packing_core::session::SolverSession` retains optimizer state across bounded
+steps. The browser worker exposes pause/resume; the full visualization remains a
+future milestone.
 
 ## Legacy baseline
 
