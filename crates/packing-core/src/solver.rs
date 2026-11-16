@@ -483,7 +483,11 @@ where
     })
 }
 
-fn consider(instance: &Instance, solution: Solution, best: &mut (Solution, String)) -> bool {
+pub(crate) fn consider(
+    instance: &Instance,
+    solution: Solution,
+    best: &mut (Solution, String),
+) -> bool {
     // Avoid expensive formatting if even the unpadded radius cannot improve.
     if solution.radius >= best.0.radius {
         return false;
@@ -497,7 +501,7 @@ fn consider(instance: &Instance, solution: Solution, best: &mut (Solution, Strin
     false
 }
 
-fn line_fallback(instance: &Instance) -> Result<Solution, PackingError> {
+pub(crate) fn line_fallback(instance: &Instance) -> Result<Solution, PackingError> {
     let total = instance.radii().iter().sum::<f64>();
     let radius = total + instance.len().saturating_sub(1) as f64 * 1e-4;
     if !radius.is_finite() {
@@ -513,7 +517,7 @@ fn line_fallback(instance: &Instance) -> Result<Solution, PackingError> {
     Ok(Solution { radius, circles })
 }
 
-fn export_candidate(
+pub(crate) fn export_candidate(
     instance: &Instance,
     mut solution: Solution,
 ) -> Result<(Solution, String), PackingError> {

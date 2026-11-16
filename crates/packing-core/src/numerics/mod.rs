@@ -11,11 +11,13 @@ pub mod penalty;
 pub mod repair;
 
 pub use bfgs::{minimize, BfgsConfig, BfgsReport, BfgsTermination, CallbackAction, Iteration};
-pub use initialization::{initialize, Initialization, RandomSource, SplitMix64};
+pub use initialization::{
+    initialize, initialize_portable, Initialization, RandomSource, SplitMix64,
+};
 pub use line_search::{line_search, LineSearchConfig, LineSearchStep};
 pub use objective::{evaluate, value, PenaltyWeights};
 pub use penalty::PenaltySchedule;
-pub use repair::{min_scale, repair};
+pub use repair::{min_scale, min_scale_portable, repair, repair_portable};
 
 use std::fmt;
 
@@ -54,3 +56,12 @@ impl fmt::Display for NumericalError {
 }
 
 impl std::error::Error for NumericalError {}
+
+// Portable math is opt-in so the legacy native path retains its platform behavior.
+pub(crate) fn hypot(x: f64, y: f64, portable: bool) -> f64 {
+    if portable {
+        libm::hypot(x, y)
+    } else {
+        x.hypot(y)
+    }
+}

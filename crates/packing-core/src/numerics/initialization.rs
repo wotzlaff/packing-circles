@@ -44,6 +44,24 @@ pub fn initialize<R: RandomSource>(
     trials: usize,
     rng: &mut R,
 ) -> Result<Initialization, NumericalError> {
+    initialize_impl(instance, trials, rng, false)
+}
+
+/// Rolling placement with pinned software transcendental functions across targets.
+pub fn initialize_portable<R: RandomSource>(
+    instance: &Instance,
+    trials: usize,
+    rng: &mut R,
+) -> Result<Initialization, NumericalError> {
+    initialize_impl(instance, trials, rng, true)
+}
+
+fn initialize_impl<R: RandomSource>(
+    instance: &Instance,
+    trials: usize,
+    rng: &mut R,
+    portable: bool,
+) -> Result<Initialization, NumericalError> {
     if trials == 0 {
         return Err(NumericalError::InvalidInput(
             "initialization needs at least one trial",
@@ -69,11 +87,11 @@ pub fn initialize<R: RandomSource>(
             placed.push(Point::new(separation, 0.0));
         }
         for j in 2..n {
-            let mut candidates = rolling_candidates(&radii[..j], &placed, radii[j]);
+            let mut candidates = rolling_candidates(&radii[..j], &placed, radii[j], portable);
             candidates.retain(|p| {
                 p.x.is_finite()
                     && p.y.is_finite()
-                    && prefix_feasible(&placed, &radii[..j], *p, radii[j])
+                    && prefix_feasible(&placed, &radii[..j], *p, radii[j], portable)
             });
             if candidates.is_empty() {
                 fallback_count += 1;
@@ -91,15 +109,17 @@ pub fn initialize<R: RandomSource>(
                 let chosen = candidates
                     .into_iter()
                     .min_by(|a, b| {
-                        prefix_center(&radii[..=j], &placed_with(&placed, *a))
+                        prefix_center(&radii[..=j], &placed_with(&placed, *a), portable)
                             .0
-                            .total_cmp(&prefix_center(&radii[..=j], &placed_with(&placed, *b)).0)
+                            .total_cmp(
+                                &prefix_center(&radii[..=j], &placed_with(&placed, *b), portable).0,
+                            )
                     })
                     .ok_or(NumericalError::NonFinite)?;
                 placed.push(chosen);
             }
         }
-        let (_, center) = prefix_center(&radii, &placed);
+        let (_, center) = prefix_center(&radii, &placed, portable);
         if !center.x.is_finite() || !center.y.is_finite() {
             return Err(NumericalError::NonFinite);
         }
@@ -136,7 +156,7 @@ fn placed_with(points: &[Point], p: Point) -> Vec<Point> {
 }
 
 /// Returns legacy's 20-step center and its enclosing-radius score.
-fn prefix_center(radii: &[f64], points: &[Point]) -> (f64, Point) {
+fn prefix_center(radii: &[f64], points: &[Point], portable: bool) -> (f64, Point) {
     let mut best = f64::INFINITY;
     let mut best_center = Point::default();
     let mut center = Point::default();
@@ -148,7 +168,7 @@ fn prefix_center(radii: &[f64], points: &[Point]) -> (f64, Point) {
         for (&r, p) in radii.iter().zip(points) {
             let x = p.x - center.x;
             let y = p.y - center.y;
-            let v = x.hypot(y) + r;
+            let v = super::hypot(x, y, portable) + r;
             if v > value {
                 value = v;
                 dx = x;
@@ -168,14 +188,19 @@ fn prefix_center(radii: &[f64], points: &[Point]) -> (f64, Point) {
     (best, best_center)
 }
 
-fn prefix_feasible(placed: &[Point], radii: &[f64], candidate: Point, radius: f64) -> bool {
-    placed
-        .iter()
-        .zip(radii)
-        .all(|(p, r)| p.distance(candidate) + 1e-10 >= r + radius)
+fn prefix_feasible(
+    placed: &[Point],
+    radii: &[f64],
+    candidate: Point,
+    radius: f64,
+    portable: bool,
+) -> bool {
+    placed.iter().zip(radii).all(|(p, r)| {
+        super::hypot(p.x - candidate.x, p.y - candidate.y, portable) + 1e-10 >= r + radius
+    })
 }
 
-fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64) -> Vec<Point> {
+fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64, portable: bool) -> Vec<Point> {
     let j = points.len();
     let mut i0 = 0;
     let mut rightmost = points[0].x + radii[0];
@@ -199,7 +224,7 @@ fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64) -> Vec<Point
             }
             let dx = x0 - points[i].x;
             let dy = y0 - points[i].y;
-            let d = dx.hypot(dy);
+            let d = super::hypot(dx, dy, portable);
             let denom = d * (r0 + radius);
             if d == 0.0 || !denom.is_finite() || denom == 0.0 {
                 continue;
@@ -208,7 +233,17 @@ fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64) -> Vec<Point
             if rhs < -1.0 - 1e-10 || rhs > 1.0 + 1e-10 || !rhs.is_finite() {
                 continue;
             }
-            let phi = (2.0 * std::f64::consts::PI + dy.atan2(dx) + rhs.clamp(-1.0, 1.0).acos()
+            let phi = (2.0 * std::f64::consts::PI
+                + if portable {
+                    libm::atan2(dy, dx)
+                } else {
+                    dy.atan2(dx)
+                }
+                + if portable {
+                    libm::acos(rhs.clamp(-1.0, 1.0))
+                } else {
+                    rhs.clamp(-1.0, 1.0).acos()
+                }
                 - phi_ref)
                 .rem_euclid(2.0 * std::f64::consts::PI);
             if phi < best_phi {
@@ -221,8 +256,18 @@ fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64) -> Vec<Point
         }
         let angle = phi_ref + best_phi;
         let candidate = Point::new(
-            x0 + (r0 + radius) * angle.cos(),
-            y0 + (r0 + radius) * angle.sin(),
+            x0 + (r0 + radius)
+                * if portable {
+                    libm::cos(angle)
+                } else {
+                    angle.cos()
+                },
+            y0 + (r0 + radius)
+                * if portable {
+                    libm::sin(angle)
+                } else {
+                    angle.sin()
+                },
         );
         output.push(candidate);
         let Some(i) = next else {
@@ -232,7 +277,11 @@ fn rolling_candidates(radii: &[f64], points: &[Point], radius: f64) -> Vec<Point
         r0 = radii[i];
         x0 = points[i].x;
         y0 = points[i].y;
-        phi_ref = (candidate.y - y0).atan2(candidate.x - x0) - 1e-10;
+        phi_ref = if portable {
+            libm::atan2(candidate.y - y0, candidate.x - x0)
+        } else {
+            (candidate.y - y0).atan2(candidate.x - x0)
+        } - 1e-10;
         steps += 1;
         if i0 == first || steps >= j.saturating_mul(2).max(1) {
             break;
@@ -254,7 +303,7 @@ mod tests {
             Point::new(2.0, 0.0),
             Point::new(1.0, 1.5),
         ];
-        let (radius, center) = prefix_center(&radii, &points);
+        let (radius, center) = prefix_center(&radii, &points, false);
 
         // Reference: twenty legacy updates, with dx0=dy0=0 left unchanged.
         assert!((center.x - 1.845_928_626_256_722_3).abs() < 1e-12);

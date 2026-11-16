@@ -8,6 +8,7 @@ mod error;
 mod geometry;
 mod io;
 pub mod numerics;
+pub mod session;
 pub mod solver;
 
 pub use config::SolverConfig;

@@ -33,6 +33,26 @@ impl PenaltySchedule {
         state: &[f64],
         gradient_squared: f64,
     ) -> Result<CallbackAction, NumericalError> {
+        self.update_impl(instance, state, gradient_squared, false)
+    }
+
+    /// Update with portable pairwise distances for cross-target sessions.
+    pub fn update_portable(
+        &mut self,
+        instance: &Instance,
+        state: &[f64],
+        gradient_squared: f64,
+    ) -> Result<CallbackAction, NumericalError> {
+        self.update_impl(instance, state, gradient_squared, true)
+    }
+
+    fn update_impl(
+        &mut self,
+        instance: &Instance,
+        state: &[f64],
+        gradient_squared: f64,
+        portable: bool,
+    ) -> Result<CallbackAction, NumericalError> {
         if state.len() != 1 + 2 * instance.len() {
             return Err(NumericalError::InvalidInput(
                 "penalty state dimension mismatch",
@@ -78,7 +98,11 @@ impl PenaltySchedule {
         }
         let containment_violated =
             state[0] == 0.0 || radius / state[0] > 1.0 + self.violation_tolerance;
-        let scale = min_scale(instance, &points)?;
+        let scale = if portable {
+            super::min_scale_portable(instance, &points)?
+        } else {
+            min_scale(instance, &points)?
+        };
         let pairwise_violated = scale == 0.0 || 1.0 / scale > 1.0 + self.violation_tolerance;
         let weights = PenaltyWeights {
             containment: self.weights.containment * if containment_violated { 2.0 } else { 1.0 },

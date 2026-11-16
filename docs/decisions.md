@@ -85,3 +85,30 @@ that belong in B. See the full source map in `legacy-baseline.md`.
 - Compare traced/plain runs at fixed work, alternating pair order, with both
   outputs/counters and runtime audited. Keep timings, metadata, and all traces;
   do not infer an optimization speedup from timing noise.
+
+## Resumable execution and portable math
+
+- Retain the qualified blocking native solver as the regression reference. Add
+  an owned session that stores the dense Hessian, accepted iterate, gradient,
+  strong-Wolfe bracket/zoom phase, penalty schedule, RNG, and global work counters.
+  A yield preserves these values; resume never restarts optimization.
+- Bound each work unit to one objective call or one transition, including an
+  atomic rolling initialization at at most 50 circles. Let hosts supply monotonic
+  active elapsed time so WASM needs no operating-system clock and pauses exclude
+  waiting time. Cancellation repairs the last accepted iterate before returning.
+- Initial browser comparisons exposed target-dependent math: at 5000 evaluations,
+  `20_01.txt` gave radius 354.63090907057926 in Chromium versus
+  354.8223311745897 natively, exceeding the `1e-6` relative gate. Small math
+  differences can change initialization choices and subsequent BFGS trajectories.
+- Provide `SolverSession::new_portable` with pinned `libm` 0.2.16 and
+  `force-soft-floats` for initialization trigonometry and distance calculations.
+  The feature disables architecture-specific math implementations, as described
+  in the [upstream manifest](https://docs.rs/crate/libm/0.2.16/source/Cargo.toml.orig).
+  Browser execution and the native session probe use this profile. Keep platform
+  math in the CLI and `SolverSession::new`; exact archived native outputs and
+  work counters remain regression requirements. Portable results are a distinct
+  numerical profile and do not inherit native quality/runtime qualification.
+- Use a small dependency-free WASM host ABI around the Rust session, with a
+  fixed 16 KiB input buffer, checked JSON snapshots, and at most 64 work units
+  per call. Expose seed words rather than requiring JavaScript number precision
+  for a full 64-bit seed. Browser scheduling and rendering remain outside Rust.
