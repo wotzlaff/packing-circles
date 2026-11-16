@@ -55,6 +55,30 @@ try {
   }
   assert.ok(result.trace.snapshots.length >= frames.length);
   assert.equal(result.messages.at(-1).snapshot.evaluations, 5000);
+  const terminalTrace = await page.evaluate(async base => {
+    const {PackingWorker} = await import('./solver.js');
+    const OriginalWorker = window.Worker;
+    window.Worker = class {
+      postMessage({runId}) {
+        queueMicrotask(() => {
+          this.onmessage({data: {type: 'progress', runId, snapshot: {...base, finished: false}, history: []}});
+          this.onmessage({data: {type: 'done', runId, snapshot: {...base, finished: true}, history: []}});
+        });
+      }
+      terminate() {}
+    };
+    let client;
+    try {
+      client = new PackingWorker();
+      await new Promise(resolve => {
+        client.addEventListener('message', ({data}) => { if (data.type === 'done') resolve(); });
+        client.start({input: '2\n1 1\n'});
+      });
+      return client.exportTrace();
+    } finally { client?.dispose(); window.Worker = OriginalWorker; }
+  }, result.messages.at(-1).snapshot);
+  assert.equal(terminalTrace.snapshots.length, 2, 'a terminal transition survives equal-time deduplication');
+  assert.equal(terminalTrace.snapshots.at(-1).finished, true);
   console.log(`Captured ${frames.length} early frames`);
 } finally {
   await browser?.close();

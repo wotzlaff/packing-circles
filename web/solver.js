@@ -16,7 +16,8 @@ export class PackingWorker extends EventTarget {
       for (const frame of frames) {
         const last = this.#trace.at(-1)?.snapshot;
         if (last && last.elapsed_seconds === frame.elapsed_seconds &&
-            last.evaluations === frame.evaluations && last.radius === frame.radius) continue;
+            last.evaluations === frame.evaluations && last.radius === frame.radius &&
+            last.iterations === frame.iterations && last.finished === frame.finished) continue;
         const snapshot = structuredClone(frame);
         const bytes = new TextEncoder().encode(JSON.stringify(snapshot)).length;
         this.#trace.push({snapshot, bytes});
