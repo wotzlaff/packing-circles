@@ -2,7 +2,7 @@
 
 ## Purpose & Architecture
 
-Reimplement the contest-winning circle-packing solver in Rust. See the [contest](https://incyb.kiev.ua/en/event/glushkov-cyber-2022-11-01) and [problem definition](https://incyb.kiev.ua/storage/editor/files/problem-2022-10-17-en.pdf).
+Reimplement the contest-winning solver in Rust. See the [contest](https://incyb.kiev.ua/en/event/glushkov-cyber-2022-11-01) and [problem definition](https://incyb.kiev.ua/storage/editor/files/problem-2022-10-17-en.pdf).
 
 - **Version A:** preserve the legacy algorithm; random initialization and minor numerical differences may vary.
 - **Version B:** improve solution quality, performance, or robustness, with measured comparisons against A.
@@ -13,7 +13,7 @@ The GitHub Pages site should execute through WASM, visualize optimization, and p
 
 Work in the root repository. Keep `legacy/` as a separate reference checkout. Never add it to the root repository or as a submodule; avoid unrelated edits.
 
-`crates/packing-core/` owns geometry, numerical kernels, and resumable sessions; `crates/packing-cli/` owns file commands; `crates/packing-wasm/` exposes the worker ABI. Rust tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent checks, frozen inputs, and archived results. `web/` contains the worker and development harness. Record decisions and evidence in `docs/`; follow `docs/PLAN.md`.
+`crates/packing-core/` owns geometry, numerical kernels, and resumable sessions; `crates/packing-cli/` owns file commands; `crates/packing-wasm/` exposes the worker ABI. Rust tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent checks, frozen inputs, and archived results. `web/` contains the worker and interactive site. Record decisions in `docs/`; follow `docs/PLAN.md`.
 
 ## Build, Test & Development Commands
 
@@ -27,7 +27,7 @@ Use stable Rust, Python 3.10+, and GCC from the root:
 - `python3 bench/generate_instances.py --check` — verify frozen data.
 - `python3 bench/legacy.py build --variant contest` — build the selected legacy reference outside its checkout.
 
-`python3 tools/build_wasm.py` builds WASM; `npm test --prefix web` runs browser checks after dependency/browser installation. See `README.md`, `docs/wasm.md`, and `bench/README.md`. B remains experimental.
+`python3 tools/build_wasm.py` builds WASM; `npm test --prefix web` checks the worker and `npm run test:site --prefix web` checks the UI. See `README.md`, `docs/website.md`, and `bench/README.md`. B remains experimental.
 
 ## Coding Style & Testing Guidelines
 
@@ -37,7 +37,7 @@ Use Rust's built-in tests with names such as `rejects_overlapping_circles`. Cove
 
 ## Commit, Review & Agent Workflow
 
-Commit each step and push after each commit. Use short imperative subjects, such as `Add packing feasibility checks`.
+Commit each step and push after each commit. Use imperative subjects, e.g. `Add packing feasibility checks`.
 
 PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions in Markdown. Use cheaper subagents for bounded implementation, tests, or reviews whenever reasonable; the primary agent integrates and verifies results.
 

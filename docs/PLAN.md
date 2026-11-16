@@ -22,7 +22,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 5. Experiment harness and traces | Complete | [150 paired trace runs](tracing-results.md): output/work invariant, median runtime +3.25%; 40-run unified demonstration and exact summary reproduction |
 | 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
 | 7. Resumable WASM | Complete | [Session/worker architecture and browser measurements](wasm.md); 40 native/WASM comparisons in each of Chromium/Firefox, identical radii; cancellation 30.7/15 ms |
-| 8. Interactive comparison site | In progress | Layout, worker integration, replay and import/export drafted; browser acceptance and performance checks underway |
+| 8. Interactive comparison site | Complete | [Behavior, screenshots and 30-second browser measurements](website.md); all acceptance flows pass; control p95 20.6/13 ms, render p95 0.9/5 ms in Chromium/Firefox |
 | 9. GitHub Pages | Pending | Deployment follows the interactive site |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
@@ -228,6 +228,6 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. Next: build the interactive comparison
-site in milestone 8. Stronger B candidates can proceed separately through
+qualified A, a measured B status, and 8. Next: publish and verify the site on
+GitHub Pages in milestone 9. Stronger B candidates can proceed separately through
 development ablations before held-out qualification; keep B explicitly experimental.

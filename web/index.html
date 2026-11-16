@@ -1,34 +1,52 @@
 <!doctype html>
 <html lang="en">
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dense Packing of Circles into a Circle of Minimal Radius</title>
-<style>
-  body { font: 1rem/1.5 system-ui, sans-serif; max-width: 52rem; margin: 2rem auto; padding: 0 1rem; }
-  label { display: block; margin-top: 1rem; }
-  textarea { box-sizing: border-box; width: 100%; }
-  button, select, textarea { font: inherit; }
-  button { margin: .5rem .3rem .5rem 0; }
-  pre { overflow: auto; padding: 1rem; background: #f1f4f6; }
-</style>
-<h1>Dense Packing of Circles into a Circle of Minimal Radius</h1>
-<p>WASM development harness. Optimization runs in a background worker. The interactive comparison and visualization are the next milestone.</p>
-<label for="input">Circle count followed by radii (maximum 50 circles, 16 KiB)</label>
-<textarea id="input" rows="4">10
-20 30 40 50 60 70 80 90 25 45</textarea>
-<label for="algorithm">Algorithm</label>
-<select id="algorithm">
-  <option value="0">A — qualified baseline</option>
-  <option value="1">B — early penalty (experimental)</option>
-  <option value="2">B — tight penalty (experimental)</option>
-  <option value="3">B — short restarts (experimental)</option>
-</select>
-<p>B candidates have not met the improvement target.</p>
-<button id="run" disabled>Run 5 seconds</button>
-<button id="pause" disabled>Pause</button>
-<button id="resume" disabled>Resume</button>
-<button id="cancel" disabled>Cancel</button>
-<p id="status" role="status">Loading solver…</p>
-<pre id="solution" aria-label="Checked solution"></pre>
-<script type="module" src="harness.js"></script>
-</html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore the geometry and optimization of packing circles inside a circle.">
+  <title>Dense Packing of Circles into a Circle of Minimal Radius</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script type="module" src="./app.js"></script>
+</head>
+<body>
+  <header class="masthead wrap">
+    <a class="brand" href="./"><span class="brand-mark" aria-hidden="true">◉</span> CIRCLE PACKING <span> / COMPUTATIONAL LAB</span></a>
+    <nav aria-label="Project links"><a href="https://github.com/wotzlaff/packing-circles">Source ↗</a><a href="https://github.com/wotzlaff/packing-circles/tree/main/docs">Documentation ↗</a></nav>
+  </header>
+  <main class="wrap">
+    <section class="intro">
+      <div><p class="eyebrow"><span class="dot"></span> AN INTERACTIVE OPTIMIZATION LAB</p><h1>Dense Packing of Circles<br>into a Circle of <em>Minimal Radius</em></h1></div>
+      <p class="intro-copy">Arrange a set of circles inside the smallest possible circle. Watch the search unfold, compare algorithms, and explore the geometry behind a dense packing.</p>
+    </section>
+    <div class="lab-grid">
+      <aside class="panel controls" aria-labelledby="setup-title">
+        <div class="section-heading"><div><span class="section-number">01 / SETUP</span><h2 id="setup-title">Build an experiment</h2></div><span class="heading-icon" aria-hidden="true">↗</span></div>
+        <label for="preset">Circle set</label><select id="preset"><option value="10">10 mixed circles</option><option value="50">50 mixed circles</option><option value="equal">Equal circles</option><option value="two">Two circles</option><option value="custom">Custom input</option></select>
+        <label for="input">Input <span>COUNT + RADII</span></label><textarea id="input" rows="4" spellcheck="false">10
+1 1 1 1 1 1 1 1 1 1</textarea>
+        <label class="file-label" for="upload">↥ &nbsp; Load a circle file <span>.txt, .in</span></label><input id="upload" class="file-input" type="file" accept=".txt,.in">
+        <div class="rule"></div>
+        <label for="compare">Algorithm</label><select id="compare"><option value="a">A · legacy</option><option value="b">B · experimental</option><option value="compare">Compare A + B</option></select>
+        <p class="field-note">B is experimental; none of the candidates met the improvement target. <a href="https://github.com/wotzlaff/packing-circles/blob/main/docs/version-b-experiments.md">Read the experiments ↗</a></p>
+        <label for="variant">B variant</label><select id="variant"><option value="1">Early penalty</option><option value="2">Tight penalty</option><option value="3">Short restarts</option></select>
+        <div class="field-row"><div><label for="seed">Seed</label><input id="seed" type="text" value="5" inputmode="numeric"></div><div><label for="budget">Budget <span>SECONDS</span></label><input id="budget" type="number" min="0.1" max="60" step="0.05" value="1.95"></div></div>
+        <button id="run" class="primary" type="button">Run experiment <span>↗</span></button>
+        <div class="button-row"><button id="pause" type="button">Pause</button><button id="resume" type="button">Resume</button><button id="cancel" type="button">Cancel</button><button id="reset" type="button">Reset</button></div>
+        <p id="status" class="status" role="status">Ready to explore.</p><p id="error" class="error" role="alert"></p>
+      </aside>
+      <div class="results">
+        <section class="panel visualization" aria-labelledby="packing-title">
+          <div class="section-heading"><div><span class="section-number">02 / THE PACKING</span><h2 id="packing-title">A little room to move.</h2></div><div class="live-tag"><span class="dot"></span> <span id="active-run">No active run</span></div></div>
+          <div id="run-tabs" class="run-tabs" aria-label="Select a run"></div>
+          <div class="canvas-wrap"><canvas id="packing" role="img" aria-describedby="packing-summary"></canvas><p id="packing-summary" class="sr-only">Run an experiment to see the packing.</p><div class="canvas-caption"><span id="canvas-mode">GEOMETRY / BEST KNOWN</span><span>○ &nbsp; ENCLOSING CIRCLE</span></div></div>
+          <div class="visual-footer"><div class="legend"><span><i class="legend-a"></i> A · LEGACY</span><span><i class="legend-b"></i> B · EXPERIMENTAL</span><span id="feasible">Awaiting solution</span></div><div class="toggles"><label><input id="contacts" type="checkbox"> Contacts</label><label><input id="trial" type="checkbox"> Raw trial</label></div></div>
+        </section>
+        <section class="metrics" aria-label="Solution metrics"><div><span>ENCLOSING RADIUS</span><strong id="radius">—</strong><small>smaller is better</small></div><div><span>R / AREA LOWER BOUND</span><strong id="area-ratio">—</strong><small>≥ 1; not an optimality certificate</small></div><div><span>ACTIVE TIME</span><strong id="elapsed">—</strong><small>seconds</small></div><div><span>WORK</span><strong id="work">—</strong><small>optimization progress</small></div></section>
+        <section class="panel history" aria-labelledby="history-title"><div class="section-heading"><div><span class="section-number">03 / THE SEARCH</span><h2 id="history-title">Progress over time</h2></div><label class="objective-toggle"><input id="objective" type="checkbox"> Show objective</label></div><p class="section-copy">The best feasible radius found as the solver works. Lower is better.</p><svg id="history" role="img" aria-describedby="history-summary" viewBox="0 0 800 230"></svg><p id="history-summary" class="sr-only">Run an experiment to see its improvement history.</p><details class="data-details"><summary>View history data</summary><table><thead><tr><th>Run</th><th>Time</th><th>Radius</th></tr></thead><tbody id="history-table"></tbody></table></details><div class="timeline"><button id="replay" type="button">▶ Replay</button><label for="timeline">TIMELINE</label><input id="timeline" type="range" min="0" max="1000" value="1000"><span>NOW</span></div><p id="trace-info" class="field-note"></p></section>
+      </div>
+    </div>
+    <section class="notes" aria-labelledby="notes-title"><div><span class="section-number">04 / THE MATHEMATICS</span><h2 id="notes-title">A closer look at<br><em>the problem.</em></h2><p>Simple shapes. A surprisingly intricate search.</p></div><article><span>01</span><h3>A lower bound</h3><p>Area alone gives the bound <strong>R ≥ √(Σ rᵢ²)</strong>. Circles leave gaps, so a valid packing generally needs more room than this.</p></article><article><span>02</span><h3>Searching for a fit</h3><p>The objective combines radius with quadratic penalties for constraint violations. Penalty weights change during the search, so the objective is not the minimum feasible radius.</p></article><article><span>03</span><h3>Reading the geometry</h3><p>Contacts mark circles close to tangency. Raw trial geometry can overlap or cross the boundary; violations are shown in red.</p></article></section>
+    <section class="export-bar"><div><span class="section-number">TAKE YOUR WORK WITH YOU</span><h2>Save an experiment.</h2></div><div class="export-actions"><button id="export-solution" type="button">↓ Export solution</button><button id="export-run" type="button">↓ Export run</button><label class="button-label" for="import-run">↑ Import run</label><input id="import-run" class="file-input" type="file" accept=".json,application/json"></div><details><summary>View solution text</summary><pre id="solution"></pre></details></section>
+  </main>
+  <footer class="wrap footer"><span>◉ &nbsp; CIRCLE PACKING LAB</span><span id="build-info">Local development build</span><a href="https://github.com/wotzlaff/packing-circles/blob/main/docs/version-a-results.md">NATIVE BENCHMARK / i7-8700 · LINUX ↗</a></footer>
+</body></html>

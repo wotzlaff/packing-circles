@@ -1,14 +1,15 @@
 # Dense Packing of Circles into a Circle of Minimal Radius
 
 Rust reimplementation of a contest-winning circle-packing solver, with a measured
-improvement track and a planned interactive WASM visualization.
+improvement track and an interactive WASM visualization.
 
 The Rust workspace provides seeded solvers, contest-format I/O, independent
 validation, and resumable WASM execution in a Web Worker. Native version A passed
 component parity checks and the [750-run quality/runtime qualification](docs/version-a-results.md).
 Three [version B experiments](docs/version-b-experiments.md) remain experimental;
-none met the improvement target. A browser development harness is available;
-the interactive comparison site and GitHub Pages deployment remain planned.
+none met the improvement target. The interactive site provides packing animation,
+sequential comparisons, synchronized replay, and validated recording export/import.
+GitHub Pages deployment is the next release step.
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop
@@ -24,7 +25,7 @@ cargo clippy --workspace --all-targets --locked -- -D warnings
 
 The portable WASM numerical profile uses pinned `libm`; browser tests use Node.js
 20+ and Playwright. GitHub Actions runs Rust, independent Python checks, and
-Chromium worker tests.
+Chromium worker and interface tests.
 
 ## Run WASM locally
 
@@ -34,8 +35,10 @@ python3 tools/build_wasm.py
 python3 -m http.server 8000 --bind 127.0.0.1 --directory web
 ```
 
-Open `http://127.0.0.1:8000`. The harness runs A or an explicit B experiment with
-pause, resume, cancellation, and checked solution output. Optimization executes
+Open `http://127.0.0.1:8000`. Run A, an explicit B experiment, or an equal-budget
+sequential comparison. Pause/resume the search, replay recorded progress, inspect
+contacts and raw trial geometry, and export solutions or complete recordings.
+Optimization executes
 entirely in a worker. Input is limited to 50 circles and 16 KiB; retained history
 is bounded. The binary is generated locally and ignored by Git.
 
@@ -45,12 +48,27 @@ cd web
 npx playwright install chromium firefox
 npm test
 npm test -- --browser firefox
+npm run test:data
+npm run test:site
+npm run test:site -- --browser firefox
 ```
 
 See [WASM architecture and measured results](docs/wasm.md). The browser and native
 session probe use portable software math for cross-target agreement; they can
 follow different trajectories from the platform-math CLI. Native timed quality
 qualification does not automatically apply to this numerical profile.
+See [site behavior and 30-second performance results](docs/website.md), including
+screenshots at 360 px and 1440 px. The history retains at most 4 MiB of snapshot
+payload, with any dropped intermediate frames disclosed.
+
+## Package the site
+
+After building WASM, `python3 tools/package_site.py --output /tmp/circles-site`
+creates a static site in a new or empty directory. The script verifies the WASM
+hash and source commit against `web/build-info.json`, and copies only public
+assets. The root HTML points to assets under `assets/<commit-prefix>/`, keeping
+module, worker, WASM, and metadata URLs together. The Pages workflow runs checks,
+builds WASM, and packages the same site before deployment.
 
 ## Inspect a packing
 

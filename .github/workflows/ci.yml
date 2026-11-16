@@ -72,8 +72,15 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Check worker execution and native agreement
         run: node web/tests/browser.mjs --report "$RUNNER_TEMP/wasm-browser.json"
+      - name: Check input and recording validation
+        run: node --test web/tests/data.test.mjs
+      - name: Check interactive site
+        run: node web/tests/site.mjs --stress-seconds 3 --report "$RUNNER_TEMP/site-browser.json" --screenshots "$RUNNER_TEMP/site-screenshots"
       - uses: actions/upload-artifact@v5
         if: ${{ !cancelled() }}
         with:
           name: wasm-browser-report
-          path: ${{ runner.temp }}/wasm-browser.json
+          path: |
+            ${{ runner.temp }}/wasm-browser.json
+            ${{ runner.temp }}/site-browser.json
+            ${{ runner.temp }}/site-screenshots/

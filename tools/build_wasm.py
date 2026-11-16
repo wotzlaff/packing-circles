@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """Build and copy the worker binary without a JavaScript bundler."""
 from pathlib import Path
+import hashlib
+import json
 import os
 import shutil
 import subprocess
@@ -24,6 +26,13 @@ def main():
             binary = ROOT / binary
     destination = ROOT / "web/packing_wasm.wasm"
     shutil.copyfile(binary, destination)
+    commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
+    dirty = bool(subprocess.run(["git", "status", "--porcelain"], cwd=ROOT, capture_output=True, text=True, check=True).stdout)
+    rustc = subprocess.run(["rustc", "--version"], capture_output=True, text=True, check=True).stdout.strip()
+    metadata = {"version": "0.1.0", "source_commit": commit, "dirty": dirty,
+                "math_profile": "portable-libm-0.2.16", "rustc": rustc,
+                "wasm_sha256": hashlib.sha256(destination.read_bytes()).hexdigest()}
+    (ROOT / "web/build-info.json").write_text(json.dumps(metadata, indent=2) + "\n")
     print(f"Built {destination.relative_to(ROOT)} ({destination.stat().st_size} bytes)")
 
 
