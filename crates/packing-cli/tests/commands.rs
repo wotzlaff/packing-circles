@@ -1,6 +1,10 @@
 //! End-to-end checks of the public file format and command exit statuses.
 
-use std::{path::PathBuf, process::Command};
+use std::{
+    path::PathBuf,
+    process::Command,
+    time::{SystemTime, UNIX_EPOCH},
+};
 
 fn fixture(name: &str) -> PathBuf {
     PathBuf::from(env!("CARGO_MANIFEST_DIR"))
@@ -10,6 +14,17 @@ fn fixture(name: &str) -> PathBuf {
 
 fn cli() -> Command {
     Command::new(env!("CARGO_BIN_EXE_packing-cli"))
+}
+
+fn temporary_trace() -> PathBuf {
+    std::env::temp_dir().join(format!(
+        "packing-trace-{}-{}.jsonl",
+        std::process::id(),
+        SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos()
+    ))
 }
 
 #[test]
@@ -213,4 +228,81 @@ fn solve_rejects_invalid_and_conflicting_options() {
         assert!(output.stdout.is_empty(), "args={arguments:?}");
         assert!(!output.stderr.is_empty(), "args={arguments:?}");
     }
+}
+
+#[test]
+fn trace_records_header_initial_and_final_snapshots_without_changing_fixed_work() {
+    let path = temporary_trace();
+    let base_args = ["--fixed-work", "--evaluations", "0", "--seed", "42"];
+    let plain = cli()
+        .arg("solve")
+        .arg(fixture("two_unit_circles.in"))
+        .args(base_args)
+        .output()
+        .unwrap();
+    let mut command = cli();
+    command
+        .arg("solve")
+        .arg(fixture("two_unit_circles.in"))
+        .args(base_args)
+        .arg("--trace")
+        .arg(&path)
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped());
+    let traced = command.output().unwrap();
+    assert!(plain.status.success());
+    assert!(
+        traced.status.success(),
+        "{}",
+        String::from_utf8_lossy(&traced.stderr)
+    );
+    assert_eq!(plain.stdout, traced.stdout);
+    let records = std::fs::read_to_string(&path).unwrap();
+    let lines = records.lines().collect::<Vec<_>>();
+    assert!(lines.len() >= 3, "{records}");
+    assert!(lines[0].contains("\"type\":\"header\""));
+    assert!(lines
+        .iter()
+        .any(|line| line.contains("\"kind\":\"initial\"")));
+    assert!(lines.iter().any(|line| line.contains("\"kind\":\"final\"")));
+    assert!(lines
+        .iter()
+        .all(|line| line.contains("\"schema_version\":1")));
+    let summary = |output: &std::process::Output, field: &str| {
+        let text = String::from_utf8_lossy(&output.stderr);
+        let start = text.find(field).unwrap() + field.len();
+        text[start..].split([',', '}']).next().unwrap().to_owned()
+    };
+    assert_eq!(
+        summary(&plain, "\"evaluations\":"),
+        summary(&traced, "\"evaluations\":")
+    );
+    assert_eq!(
+        summary(&plain, "\"iterations\":"),
+        summary(&traced, "\"iterations\":")
+    );
+    let _ = std::fs::remove_file(path);
+}
+
+#[test]
+fn trace_creation_refuses_overwrite_and_duplicate_options() {
+    let path = temporary_trace();
+    std::fs::write(&path, "keep me\n").unwrap();
+    let output = cli()
+        .arg("solve")
+        .arg(fixture("two_unit_circles.in"))
+        .arg("--trace")
+        .arg(&path)
+        .output()
+        .unwrap();
+    assert_eq!(output.status.code(), Some(2));
+    assert!(output.stdout.is_empty());
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), "keep me\n");
+    let duplicate = cli()
+        .args(["solve", "--trace", "one", "--trace", "two"])
+        .output()
+        .unwrap();
+    assert_eq!(duplicate.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&duplicate.stderr).contains("duplicate option --trace"));
+    let _ = std::fs::remove_file(path);
 }

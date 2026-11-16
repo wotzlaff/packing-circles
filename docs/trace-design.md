@@ -1,8 +1,9 @@
 # Run and optimization trace design
 
-This is a design for milestone 5, not a description of implemented trace support.
-The solver currently returns a checked incumbent and aggregate counts; it does not
-emit incumbent events or resume an interrupted search.
+The milestone 5 observer and CLI trace writer are implemented. Independent replay,
+the unified comparison harness, and measured overhead qualification are being
+verified. This document defines their format and acceptance criteria. Interrupted
+searches still cannot resume their optimizer state; that remains milestone 7.
 
 ## Run record
 

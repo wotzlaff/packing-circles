@@ -4,9 +4,10 @@ use packing_core::{format_solution, parse_instance, parse_solution, validate};
 use std::{
     env,
     error::Error,
-    fs,
-    io::{self, Read},
+    fs::{self, OpenOptions},
+    io::{self, BufWriter, Read, Write},
     process::ExitCode,
+    time::{SystemTime, UNIX_EPOCH},
 };
 
 const USAGE: &str = "Usage:
@@ -15,6 +16,7 @@ const USAGE: &str = "Usage:
   packing-cli format-instance INSTANCE
   packing-cli solve [INSTANCE|-] [--algorithm a] [--seed N] [--time-limit SECONDS]
                     [--evaluations N] [--iterations N] [--restarts N] [--fixed-work]
+                    [--trace PATH]
 
 solve writes contest-format solution to stdout and one JSON run summary to stderr.
 --fixed-work disables the time limit and requires at least one finite work limit.
@@ -31,6 +33,7 @@ struct SolveArgs {
     iteration_limit: Option<usize>,
     restart_limit: Option<usize>,
     fixed_work: bool,
+    trace_path: Option<String>,
 }
 
 fn execute(args: &[String]) -> Result<bool, Box<dyn Error>> {
@@ -78,7 +81,7 @@ fn execute(args: &[String]) -> Result<bool, Box<dyn Error>> {
 }
 
 fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
-    use packing_core::solver::{solve, SolveOptions};
+    use packing_core::solver::{solve, solve_with_observer, SolveOptions};
 
     let parsed = parse_solve_args(args)?;
     let algorithm = parsed.algorithm.as_deref().unwrap_or("a");
@@ -119,7 +122,33 @@ fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
         iteration_limit: parsed.iteration_limit.unwrap_or(defaults.iteration_limit),
         restart_limit: parsed.restart_limit.unwrap_or(defaults.restart_limit),
     };
-    let result = solve(&instance, options)?;
+    let result = if let Some(path) = parsed.trace_path.as_deref() {
+        let file = OpenOptions::new().write(true).create_new(true).open(path)?;
+        let mut trace = BufWriter::new(file);
+        let run_id = format!(
+            "{}-{}-{}",
+            std::process::id(),
+            SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos(),
+            options.seed
+        );
+        write_trace_header(&mut trace, &run_id, &instance, options)?;
+        let mut trace_error = None;
+        let result = solve_with_observer(&instance, options, &mut |event| {
+            if trace_error.is_none() {
+                if let Err(error) = write_trace_event(&mut trace, &run_id, event) {
+                    trace_error = Some(error);
+                }
+            }
+        });
+        if let Some(error) = trace_error {
+            return Err(error.into());
+        }
+        let result = result?;
+        trace.flush()?;
+        result
+    } else {
+        solve(&instance, options)?
+    };
     let output_solution = parse_solution(&instance, &result.output)?;
     let internal_report = validate(&instance, &result.solution)?;
     let output_report = validate(&instance, &output_solution)?;
@@ -148,6 +177,66 @@ fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
     Ok(internal_report.is_feasible && output_report.is_feasible)
 }
 
+fn write_trace_header(
+    writer: &mut impl Write,
+    run_id: &str,
+    instance: &packing_core::Instance,
+    options: packing_core::solver::SolveOptions,
+) -> io::Result<()> {
+    let radii = instance
+        .radii()
+        .iter()
+        .map(|value| json_number(*value))
+        .collect::<Vec<_>>()
+        .join(",");
+    writeln!(writer,
+        "{{\"schema_version\":1,\"type\":\"header\",\"algorithm\":\"a\",\"run_id\":{},\"instance\":{{\"radii\":[{}]}},\"seed\":{},\"options\":{{\"time_limit_seconds\":{},\"evaluation_limit\":{},\"iteration_limit\":{},\"restart_limit\":{}}},\"solver_version\":{},\"trace_min_interval_seconds\":0.1}}",
+        json_string(run_id), radii, options.seed, json_optional_number(options.time_limit_seconds),
+        options.evaluation_limit, options.iteration_limit, options.restart_limit,
+        json_string(env!("CARGO_PKG_VERSION")))
+}
+
+fn write_trace_event(
+    writer: &mut impl Write,
+    run_id: &str,
+    event: packing_core::solver::ProgressEvent<'_>,
+) -> io::Result<()> {
+    let points = event
+        .solution
+        .circles
+        .iter()
+        .map(|point| format!("[{},{}]", json_number(point.x), json_number(point.y)))
+        .collect::<Vec<_>>()
+        .join(",");
+    writeln!(writer,
+        "{{\"schema_version\":1,\"type\":\"snapshot\",\"run_id\":{},\"kind\":{},\"sequence\":{},\"elapsed_seconds\":{},\"evaluations\":{},\"iterations\":{},\"restarts\":{},\"radius\":{},\"points\":[{}],\"max_violation\":{},\"feasible\":{},\"output\":{}}}",
+        json_string(run_id), json_string(&event.kind.to_string()), event.sequence,
+        json_number(event.elapsed_seconds), event.evaluations, event.iterations, event.restarts,
+        json_number(event.solution.radius), points, json_number(event.max_violation),
+        event.feasible, json_string(event.output))
+}
+
+fn json_string(value: &str) -> String {
+    let mut escaped = String::with_capacity(value.len() + 2);
+    escaped.push('"');
+    for character in value.chars() {
+        match character {
+            '"' => escaped.push_str("\\\""),
+            '\\' => escaped.push_str("\\\\"),
+            '\n' => escaped.push_str("\\n"),
+            '\r' => escaped.push_str("\\r"),
+            '\t' => escaped.push_str("\\t"),
+            character if character.is_control() => {
+                use std::fmt::Write as _;
+                write!(escaped, "\\u{:04x}", character as u32).expect("String write cannot fail");
+            }
+            character => escaped.push(character),
+        }
+    }
+    escaped.push('"');
+    escaped
+}
+
 fn parse_solve_args(args: &[String]) -> Result<SolveArgs, Box<dyn Error>> {
     let mut parsed = SolveArgs::default();
     let mut index = 0;
@@ -165,6 +254,16 @@ fn parse_solve_args(args: &[String]) -> Result<SolveArgs, Box<dyn Error>> {
                 return Err("duplicate option --fixed-work".into());
             }
             parsed.fixed_work = true;
+            index += 1;
+            continue;
+        }
+        if argument == "--trace" {
+            index += 1;
+            let value = args.get(index).ok_or("missing value for --trace")?;
+            if value.starts_with("--") {
+                return Err("missing value for --trace".into());
+            }
+            set_once(&mut parsed.trace_path, value.clone(), "--trace")?;
             index += 1;
             continue;
         }

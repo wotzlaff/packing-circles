@@ -2,7 +2,7 @@
 //!
 //! Timed execution uses the native monotonic clock. Fixed-work mode disables the
 //! clock limit, making seeded runs reproducible within the same build. Rendering,
-//! filesystem access, and CLI formatting remain outside the optimization loop.
+//! filesystem access, and CLI formatting are owned by callers, not this module.
 
 use crate::numerics::{
     evaluate, initialize, min_scale, minimize, repair, value, BfgsConfig, BfgsTermination,
@@ -80,6 +80,84 @@ pub struct SolveResult {
     pub termination: StopReason,
 }
 
+/// Initial/final snapshots are unconditional; ordinary improvements are throttled.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum ProgressKind {
+    Initial,
+    Incumbent,
+    Final,
+}
+
+impl fmt::Display for ProgressKind {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.write_str(match self {
+            Self::Initial => "initial",
+            Self::Incumbent => "incumbent",
+            Self::Final => "final",
+        })
+    }
+}
+
+/// A borrowed, independently checked incumbent snapshot. Observers cannot mutate it.
+pub struct ProgressEvent<'a> {
+    pub kind: ProgressKind,
+    pub sequence: u64,
+    pub elapsed_seconds: f64,
+    pub evaluations: u64,
+    pub iterations: usize,
+    pub restarts: usize,
+    pub solution: &'a Solution,
+    pub output: &'a str,
+    pub max_violation: f64,
+    pub feasible: bool,
+}
+
+struct Emitter<'a, O> {
+    observer: &'a mut O,
+    start: Instant,
+    last_elapsed: f64,
+    sequence: u64,
+}
+
+impl<O: FnMut(ProgressEvent<'_>)> Emitter<'_, O> {
+    fn emit<const ENABLED: bool>(
+        &mut self,
+        instance: &Instance,
+        kind: ProgressKind,
+        best: &(Solution, String),
+        evaluations: u64,
+        iterations: usize,
+        restarts: usize,
+    ) -> Result<(), PackingError> {
+        if !ENABLED {
+            return Ok(());
+        }
+        let elapsed = self.start.elapsed().as_secs_f64();
+        if kind == ProgressKind::Incumbent && elapsed - self.last_elapsed < 0.1 {
+            return Ok(());
+        }
+        let report = validate(instance, &best.0)?;
+        if !report.is_feasible {
+            return Err(PackingError::InfeasibleSolution(report));
+        }
+        (self.observer)(ProgressEvent {
+            kind,
+            sequence: self.sequence,
+            elapsed_seconds: elapsed,
+            evaluations,
+            iterations,
+            restarts,
+            solution: &best.0,
+            output: &best.1,
+            max_violation: report.max_overlap.max(report.max_containment_violation),
+            feasible: report.is_feasible,
+        });
+        self.sequence += 1;
+        self.last_elapsed = elapsed;
+        Ok(())
+    }
+}
+
 struct Control<'a, C> {
     start: Instant,
     options: SolveOptions,
@@ -141,6 +219,47 @@ pub fn solve_with_control<C: FnMut() -> bool>(
     options: SolveOptions,
     cancellation: &mut C,
 ) -> Result<SolveResult, PackingError> {
+    run::<false, _, _>(instance, options, cancellation, &mut |_| {})
+}
+
+/// Solve with read-only incumbent snapshots, with initial/final events always emitted.
+///
+/// Ordinary improvement snapshots are separated by at least 100 ms. Enabling
+/// observation adds no objective evaluations or random draws. Fixed-work output
+/// and counters are unchanged; callback time counts toward timed budgets, so
+/// timed runs can complete less optimization work with an expensive observer.
+pub fn solve_with_observer<O: FnMut(ProgressEvent<'_>)>(
+    instance: &Instance,
+    options: SolveOptions,
+    observer: &mut O,
+) -> Result<SolveResult, PackingError> {
+    solve_with_control_and_observer(instance, options, &mut || false, observer)
+}
+
+/// Combine cooperative cancellation with an incumbent observer.
+pub fn solve_with_control_and_observer<C, O>(
+    instance: &Instance,
+    options: SolveOptions,
+    cancellation: &mut C,
+    observer: &mut O,
+) -> Result<SolveResult, PackingError>
+where
+    C: FnMut() -> bool,
+    O: FnMut(ProgressEvent<'_>),
+{
+    run::<true, _, _>(instance, options, cancellation, observer)
+}
+
+fn run<const TRACE: bool, C, O>(
+    instance: &Instance,
+    options: SolveOptions,
+    cancellation: &mut C,
+    observer: &mut O,
+) -> Result<SolveResult, PackingError>
+where
+    C: FnMut() -> bool,
+    O: FnMut(ProgressEvent<'_>),
+{
     let start = Instant::now();
     if options
         .time_limit_seconds
@@ -156,6 +275,13 @@ pub fn solve_with_control<C: FnMut() -> bool>(
         ));
     }
     let mut best = export_candidate(instance, line_fallback(instance)?)?;
+    let mut emitter = Emitter {
+        observer,
+        start,
+        last_elapsed: 0.0,
+        sequence: 0,
+    };
+    emitter.emit::<TRACE>(instance, ProgressKind::Initial, &best, 0, 0, 0)?;
     let control = Control {
         start,
         options,
@@ -189,7 +315,16 @@ pub fn solve_with_control<C: FnMut() -> bool>(
         };
         initialization_fallbacks += initialized.fallback_count;
         if let Ok(solution) = repair(instance, &initialized.points, 1.00005) {
-            consider(instance, solution, &mut best);
+            if consider(instance, solution, &mut best) {
+                emitter.emit::<TRACE>(
+                    instance,
+                    ProgressKind::Incumbent,
+                    &best,
+                    control.evaluations.get(),
+                    control.iterations.get(),
+                    restarts,
+                )?;
+            }
         }
         if control.poll(true).is_err() {
             break;
@@ -266,9 +401,26 @@ pub fn solve_with_control<C: FnMut() -> bool>(
             .map(|p| Point::new(p[0], p[1]))
             .collect();
         if let Ok(solution) = repair(instance, &optimized, 1.00005) {
-            consider(instance, solution, &mut best);
+            if consider(instance, solution, &mut best) {
+                emitter.emit::<TRACE>(
+                    instance,
+                    ProgressKind::Incumbent,
+                    &best,
+                    control.evaluations.get(),
+                    control.iterations.get(),
+                    restarts,
+                )?;
+            }
         }
     }
+    emitter.emit::<TRACE>(
+        instance,
+        ProgressKind::Final,
+        &best,
+        control.evaluations.get(),
+        control.iterations.get(),
+        restarts,
+    )?;
     Ok(SolveResult {
         solution: best.0,
         output: best.1,
@@ -282,16 +434,18 @@ pub fn solve_with_control<C: FnMut() -> bool>(
     })
 }
 
-fn consider(instance: &Instance, solution: Solution, best: &mut (Solution, String)) {
+fn consider(instance: &Instance, solution: Solution, best: &mut (Solution, String)) -> bool {
     // Avoid expensive formatting if even the unpadded radius cannot improve.
     if solution.radius >= best.0.radius {
-        return;
+        return false;
     }
     if let Ok(candidate) = export_candidate(instance, solution) {
         if candidate.0.radius < best.0.radius {
             *best = candidate;
+            return true;
         }
     }
+    false
 }
 
 fn line_fallback(instance: &Instance) -> Result<Solution, PackingError> {
