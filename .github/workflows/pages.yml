@@ -28,6 +28,8 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
           node-version: '24'
@@ -45,12 +47,21 @@ jobs:
           cargo test --workspace --locked
           python3 -m unittest discover -s bench -v
           python3 bench/generate_instances.py --check
-      - name: Replay archived numerical and A regression results
+      - name: Replay numerical reference and same-host A regression
         run: |
           cargo build -p packing-core --release --example numerical_probe --locked
           python3 bench/check_numerical_parity.py --replay-report bench/results/numerical-parity.json
           cargo build -p packing-cli --release --locked
-          python3 bench/check_a_regression.py
+          git archive --output "$RUNNER_TEMP/native-reference.tar" bb3609c0bd6afa36c1af140ee0573cb8848be47f
+          mkdir -p "$RUNNER_TEMP/native-reference"
+          tar -xf "$RUNNER_TEMP/native-reference.tar" -C "$RUNNER_TEMP/native-reference"
+          cargo build --manifest-path "$RUNNER_TEMP/native-reference/Cargo.toml" --target-dir "$RUNNER_TEMP/native-reference-target" -p packing-cli --release --locked
+          python3 bench/check_a_regression.py --reference-binary "$RUNNER_TEMP/native-reference-target/release/packing-cli" --report "$RUNNER_TEMP/native-regression.json"
+      - uses: actions/upload-artifact@v5
+        if: ${{ !cancelled() }}
+        with:
+          name: native-regression
+          path: ${{ runner.temp }}/native-regression.json
       - name: Build WASM
         run: python3 tools/build_wasm.py
       - name: Install browser test dependencies

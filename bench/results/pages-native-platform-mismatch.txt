@@ -1,0 +1,21 @@
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0807181Z ##[group]Run cargo build -p packing-core --release --example numerical_probe --locked
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0807729Z ^[[36;1mcargo build -p packing-core --release --example numerical_probe --locked^[[0m
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0808267Z ^[[36;1mpython3 bench/check_numerical_parity.py --replay-report bench/results/numerical-parity.json^[[0m
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0808719Z ^[[36;1mcargo build -p packing-cli --release --locked^[[0m
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0809027Z ^[[36;1mpython3 bench/check_a_regression.py^[[0m
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0836545Z shell: /usr/bin/bash -e {0}
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.0836865Z ##[endgroup]
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.1002469Z    Compiling libm v0.2.16
+build	Replay archived numerical and A regression results	2026-11-16T19:44:28.7193831Z    Compiling packing-core v0.1.0 (/home/runner/work/packing-circles/packing-circles/crates/packing-core)
+build	Replay archived numerical and A regression results	2026-11-16T19:44:29.9805261Z     Finished `release` profile [optimized] target(s) in 1.88s
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.0103864Z Replayed 426 C++ reference cases and 128 finite-difference states; maximum error 4.24e-08 × tolerance
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.0313901Z    Compiling packing-cli v0.1.0 (/home/runner/work/packing-circles/packing-circles/crates/packing-cli)
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.4906886Z     Finished `release` profile [optimized] target(s) in 0.46s
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5659813Z Traceback (most recent call last):
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5661446Z   File "/home/runner/work/packing-circles/packing-circles/bench/check_a_regression.py", line 28, in <module>
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5662292Z     main()
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5662591Z     ~~~~^^
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5663001Z   File "/home/runner/work/packing-circles/packing-circles/bench/check_a_regression.py", line 20, in main
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5663681Z     raise ValueError(f"output mismatch: {record['instance']}")
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5664170Z ValueError: output mismatch: bench/data/development/10_01.txt
+build	Replay archived numerical and A regression results	2026-11-16T19:44:32.5826255Z ##[error]Process completed with exit code 1.

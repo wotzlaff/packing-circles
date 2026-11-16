@@ -11,12 +11,23 @@ API credentials, or cross-origin isolation is required.
 
 The [Pages workflow](../.github/workflows/pages.yml) runs on relevant `main`
 changes or manual dispatch. It checks formatting, Clippy, Rust, Python, frozen
-datasets, numerical reference replay, archived native-A output/counter replay,
+datasets, numerical reference replay, same-host native-A output/counter replay,
 worker/native comparisons, and short UI acceptance tests before deployment.
 Thirty-second reference-machine performance measurements are documented
 separately in [website.md](website.md); shared CI smoke checks do not qualify
 performance. The deployment job uses the `github-pages` environment and the
 repository's Pages/OIDC permissions.
+
+Native A uses platform math, so its archived byte hashes are specific to the
+qualification environment. An initial release job incorrectly required those
+Debian/Rust-1.100 hashes on Ubuntu/Rust-1.99 and stopped at `10_01.txt` despite
+passing all 426 numerical reference cases. The release job now compiles the
+pinned Rust reference `bb3609c0bd6afa36c1af140ee0573cb8848be47f` on the same runner
+and requires all 50 fixed-work outputs and counters to match exactly. It retains
+the complete comparison report as a workflow artifact, including mismatches.
+`python3 bench/check_a_regression.py` still checks the original archive locally;
+`--reference-binary PATH --report PATH` selects same-host comparison. No numerical
+tolerances or quality targets were changed.
 
 `tools/build_wasm.py` generates the binary and `web/build-info.json`, including
 the source commit, working-tree state, Rust compiler, portable numerical profile

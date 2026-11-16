@@ -134,3 +134,9 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   recordings to two runs, 512 frames per run and 4 MiB of serialized snapshot
   payload; disclose any evicted intermediate frames. Retain the first and latest
   frames. The worker client retains at most another 1 MiB of recent snapshots.
+- Scope native byte-for-byte archive replay to its qualification environment.
+  The first Pages pipeline exposed that its Ubuntu/Rust-1.99 platform math differs
+  from Debian/Rust-1.100. Require exact comparison to the pinned pre-site Rust
+  solver compiled on the same CI host, alongside numerical oracle replay and
+  portable native/WASM checks. Preserve the failed job evidence; retain the
+  original archive command and unchanged numerical/quality thresholds.
