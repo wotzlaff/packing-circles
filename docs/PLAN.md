@@ -18,7 +18,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 1. Legacy baseline | Complete | [Source map and findings](legacy-baseline.md); [750-run report](../bench/results/contest-development.md); committed datasets and sanitizer evidence |
 | 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
 | 3. Numerical components | Complete | [426 fixed comparisons and 128 finite-difference states](numerical-parity.md); 49 Rust/21 Python tests; safe initialization and repair |
-| 4. Complete version A | Next | Assemble kernels into a seeded, bounded solver and CLI; run quality/runtime qualification |
+| 4. Complete version A | In progress | Seeded solver/CLI, checked incumbents, work/deadline limits, cancellation, and summaries implemented; timed quality qualification pending |
 | 5–9 | Pending | No improvement claims, WASM app, or deployment yet |
 
 Milestones 1–3 were completed on 2026-11-16. Foundation code was drafted while

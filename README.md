@@ -3,9 +3,10 @@
 Rust reimplementation of a contest-winning circle-packing solver, with a measured
 improvement track and a planned interactive WASM visualization.
 
-The Rust workspace provides geometry, contest-format I/O, independent validation,
-and version A's numerical components. End-to-end A/B solvers and the website are
-not implemented yet.
+The Rust workspace provides a seeded version A solver, contest-format I/O, and
+independent validation. Version A's numerical components passed fixed-state C++
+comparisons; end-to-end qualification is in progress. Version B and the website
+are not implemented yet.
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop
@@ -40,6 +41,29 @@ pairwise separation, finite values, and matching radii/counts. Its tolerance is
 and 2 for invalid input or another error. `format-solution` validates before and
 after rounding to four decimals; it returns an error if rounding loses feasibility.
 Formatting does not optimize or repair a packing.
+
+## Solve an instance
+
+```sh
+cargo build -p packing-cli --release --locked
+target/release/packing-cli solve bench/data/development/10_01.txt --algorithm a --seed 5 --time-limit 1.95
+target/release/packing-cli solve bench/data/development/10_01.txt --fixed-work --evaluations 5000
+```
+
+Omit the input path or use `-` to read stdin. The solver writes a checked
+four-decimal packing to stdout and one JSON run summary to stderr. The summary
+includes the seed, limits, actual work counts, internal/output feasibility,
+termination reason, and numerical recovery counts.
+
+Native version A supports 1–50 circles. It retains a feasible fallback before
+optimization, so zero budgets and cooperative cancellation still return a valid
+result. `solve_with_control` exposes cancellation to Rust callers. Initialization
+and final validation/export are bounded atomic work units.
+
+Fixed-work mode disables the deadline and requires an explicit evaluation,
+iteration, or restart cap. Identical seeds and work limits reproduce output and
+counts within the same build; timed runs may differ. Evaluation counts cover
+scalar or value/gradient calls, excluding initialization and validation.
 
 ## Legacy baseline
 

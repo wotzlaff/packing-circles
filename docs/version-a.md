@@ -13,8 +13,9 @@ updates, restarts, feasibility scaling, and best repaired incumbent selection.
 `main.cpp`'s softmax formulation is a secondary benchmark, not the definition of A.
 
 The numerical kernels are implemented in `crates/packing-core/src/numerics/`.
-End-to-end solving, restart/deadline orchestration, and CLI integration remain
-milestone 4. Record numerical experiments before accepting additional deviations.
+End-to-end solving, restart/deadline orchestration, and CLI integration are now
+implemented; milestone 4's timed qualification is pending. Record numerical
+experiments before accepting additional deviations.
 
 ## Historical behavior to retain
 
@@ -95,3 +96,29 @@ Regression coverage includes legacy centering, initializer prefixes across all 5
 development inputs with two seeds, zero/invalid work limits, cancellation,
 threshold equality, coincidence, diagonal rounding loss, line-search exhaustion,
 and subnormal curvature that would divide by zero in the original BFGS update.
+
+## Solver orchestration
+
+`solver.rs` assembles seeded rolling initialization, the reference's 0.999
+initial shrink and `R-0.001` trial radius, adaptive BFGS, and radial repair.
+Defaults preserve one rolling trial and the legacy penalty/Wolfe constants.
+
+A simple line packing is retained before any optimization. Valid initializations
+are also eligible incumbents before BFGS starts; this defined fallback behavior
+prevents empty output on tiny budgets or local-search failures. Every replacement
+passes internal and serialized geometry checks. The enclosing radius receives
+the legacy `1e-4` containment margin (except one circle), then rounds upward.
+If coordinate rounding erases a pair gap, additional radial slack guarantees
+`2e-4` absolute pair clearance before revalidation. This is export safety, not
+a different optimization objective.
+
+Time, scalar/gradient-call, attempted-iteration, and restart limits apply across
+the whole solve. Cancellation is checked at restart, iteration, and objective
+boundaries. Fallback creation, one rolling initialization, and final validation
+are bounded atomic units; timed qualification measures the process including
+these costs. Fixed-work mode disables deadline checks for reproducibility.
+
+The native solver currently accepts at most 50 circles, bounding dense-Hessian
+memory and atomic initialization work to the contest scale. General geometry/I/O
+can still represent larger instances. Numerical failures retain the last checked
+incumbent and increment diagnostics rather than producing invalid output.

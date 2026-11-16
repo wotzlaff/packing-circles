@@ -51,3 +51,20 @@ that belong in B. See the full source map in `legacy-baseline.md`.
 - Correct B's experiment shortlist to reflect the chosen explicit-radius objective:
   it has no exponential term. Softmax stabilization is only relevant to a future
   alternative objective, not a presumed improvement to the selected solver.
+
+## Native version A assembly
+
+- Save a validated line fallback before polling zero budgets/cancellation and save
+  repaired initialization candidates before local optimization. This adds defined
+  output where the legacy driver could leave its best-point vector empty.
+- Count each scalar/gradient evaluation and attempted BFGS iteration across all
+  restarts. Exclude initialization/export from evaluation counts but include them
+  in measured time. Poll cancellation/deadline at objective and iteration boundaries.
+- Keep the native solver at 1–50 circles to bound dense-Hessian storage and atomic
+  initialization work; leave general-purpose geometry parsing unrestricted.
+- Add export containment slack and, only if needed, absolute separation slack to
+  survive four-decimal coordinates. Compare only validated, serialized incumbents.
+- Qualify against the frozen 750-run legacy archive on the same recorded CPU/OS.
+  Disclose that this is an archived baseline with undefined behavior and uncontrolled
+  external load, not a contemporary paired-seed experiment. Rust uses seeds 5–9;
+  the unmodified C++ executable uses its fixed seed sequence on each invocation.
