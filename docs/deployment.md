@@ -74,7 +74,23 @@ The packaged local preflight passed in Chrome 157.0.8103.78 and Firefox 160.0
 (geckodriver 0.37.1). Stable versions were obtained from the official
 [Chrome for Testing feed](https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions-with-downloads.json)
 and [Mozilla product feed](https://product-details.mozilla.org/1.0/firefox_versions.json).
-Published release evidence is recorded after deployment verification.
+The published URL passed the same checks on 2026-11-16 in both stable browsers.
+The first Firefox export check exposed a test-harness race: Firefox creates an
+empty final filename before finishing the `.part` file. The harness now waits
+for a nonempty completed download; all geometry and format assertions remain
+unchanged. [Initial failure](../bench/results/pages-firefox-download-race.json)
+and [successful public verification](../bench/results/pages-release.json) are retained.
+
+Verified application release: `3cf0f1ea95326a91749bc4c5f807c16a6209e3d3`.
+[Checks](https://github.com/wotzlaff/packing-circles/actions/runs/43943101368)
+and [Pages deployment](https://github.com/wotzlaff/packing-circles/actions/runs/43943101493)
+both passed. The served WASM hash is
+`4fc7da442f4c9219e975543fe3d370c507da57ba59d33d3b28ea23c2993ac475`.
+The clean release build used Rust 1.99.1 and the same portable math profile.
+The [same-host native CI report](../bench/results/pages-native-ci-regression.json)
+records zero differences on all 50 development inputs. The original
+[platform-specific failure log](../bench/results/pages-native-platform-mismatch.txt)
+is preserved alongside it.
 
 The browser uses portable software math. Native A's benchmark qualification is
 preserved, and B remains explicitly experimental; publication does not claim

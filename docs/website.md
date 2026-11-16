@@ -6,6 +6,10 @@ remains experimental: none of its three development candidates met the quality
 target. Native quality qualification does not transfer automatically to the
 browser's portable math profile.
 
+Live app: <https://wotzlaff.github.io/packing-circles/>.
+[Deployment and stable-browser verification](deployment.md) record the released
+commit, served WASM hash, and public URL checks.
+
 ## Use the app
 
 Build and serve with the [README commands](../README.md#run-wasm-locally).

@@ -1,0 +1,53 @@
+{
+  "url": "https://wotzlaff.github.io/packing-circles/",
+  "measured_at": "2026-11-16T19:51:03.619Z",
+  "passed": false,
+  "cases": [
+    {
+      "name": "published build metadata and WASM hash",
+      "passed": true,
+      "details": {
+        "source_commit": "3cf0f1ea95326a91749bc4c5f807c16a6209e3d3",
+        "wasm_sha256": "4fc7da442f4c9219e975543fe3d370c507da57ba59d33d3b28ea23c2993ac475"
+      }
+    },
+    {
+      "name": "Chrome: first load and reload",
+      "passed": true
+    },
+    {
+      "name": "Chrome: sequential A and explicit B",
+      "passed": true,
+      "details": {
+        "seen": [
+          "A · legacy is running · comparison runs use equal budgets, one after another.",
+          "B · tight penalty is running · comparison runs use equal budgets, one after another."
+        ],
+        "tabs": [
+          "A · legacy · complete",
+          "B · tight penalty · complete"
+        ]
+      }
+    },
+    {
+      "name": "Firefox: first load and reload",
+      "passed": true
+    },
+    {
+      "name": "Firefox: sequential A and explicit B",
+      "passed": false,
+      "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 31\n\n    at checkSolution (file:///home/nico/circles/web/tests/release.mjs:28:48)\n    at file:///home/nico/circles/web/tests/release.mjs:50:164\n    at async test (file:///home/nico/circles/web/tests/release.mjs:24:55)\n    at async smoke (file:///home/nico/circles/web/tests/release.mjs:38:3)\n    at async file:///home/nico/circles/web/tests/release.mjs:88:3"
+    }
+  ],
+  "build_info": {
+    "version": "0.1.0",
+    "source_commit": "3cf0f1ea95326a91749bc4c5f807c16a6209e3d3",
+    "dirty": false,
+    "math_profile": "portable-libm-0.2.16",
+    "rustc": "rustc 1.99.1 (58cf8f9c3 2026-10-13)",
+    "wasm_sha256": "4fc7da442f4c9219e975543fe3d370c507da57ba59d33d3b28ea23c2993ac475"
+  },
+  "chrome_version": "157.0.8103.78",
+  "firefox_version": "160.0",
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n1 !== 31\n\n    at checkSolution (file:///home/nico/circles/web/tests/release.mjs:28:48)\n    at file:///home/nico/circles/web/tests/release.mjs:50:164\n    at async test (file:///home/nico/circles/web/tests/release.mjs:24:55)\n    at async smoke (file:///home/nico/circles/web/tests/release.mjs:38:3)\n    at async file:///home/nico/circles/web/tests/release.mjs:88:3"
+}

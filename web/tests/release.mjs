@@ -83,7 +83,18 @@ try {
   const ff = {
     navigate: url => call('POST', '/url', {url}), reload: () => call('POST', '/refresh', {}),
     evaluate: (fn, arg) => call('POST', '/execute/async', {script: `const done = arguments[arguments.length - 1]; Promise.resolve((${fn.toString()})(arguments[0])).then(value => done({value}), error => done({error: String(error)}));`, args:[arg ?? null]}).then(x => { if (x.error) throw new Error(x.error); return x.value; }),
-    download: async () => { const before = new Set(await readdir(downloadDir)); await ff.evaluate(() => document.querySelector('#export-solution').click()); const file = await waitFor(async () => (await readdir(downloadDir)).find(n => !before.has(n) && !n.endsWith('.part')), 'Firefox download'); return readFile(path.join(downloadDir, file), 'utf8'); },
+    download: async () => {
+      const before = new Set(await readdir(downloadDir));
+      await ff.evaluate(() => document.querySelector('#export-solution').click());
+      return waitFor(async () => {
+        const files = await readdir(downloadDir);
+        const file = files.find(n => !before.has(n) && !n.endsWith('.part'));
+        if (!file || files.some(n => n.endsWith('.part'))) return false;
+        // Firefox creates the final empty placeholder before finishing its .part file.
+        const output = await readFile(path.join(downloadDir, file), 'utf8');
+        return output.trim() ? output : false;
+      }, 'completed Firefox download');
+    },
   };
   await smoke(ff, 'Firefox');
   await call('DELETE', '', undefined); session = null;
