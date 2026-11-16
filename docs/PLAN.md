@@ -28,7 +28,7 @@ results in `docs/`; update this plan when a gate passes or scope changes.
 - **Fairness:** use release builds, one process at a time on the same machine,
   equal end-to-end solver budgets including initialization and repair, and five
   runs per instance at 0.1, 0.5, and 1.95 seconds. Use fixed seeds for Rust; the
-  unmodified legacy executable uses nondeterministic randomness, so compare its
+  legacy RNG behavior varies by source (see `legacy-selection.md`), so compare
   repeated-run distributions rather than claim paired seeds. Report time overruns.
 - **Data:** generate and commit 50 development instances and 50 held-out instances,
   ten of each size 10, 20, 30, 40, and 50 in each set, with integer radii 20–99.
@@ -46,11 +46,12 @@ The time budgets above are project benchmarks, not asserted contest requirements
 generator, independent solution checker, and baseline results under
 `bench/results/`. Put temporary binaries outside `legacy/`.
 
-Map `main.cpp` and `fun_softmax.cpp` to initialization, centering, objective and
-gradient, strong-Wolfe search, BFGS, penalty scheduling, repair, and output. Record
+Map the selected reference to initialization, centering, objective and gradient,
+strong-Wolfe search, BFGS, penalty scheduling, repair, and output. Record
 defaults, termination conditions, and suspected quirks before deciding how A
-handles them. Identify whether `main.cpp` is the intended winning entry point;
-until confirmed, label it the provisional reference.
+handles them. `circles-hackbfgs.tr.cpp` is the provisional winning entry point
+based on notebook and benchmark usage; retain `main.cpp` as a comparison baseline.
+See [selection evidence](legacy-selection.md); confirm provenance before porting.
 
 **Done when:** both datasets and their hashes exist; checker tests reject overlap,
 out-of-bounds circles, missing circles, and nonfinite values; legacy runs complete
@@ -183,7 +184,8 @@ Record the release URL and commit in this document.
 ## Review points and unresolved inputs
 
 - Confirm the historical winning entry point before freezing A; meanwhile inspect
-  and measure `main.cpp` as the provisional baseline.
+  and measure `circles-hackbfgs.tr.cpp` as the provisional reference and `main.cpp`
+  as a comparison baseline.
 - If original contest inputs/results become available, archive provenance and add
   a separate evaluation track; never substitute synthetic data without labeling it.
 - Select frontend tooling during milestone 8 based on worker, chart, and static
