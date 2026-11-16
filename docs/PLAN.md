@@ -23,7 +23,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
 | 7. Resumable WASM | Complete | [Session/worker architecture and browser measurements](wasm.md); 40 native/WASM comparisons in each of Chromium/Firefox, identical radii; cancellation 30.7/15 ms |
 | 8. Interactive comparison site | Complete | [Behavior, screenshots and 30-second browser measurements](website.md); all acceptance flows pass; control p95 20.6/13 ms, render p95 0.9/5 ms in Chromium/Firefox |
-| 9. GitHub Pages | Pending | Deployment follows the interactive site |
+| 9. GitHub Pages | In progress | Versioned static packaging and release workflow ready; publishing and stable-browser URL verification underway |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.

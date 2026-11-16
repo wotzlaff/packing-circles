@@ -1,8 +1,9 @@
 # Resumable WASM execution
 
-Milestone 7 is complete. The development harness runs version A and all three
-experimental B policies in a Web Worker. The comparison website and deployment
-remain milestones 8–9; B has not met its quality target.
+Milestone 7 is complete. The worker runs version A and all three experimental B
+policies. The [interactive comparison site](website.md) now builds on this API;
+B has not met its quality target. The measurements below record milestone 7's
+original development harness.
 
 ## Build and run
 

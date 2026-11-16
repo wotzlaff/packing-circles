@@ -1,0 +1,81 @@
+name: Deploy Pages
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'web/**'
+      - 'crates/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'tools/build_wasm.py'
+      - 'tools/package_site.py'
+      - '.github/workflows/pages.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - name: Select stable Rust and WASM target
+        run: |
+          rustup default stable
+          rustup component add rustfmt clippy
+          rustup target add wasm32-unknown-unknown
+      - name: Validate Rust and benchmark tooling
+        run: |
+          cargo fmt --all --check
+          cargo clippy --workspace --all-targets --locked -- -D warnings
+          cargo test --workspace --locked
+          python3 -m unittest discover -s bench -v
+          python3 bench/generate_instances.py --check
+      - name: Replay archived numerical and A regression results
+        run: |
+          cargo build -p packing-core --release --example numerical_probe --locked
+          python3 bench/check_numerical_parity.py --replay-report bench/results/numerical-parity.json
+          cargo build -p packing-cli --release --locked
+          python3 bench/check_a_regression.py
+      - name: Build WASM
+        run: python3 tools/build_wasm.py
+      - name: Install browser test dependencies
+        working-directory: web
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
+      - name: Test worker and site
+        run: |
+          node --test web/tests/data.test.mjs
+          node web/tests/browser.mjs --report "$RUNNER_TEMP/wasm-browser.json"
+          node web/tests/site.mjs --stress-seconds 3 --report "$RUNNER_TEMP/site.json" --screenshots "$RUNNER_TEMP/site-screenshots"
+      - uses: actions/configure-pages@v5
+      - name: Package public site
+        run: python3 tools/package_site.py --output _site
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

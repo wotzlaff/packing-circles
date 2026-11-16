@@ -9,7 +9,7 @@ component parity checks and the [750-run quality/runtime qualification](docs/ver
 Three [version B experiments](docs/version-b-experiments.md) remain experimental;
 none met the improvement target. The interactive site provides packing animation,
 sequential comparisons, synchronized replay, and validated recording export/import.
-GitHub Pages deployment is the next release step.
+Open the [interactive lab](https://wotzlaff.github.io/packing-circles/).
 See the [implementation plan](docs/PLAN.md) for milestones and acceptance gates.
 
 ## Develop
@@ -69,6 +69,8 @@ hash and source commit against `web/build-info.json`, and copies only public
 assets. The root HTML points to assets under `assets/<commit-prefix>/`, keeping
 module, worker, WASM, and metadata URLs together. The Pages workflow runs checks,
 builds WASM, and packages the same site before deployment.
+See [deployment and release verification](docs/deployment.md) for the Pages
+workflow, build provenance, and stable-browser smoke command.
 
 ## Inspect a packing
 
