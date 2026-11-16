@@ -1,0 +1,117 @@
+[
+  {
+    "command": [
+      "/home/nico/circles/bench/build/contest",
+      "1e-7",
+      "1e-5",
+      "1e-5",
+      "1e-5",
+      "1",
+      "1.95",
+      "0.1",
+      "0.95"
+    ],
+    "elapsed_seconds": 0.04190905764698982,
+    "returncode": 0,
+    "timeout": false,
+    "stdout": "2.7178\n1 -1.7177 0.0000\n1 0.2824 0.0000\n",
+    "stderr": "",
+    "variant": "contest",
+    "input": "tests/fixtures/two_unit_circles.in",
+    "input_sha256": "3c5b54a75e483fd7863419c9c44f76601871d171c02a7a1e7490efaf809bd1da",
+    "budget_seconds": 1.95,
+    "validation": {
+      "feasible": true,
+      "count_matches": true,
+      "radii_match": true,
+      "finite": true,
+      "enclosing_radius": 2.7178,
+      "internal_tolerance": 2.7178000000000003e-09,
+      "max_containment_violation": 0.0,
+      "max_separation_violation": 0.0,
+      "max_violation": 0.0,
+      "rounding_allowances": {
+        "coordinate_component": 5e-05,
+        "enclosing_radius": 5e-05,
+        "containment": 0.00012071067811865476,
+        "separation": 0.0001414213562373095
+      },
+      "rounding_feasible": true,
+      "area_bound_ratio": 1.9217748099087988
+    },
+    "build": {
+      "variant": "contest",
+      "source": "legacy/circles-hackbfgs.tr.cpp",
+      "source_sha256": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083",
+      "legacy_commit": "33a13c04c6b27a9be1b87db9a2a5bbc82c7ecbc0",
+      "compiler": "g++ (Debian 12.2.0-14+deb12u1) 12.2.0",
+      "flags": [
+        "-O2",
+        "-std=c++17"
+      ],
+      "binary_sha256": "a014e5c2a0d84ef3eb4c85efddfabce7653131ddb904b8256c00bc3f05303c70",
+      "sanitizers": false,
+      "included_sources": {
+        "circles-hackbfgs.tr.cpp": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083"
+      }
+    }
+  },
+  {
+    "command": [
+      "/home/nico/circles/bench/build/main",
+      "10000",
+      "0.0001",
+      "10",
+      "50",
+      "1.95",
+      "1e-6",
+      "0.2",
+      "0.5"
+    ],
+    "elapsed_seconds": 0.5294197909533978,
+    "returncode": 0,
+    "timeout": false,
+    "stdout": "2.4884\n1 -0.3931 -1.4355\n1 0.1352 0.4936\n",
+    "stderr": "",
+    "variant": "main",
+    "input": "tests/fixtures/two_unit_circles.in",
+    "input_sha256": "3c5b54a75e483fd7863419c9c44f76601871d171c02a7a1e7490efaf809bd1da",
+    "budget_seconds": 1.95,
+    "validation": {
+      "feasible": true,
+      "count_matches": true,
+      "radii_match": true,
+      "finite": true,
+      "enclosing_radius": 2.4884,
+      "internal_tolerance": 2.4884000000000002e-09,
+      "max_containment_violation": 0.0,
+      "max_separation_violation": 0.0,
+      "max_violation": 0.0,
+      "rounding_allowances": {
+        "coordinate_component": 5e-05,
+        "enclosing_radius": 5e-05,
+        "containment": 0.00012071067811865476,
+        "separation": 0.0001414213562373095
+      },
+      "rounding_feasible": true,
+      "area_bound_ratio": 1.7595645143046048
+    },
+    "build": {
+      "variant": "main",
+      "source": "legacy/main.cpp",
+      "source_sha256": "520d5a386b35287a0339513a73dc30f54bbf3f2e65613178f1ec5122e706cf4c",
+      "legacy_commit": "33a13c04c6b27a9be1b87db9a2a5bbc82c7ecbc0",
+      "compiler": "g++ (Debian 12.2.0-14+deb12u1) 12.2.0",
+      "flags": [
+        "-O2",
+        "-std=c++17"
+      ],
+      "binary_sha256": "3e3a8443ec02e4fecf49906e8d332956bd7375baeeba79e4e7c39b5bdebec554",
+      "sanitizers": false,
+      "included_sources": {
+        "main.cpp": "520d5a386b35287a0339513a73dc30f54bbf3f2e65613178f1ec5122e706cf4c",
+        "fun_softmax.cpp": "a08eeac823bef33158ab2b9c1cf49f6a9eb680f47e91b5bb6c9a2fadba0f623a"
+      }
+    }
+  }
+]

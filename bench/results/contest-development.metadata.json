@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "started_utc": "2026-11-16T10:04:30.525232+00:00",
+  "root_commit": "54447de6549d308640bbf604752ed4bb1b848441",
+  "build": {
+    "variant": "contest",
+    "source": "legacy/circles-hackbfgs.tr.cpp",
+    "source_sha256": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083",
+    "legacy_commit": "33a13c04c6b27a9be1b87db9a2a5bbc82c7ecbc0",
+    "compiler": "g++ (Debian 12.2.0-14+deb12u1) 12.2.0",
+    "flags": [
+      "-O2",
+      "-std=c++17"
+    ],
+    "binary_sha256": "a014e5c2a0d84ef3eb4c85efddfabce7653131ddb904b8256c00bc3f05303c70",
+    "sanitizers": false,
+    "included_sources": {
+      "circles-hackbfgs.tr.cpp": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083"
+    }
+  },
+  "runner_sha256": "3dbd3d98aa650313d175216856d116733fc97b9a28fb5df84119b3284fcfe7ec",
+  "checker_sha256": "14536a64e2ef6cacb5d8670ebb38a3ff6f169dbceb4c14423c2953773ee85391",
+  "wrapper_sha256": "92177d1206d1345589f476438400672d5641cb7dd47dffefbfef687bb6d9c79a",
+  "platform": "Linux-6.1.0-44-amd64-x86_64-with-glibc2.36",
+  "cpu": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
+  "python": "3.11.2",
+  "manifest_sha256": "277ea135fde85086b638b1ee757db42a411025b7be34885a37bde890516c62e5",
+  "protocol": {
+    "split": "development",
+    "input_count": 50,
+    "budgets_seconds": [
+      0.1,
+      0.5,
+      1.95
+    ],
+    "repetitions": 5,
+    "serial_execution": true,
+    "external_machine_load_controlled": false
+  },
+  "rng": "fixed seed_seq{5}; standard-library-dependent shuffle",
+  "limitations": [
+    "unmodified legacy; no internal feasibility or evaluation counts",
+    "contest variant has sanitizer-confirmed undefined behavior"
+  ]
+}

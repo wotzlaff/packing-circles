@@ -63,4 +63,29 @@ python3 bench/legacy.py run --variant contest --input PATH --budget SECONDS
 python3 bench/legacy.py run --variant main --input PATH --budget SECONDS
 ```
 
-Here `contest` means the provisional `circles-hackbfgs.tr.cpp`; `main` means `legacy/main.cpp`. Builds go to ignored `bench/build/`. Build metadata records compiler flags, source hashes, legacy revision, and binary hash. Baseline results are pending.
+Here `contest` means the provisional `circles-hackbfgs.tr.cpp`; `main` means `legacy/main.cpp`. Builds go to ignored `bench/build/`. Build metadata records compiler flags, source hashes, legacy revision, and binary hash.
+
+## Baseline results
+
+The selected candidate completed **750/750** runs on the 50 development inputs:
+five repetitions at each of 0.1, 0.5, and 1.95 seconds. All serialized outputs
+passed the independent strict-tolerance geometric checks. No process crashed or
+timed out, and none exceeded budget plus `max(20 ms, 10% of budget)`. Every expected
+input/budget/repetition combination was checked for uniqueness and completeness,
+and validation was recomputed from all archived outputs.
+
+See [the generated report](../bench/results/contest-development.md),
+[raw runs](../bench/results/contest-development.jsonl), and
+[machine/build metadata](../bench/results/contest-development.metadata.json).
+Measurements used GCC 12.2.0, `-O2 -std=c++17`, and an Intel Core i7-8700.
+Solvers ran serially and local compilation was paused; external machine load was
+not controlled. The 50 held-out inputs have not been evaluated.
+
+This is **observational evidence for an unmodified program with undefined
+behavior**, not proof of deterministic reproduction, memory safety, internal
+feasibility, or optimality. The checker sees only rounded output; internal states
+and evaluation counts are unavailable. The source remains unchanged.
+
+The [two-unit smoke archive](../bench/results/two-unit-smoke.json) also records
+both variants on the same simple input. It is a feasibility smoke check, not a
+full quality/performance qualification of the secondary `main.cpp` solver.

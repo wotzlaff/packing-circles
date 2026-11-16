@@ -41,6 +41,9 @@ def summarize(path):
     for row in rows:
         groups[(row["variant"], row["budget_seconds"], row["circle_count"])].append(row)
     lines = ["# Legacy baseline results", "", "Generated from `" + path.name + "`.", "",
+             "The unmodified contest candidate has a sanitizer-confirmed out-of-bounds read.",
+             "These results describe observed behavior, not reproducibility or memory safety.",
+             "See [the source map](../../docs/legacy-baseline.md).", "",
              "Validation covers serialized output only; internal states are unavailable.",
              "Each cell groups ten instances × five repetitions in the full protocol.",
              "Quality ratios include successful, strictly feasible runs only.", "",
