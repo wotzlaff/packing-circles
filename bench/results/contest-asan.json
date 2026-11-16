@@ -1,0 +1,39 @@
+{
+  "command": [
+    "/home/nico/circles/bench/build/contest-asan",
+    "1e-7",
+    "1e-5",
+    "1e-5",
+    "1e-5",
+    "1",
+    "0.1",
+    "0.1",
+    "0.95"
+  ],
+  "elapsed_seconds": 0.025626778602600098,
+  "returncode": 1,
+  "timeout": false,
+  "stdout": "",
+  "stderr": "=================================================================\n==4==ERROR: AddressSanitizer: heap-buffer-overflow on address 0x604000000080 at pc 0x55c17404f43d bp 0x7fffc9f67fd0 sp 0x7fffc9f67fc8\nREAD of size 8 at 0x604000000080 thread T0\n    #0 0x55c17404f43c in findCenter(std::vector<double, std::allocator<double> > const&, std::vector<double, std::allocator<double> > const&, int, double, double, double) /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:124\n    #1 0x55c174066aa3 in rollAroundHeuristic(std::vector<double, std::allocator<double> > const&) /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:224\n    #2 0x55c1740697ea in repeatedHeuristic(std::vector<double, std::allocator<double> > const&, int) /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:253\n    #3 0x55c17406e85f in main /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:709\n    #4 0x7f445aa45249  (/lib/x86_64-linux-gnu/libc.so.6+0x27249)\n    #5 0x7f445aa45304 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x27304)\n    #6 0x55c174048490 in _start (/home/nico/circles/bench/build/contest-asan+0x54490)\n\n0x604000000080 is located 0 bytes to the right of 48-byte region [0x604000000050,0x604000000080)\nallocated by thread T0 here:\n    #0 0x7f445acb94c8 in operator new(unsigned long) ../../../../src/libsanitizer/asan/asan_new_delete.cpp:95\n    #1 0x55c1740654dc in std::__new_allocator<double>::allocate(unsigned long, void const*) /usr/include/c++/12/bits/new_allocator.h:137\n    #2 0x55c1740654dc in std::allocator_traits<std::allocator<double> >::allocate(std::allocator<double>&, unsigned long) /usr/include/c++/12/bits/alloc_traits.h:464\n    #3 0x55c1740654dc in std::_Vector_base<double, std::allocator<double> >::_M_allocate(unsigned long) /usr/include/c++/12/bits/stl_vector.h:378\n    #4 0x55c1740654dc in std::_Vector_base<double, std::allocator<double> >::_M_create_storage(unsigned long) /usr/include/c++/12/bits/stl_vector.h:395\n    #5 0x55c1740654dc in std::_Vector_base<double, std::allocator<double> >::_Vector_base(unsigned long, std::allocator<double> const&) /usr/include/c++/12/bits/stl_vector.h:332\n    #6 0x55c1740654dc in std::vector<double, std::allocator<double> >::vector(unsigned long, std::allocator<double> const&) /usr/include/c++/12/bits/stl_vector.h:552\n    #7 0x55c1740654dc in rollAroundHeuristic(std::vector<double, std::allocator<double> > const&) /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:210\n    #8 0x55c1740697ea in repeatedHeuristic(std::vector<double, std::allocator<double> > const&, int) /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:253\n    #9 0x55c17406e85f in main /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:709\n    #10 0x7f445aa45249  (/lib/x86_64-linux-gnu/libc.so.6+0x27249)\n\nSUMMARY: AddressSanitizer: heap-buffer-overflow /home/nico/circles/legacy/circles-hackbfgs.tr.cpp:124 in findCenter(std::vector<double, std::allocator<double> > const&, std::vector<double, std::allocator<double> > const&, int, double, double, double)\nShadow bytes around the buggy address:\n  0x0c087fff7fc0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c087fff7fd0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c087fff7fe0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c087fff7ff0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00\n  0x0c087fff8000: fa fa 00 00 00 00 00 fa fa fa 00 00 00 00 00 00\n=>0x0c087fff8010:[fa]fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c087fff8020: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c087fff8030: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c087fff8040: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c087fff8050: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\n  0x0c087fff8060: fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa fa\nShadow byte legend (one shadow byte represents 8 application bytes):\n  Addressable:           00\n  Partially addressable: 01 02 03 04 05 06 07 \n  Heap left redzone:       fa\n  Freed heap region:       fd\n  Stack left redzone:      f1\n  Stack mid redzone:       f2\n  Stack right redzone:     f3\n  Stack after return:      f5\n  Stack use after scope:   f8\n  Global redzone:          f9\n  Global init order:       f6\n  Poisoned by user:        f7\n  Container overflow:      fc\n  Array cookie:            ac\n  Intra object redzone:    bb\n  ASan internal:           fe\n  Left alloca redzone:     ca\n  Right alloca redzone:    cb\n==4==ABORTING\n",
+  "input": "bench/data/development/10_01.txt",
+  "input_sha256": "a86c06e2c5e4891817a533b953b55e88a62be04ed94d9f052837a51bbcaf4b52",
+  "build": {
+    "variant": "contest",
+    "source": "legacy/circles-hackbfgs.tr.cpp",
+    "source_sha256": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083",
+    "legacy_commit": "33a13c04c6b27a9be1b87db9a2a5bbc82c7ecbc0",
+    "compiler": "g++ (Debian 12.2.0-14+deb12u1) 12.2.0",
+    "flags": [
+      "-O1",
+      "-g",
+      "-std=c++17",
+      "-fsanitize=address,undefined",
+      "-fno-omit-frame-pointer"
+    ],
+    "binary_sha256": "b831102f77cf2765677507832f5f6dacdfb640b8bd91c979fa4a19f45f2b1077",
+    "sanitizers": true,
+    "included_sources": {
+      "circles-hackbfgs.tr.cpp": "85f0d9880e2dea9abc8718c7abd283c43c9e1bdde5fba258f8d9371721cbc083"
+    }
+  }
+}
