@@ -99,6 +99,15 @@ passed. [Public verification](../bench/results/early-detail-public-release.json)
 passed in stable Chrome 157 and Firefox 160, including expanded early-time
 controls, slow replay, checkpoint stepping, A/B runs and checked downloads.
 
+Following the user's clarification, the default now emphasizes late refinements.
+Release `d71f71cd28f8ce8d578e2a82e2ef996e16e28e89` passed
+[Checks](https://github.com/wotzlaff/packing-circles/actions/runs/43952884931),
+[deployment](https://github.com/wotzlaff/packing-circles/actions/runs/43952884958),
+and [public Chrome/Firefox verification](../bench/results/late-view-public-release.json).
+The final half of elapsed time controls the chart and replay; early reductions
+do not determine its radius scale. Tests cover distinct sub-millionth radius
+labels, a large excluded initial drop, and honest reporting of flat late windows.
+
 The browser uses portable software math. Native A's benchmark qualification is
 preserved, and B remains explicitly experimental; publication does not claim
 that a B release target or portable timed-quality qualification has passed.
