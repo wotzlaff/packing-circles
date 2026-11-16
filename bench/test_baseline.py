@@ -34,6 +34,11 @@ class BaselineTests(unittest.TestCase):
         self.assertFalse(check_output("1\n1 2 0", [1])["feasible"])
         self.assertTrue(check_output("1\n1 0 0", [1])["feasible"])
 
+    def test_finite_coordinate_overflow_is_json_safe_and_invalid(self):
+        report = check_output("1\n1 1.7e308 1.7e308", [1])
+        self.assertFalse(report["feasible"])
+        json.dumps(report, allow_nan=False)
+
     def test_summary_excludes_invalid_radius_from_quality(self):
         common = {"variant": "contest", "budget_seconds": 0.1, "circle_count": 10,
                   "elapsed_seconds": 0.1, "returncode": 0, "timeout": False, "overrun": False}

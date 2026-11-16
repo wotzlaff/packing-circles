@@ -129,6 +129,15 @@ def validate_solution(radii: list[float], solution: dict[str, Any]) -> dict[str,
                    for expected_radius, (_, x, y) in zip(radii, parsed)]
     separation = [radii[i] + radii[j] - math.hypot(parsed[i][1] - parsed[j][1], parsed[i][2] - parsed[j][2])
                   for i in range(len(radii)) for j in range(i + 1, len(radii))]
+    if not all(math.isfinite(value) for value in containment + separation):
+        return {
+            "feasible": False, "count_matches": True, "radii_match": radii_match,
+            "finite": False, "arithmetic_error": "geometric calculation overflow",
+            "enclosing_radius": radius, "internal_tolerance": tolerance,
+            "max_containment_violation": None, "max_separation_violation": None,
+            "max_violation": None, "rounding_allowances": _rounding_allowances(),
+            "rounding_feasible": False,
+        }
     max_containment = max([0.0, *containment])
     max_separation = max([0.0, *separation])
     allowances = _rounding_allowances()
