@@ -115,9 +115,10 @@ python3 bench/replay_trace.py bench/results/trace-overhead.traces/50_01-rep0.jso
 `bench/configs/legacy-a-smoke.json` runs both executables across five development
 inputs and two budgets; build the separate legacy reference first. The Rust-only
 configuration needs no legacy checkout. Configured paths may select other
-executables/source files, so a new machine can collect its own comparison. Future
-algorithm B is an explicit descriptor; the current CLI rejects it and the runner
-retains that failure. Legacy progress is unavailable and is labeled accordingly.
+executables/source files, so a new machine can collect its own comparison. A Rust
+B descriptor must specify `"algorithm": "b"` and an explicit `"variant"`; the
+runner forwards the variant and checks it against the solver summary and trace.
+Legacy progress is unavailable and is labeled accordingly.
 
 Each raw record preserves its command, input/output and executable hashes, source
 fingerprints, timing, diagnostics, geometry validation, and trace linkage. The

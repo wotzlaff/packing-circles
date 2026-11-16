@@ -14,18 +14,19 @@ const USAGE: &str = "Usage:
   packing-cli validate INSTANCE SOLUTION
   packing-cli format-solution INSTANCE SOLUTION
   packing-cli format-instance INSTANCE
-  packing-cli solve [INSTANCE|-] [--algorithm a] [--seed N] [--time-limit SECONDS]
+  packing-cli solve [INSTANCE|-] [--algorithm a|b] [--variant NAME] [--seed N] [--time-limit SECONDS]
                     [--evaluations N] [--iterations N] [--restarts N] [--fixed-work]
                     [--trace PATH]
 
 solve writes contest-format solution to stdout and one JSON run summary to stderr.
 --fixed-work disables the time limit and requires at least one finite work limit.
-Version b is not implemented yet.";
+B variants: early-penalty, tight-penalty, short-restarts.";
 
 #[derive(Default)]
 struct SolveArgs {
     instance: Option<String>,
     algorithm: Option<String>,
+    variant: Option<String>,
     seed: Option<u64>,
     time_limit_seconds: Option<f64>,
     time_limit_seen: bool,
@@ -81,15 +82,21 @@ fn execute(args: &[String]) -> Result<bool, Box<dyn Error>> {
 }
 
 fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
-    use packing_core::solver::{solve, solve_with_observer, SolveOptions};
+    use packing_core::solver::{
+        solve_algorithm_with_control, solve_algorithm_with_control_and_observer, Algorithm,
+        SolveOptions,
+    };
 
     let parsed = parse_solve_args(args)?;
     let algorithm = parsed.algorithm.as_deref().unwrap_or("a");
-    if algorithm != "a" {
-        return Err(
-            format!("algorithm {algorithm:?} is not implemented; use --algorithm a").into(),
-        );
-    }
+    let variant = parsed.variant.as_deref();
+    let selected = match (algorithm, variant) {
+        ("a", None) => Algorithm::A,
+        ("b", Some("early-penalty")) => Algorithm::EarlyPenalty,
+        ("b", Some("tight-penalty")) => Algorithm::TightPenalty,
+        ("b", Some("short-restarts")) => Algorithm::ShortRestarts,
+        _ => return Err("use --algorithm a, or --algorithm b with a valid --variant".into()),
+    };
     if parsed.fixed_work && parsed.time_limit_seen {
         return Err("--fixed-work conflicts with explicit --time-limit".into());
     }
@@ -131,15 +138,21 @@ fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
             SystemTime::now().duration_since(UNIX_EPOCH)?.as_nanos(),
             options.seed
         );
-        write_trace_header(&mut trace, &run_id, &instance, options)?;
+        write_trace_header(&mut trace, &run_id, &instance, options, algorithm, variant)?;
         let mut trace_error = None;
-        let result = solve_with_observer(&instance, options, &mut |event| {
-            if trace_error.is_none() {
-                if let Err(error) = write_trace_event(&mut trace, &run_id, event) {
-                    trace_error = Some(error);
+        let result = solve_algorithm_with_control_and_observer(
+            &instance,
+            options,
+            selected,
+            &mut || false,
+            &mut |event| {
+                if trace_error.is_none() {
+                    if let Err(error) = write_trace_event(&mut trace, &run_id, event) {
+                        trace_error = Some(error);
+                    }
                 }
-            }
-        });
+            },
+        );
         if let Some(error) = trace_error {
             return Err(error.into());
         }
@@ -147,14 +160,16 @@ fn execute_solve(args: &[String]) -> Result<bool, Box<dyn Error>> {
         trace.flush()?;
         result
     } else {
-        solve(&instance, options)?
+        solve_algorithm_with_control(&instance, options, selected, &mut || false)?
     };
     let output_solution = parse_solution(&instance, &result.output)?;
     let internal_report = validate(&instance, &result.solution)?;
     let output_report = validate(&instance, &output_solution)?;
     print!("{}", result.output);
     eprintln!(
-        "{{\"schema_version\":1,\"algorithm\":\"a\",\"seed\":{},\"time_limit_seconds\":{},\"evaluation_limit\":{},\"iteration_limit\":{},\"restart_limit\":{},\"evaluations\":{},\"iterations\":{},\"restarts\":{},\"initialization_fallbacks\":{},\"numerical_failures\":{},\"elapsed_seconds\":{},\"termination\":\"{}\",\"radius\":{},\"output_radius\":{},\"max_overlap\":{},\"max_containment_violation\":{},\"feasible\":{},\"output_feasible\":{}}}",
+        "{{\"schema_version\":1,\"algorithm\":{},\"variant\":{},\"seed\":{},\"time_limit_seconds\":{},\"evaluation_limit\":{},\"iteration_limit\":{},\"restart_limit\":{},\"evaluations\":{},\"iterations\":{},\"restarts\":{},\"initialization_fallbacks\":{},\"numerical_failures\":{},\"elapsed_seconds\":{},\"termination\":\"{}\",\"radius\":{},\"output_radius\":{},\"max_overlap\":{},\"max_containment_violation\":{},\"feasible\":{},\"output_feasible\":{}}}",
+        json_string(algorithm),
+        variant.map(json_string).unwrap_or_else(|| "null".to_string()),
         options.seed,
         json_optional_number(options.time_limit_seconds),
         options.evaluation_limit,
@@ -182,6 +197,8 @@ fn write_trace_header(
     run_id: &str,
     instance: &packing_core::Instance,
     options: packing_core::solver::SolveOptions,
+    algorithm: &str,
+    variant: Option<&str>,
 ) -> io::Result<()> {
     let radii = instance
         .radii()
@@ -190,8 +207,8 @@ fn write_trace_header(
         .collect::<Vec<_>>()
         .join(",");
     writeln!(writer,
-        "{{\"schema_version\":1,\"type\":\"header\",\"algorithm\":\"a\",\"run_id\":{},\"instance\":{{\"radii\":[{}]}},\"seed\":{},\"options\":{{\"time_limit_seconds\":{},\"evaluation_limit\":{},\"iteration_limit\":{},\"restart_limit\":{}}},\"solver_version\":{},\"trace_min_interval_seconds\":0.1}}",
-        json_string(run_id), radii, options.seed, json_optional_number(options.time_limit_seconds),
+        "{{\"schema_version\":1,\"type\":\"header\",\"algorithm\":{},\"variant\":{},\"run_id\":{},\"instance\":{{\"radii\":[{}]}},\"seed\":{},\"options\":{{\"time_limit_seconds\":{},\"evaluation_limit\":{},\"iteration_limit\":{},\"restart_limit\":{}}},\"solver_version\":{},\"trace_min_interval_seconds\":0.1}}",
+        json_string(algorithm), variant.map(json_string).unwrap_or_else(|| "null".to_string()), json_string(run_id), radii, options.seed, json_optional_number(options.time_limit_seconds),
         options.evaluation_limit, options.iteration_limit, options.restart_limit,
         json_string(env!("CARGO_PKG_VERSION")))
 }
@@ -277,6 +294,7 @@ fn parse_solve_args(args: &[String]) -> Result<SolveArgs, Box<dyn Error>> {
         }
         match option {
             "--algorithm" => set_once(&mut parsed.algorithm, value.clone(), option)?,
+            "--variant" => set_once(&mut parsed.variant, value.clone(), option)?,
             "--seed" => set_once(&mut parsed.seed, parse_integer(value, option)?, option)?,
             "--time-limit" => {
                 if parsed.time_limit_seen {

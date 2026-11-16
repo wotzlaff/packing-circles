@@ -91,6 +91,8 @@ def replay_trace(path: str | Path, expected_output: str | None = None) -> dict[s
         raise ValueError("first row must be a schema version 1 header")
     if header.get("algorithm") not in ("a", "b") or not isinstance(header.get("run_id"), str) or not header["run_id"]:
         raise ValueError("header algorithm or run_id is invalid")
+    if header["algorithm"] == "b" and (not isinstance(header.get("variant"), str) or not header["variant"]):
+        raise ValueError("B trace header variant is required")
     seed = _integer(header.get("seed"), "header seed")
     if seed > 2**64 - 1:
         raise ValueError("header seed exceeds u64")
@@ -162,6 +164,7 @@ def replay_trace(path: str | Path, expected_output: str | None = None) -> dict[s
     if expected_output is not None and last_output != expected_output:
         raise ValueError("final trace output does not exactly match expected stdout")
     return {"valid": True, "run_id": header["run_id"], "algorithm": header["algorithm"],
+            "variant": header.get("variant"),
             "seed": seed, "options": options,
             "snapshots": len(kinds), "incumbents": kinds.count("incumbent"),
             "final_radius": _finite(rows[-1].get("radius"), "final radius", positive=True),
@@ -184,6 +187,8 @@ def validate_run_summary(replay_result: dict, summary: dict) -> None:
         raise ValueError("solver summary has unsupported schema")
     if replay_result.get("algorithm") != summary.get("algorithm"):
         raise ValueError("trace algorithm differs from solver summary")
+    if replay_result.get("variant") != summary.get("variant"):
+        raise ValueError("trace variant differs from solver summary")
     if type(summary.get("seed")) is not int or replay_result.get("seed") != summary["seed"]:
         raise ValueError("trace seed differs from solver summary")
     options = replay_result.get("options")

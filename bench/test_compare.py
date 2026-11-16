@@ -52,6 +52,24 @@ class CompareTests(unittest.TestCase):
         self.assertEqual(cmd[0], str(self.exe.resolve()))
         self.assertNotIn("--algorithm", cmd)
 
+    def test_b_variant_is_required_forwarded_and_checked(self):
+        b = {"name": "b", "kind": "rust", "algorithm": "b", "executable": str(self.exe)}
+        with self.assertRaisesRegex(ValueError, "explicit variant"):
+            compare.validate_config(self.config(solvers=[b]), self.input)
+        b["variant"] = "early-penalty"
+        compare.validate_config(self.config(solvers=[b]), self.input)
+        cmd = compare._command(b, 0.1, 5, self.input)
+        self.assertEqual(cmd[cmd.index("--variant") + 1], "early-penalty")
+        data = {"schema_version": 1, "algorithm": "b", "variant": "early-penalty",
+                "seed": 5, "evaluations": 1, "iterations": 1, "restarts": 0,
+                "radius": 1., "output_radius": 1., "elapsed_seconds": 0.08,
+                "time_limit_seconds": 0.1, "termination": "time_limit",
+                "feasible": True, "output_feasible": True}
+        self.assertIsNone(compare._summary(json.dumps(data), "b", 5, 0.1, "early-penalty")[1])
+        self.assertIn("variant", compare._summary(json.dumps(data), "b", 5, 0.1, "short-restarts")[1])
+        with self.assertRaisesRegex(ValueError, "only supported"):
+            compare.validate_config(self.config(solvers=[dict(b, algorithm="a")]), self.input)
+
     def test_failed_and_overrun_rows_are_excluded_from_quality(self):
         base = {"solver": "a", "kind": "rust", "successful": True, "timeout": False,
                 "returncode": 0, "overrun": False, "validation": {"feasible": True,

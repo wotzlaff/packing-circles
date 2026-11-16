@@ -3,7 +3,7 @@ from pathlib import Path
 import tempfile
 import unittest
 
-from replay_trace import replay_trace
+from replay_trace import replay_trace, validate_run_summary
 
 
 def valid_rows():
@@ -51,6 +51,19 @@ class ReplayTraceTests(unittest.TestCase):
             self.assertEqual(replay_trace(path, rows[-1]["output"])["snapshots"], 3)
             with self.assertRaisesRegex(ValueError, "exactly match"):
                 replay_trace(path, "different")
+
+    def test_b_trace_requires_and_links_variant(self):
+        self.check_bad(lambda rows: rows[0].update(algorithm="b"))
+        rows = valid_rows()
+        rows[0].update(algorithm="b", variant="early-penalty")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "trace.jsonl"
+            path.write_text("".join(json.dumps(row) + "\n" for row in rows))
+            result = replay_trace(path)
+            self.assertEqual(result["variant"], "early-penalty")
+            with self.assertRaisesRegex(ValueError, "variant differs"):
+                validate_run_summary(result, {"schema_version": 1, "algorithm": "b",
+                                               "variant": "short-restarts"})
 
     def test_rejects_bad_order_ids_geometry_and_work(self):
         self.check_bad(lambda rows: rows.__setitem__(1, dict(rows[1], kind="final")))

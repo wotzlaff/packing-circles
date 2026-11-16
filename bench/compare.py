@@ -89,6 +89,12 @@ def validate_config(config, config_path):
             raise ValueError("legacy_variant must be contest or main")
         if solver["kind"] == "rust" and solver.get("algorithm") not in ("a", "b"):
             raise ValueError("Rust solver algorithm must be a or b")
+        variant = solver.get("variant")
+        if solver["kind"] == "rust" and solver.get("algorithm") == "b":
+            if not isinstance(variant, str) or not variant or variant.startswith("-"):
+                raise ValueError("Rust B solver needs an explicit variant")
+        elif variant is not None:
+            raise ValueError("variant is only supported for Rust B")
         sources = solver.get("source_paths", [])
         if not isinstance(sources, list) or any(not isinstance(p, str) or not Path((ROOT / p) if not Path(p).is_absolute() else p).is_file() for p in sources):
             raise ValueError(f"invalid source_paths for {solver['name']}")
@@ -97,12 +103,14 @@ def validate_config(config, config_path):
     return config
 
 
-def _summary(stderr, algorithm, seed, budget):
+def _summary(stderr, algorithm, seed, budget, variant=None):
     try:
         data = json.loads(stderr.strip(), parse_constant=_bad_number, parse_float=_finite_float)
         if (not isinstance(data, dict) or type(data.get("schema_version")) is not int
                 or data.get("schema_version") != 1 or data.get("algorithm") != algorithm):
             raise ValueError("summary schema or algorithm mismatch")
+        if algorithm == "b" and (not variant or data.get("variant") != variant):
+            raise ValueError("summary variant mismatch")
         for key in ("seed", "evaluations", "iterations", "restarts"):
             if type(data.get(key)) is not int or data[key] < 0:
                 raise ValueError(f"invalid summary {key}")
@@ -150,6 +158,8 @@ def _command(solver, budget, seed, input_path, trace_path=None):
     if solver["kind"] == "legacy":
         return command_for(solver.get("legacy_variant", "contest"), budget, exe)
     cmd = [exe, "solve", "-", "--algorithm", solver["algorithm"], "--seed", str(seed), "--time-limit", str(budget)]
+    if solver.get("variant") is not None:
+        cmd += ["--variant", solver["variant"]]
     if trace_path is not None:
         cmd += ["--trace", str(trace_path)]
     return cmd
@@ -205,7 +215,7 @@ def run(config_path, output_path):
                         trace_error = None
                         trace_info = None
                         if solver["kind"] == "rust":
-                            summary, summary_error = _summary(stderr, solver["algorithm"], seed, budget)
+                            summary, summary_error = _summary(stderr, solver["algorithm"], seed, budget, solver.get("variant"))
                             if trace_path is not None:
                                 if not trace_path.exists():
                                     trace_error = "trace file was not produced"
@@ -234,6 +244,7 @@ def run(config_path, output_path):
                                            and trace_info.get("valid") is True)
                         row = {"schema_version": 1, "run_id": run_id, "solver": solver["name"],
                                "kind": solver["kind"], "algorithm": solver.get("algorithm"),
+                               "variant": solver.get("variant"),
                                "config_sha256": config_digest, "instance": str(path.relative_to(ROOT)) if path.is_relative_to(ROOT) else str(path),
                                "circle_count": len(radii), "input_sha256": hashlib.sha256(text.encode()).hexdigest(),
                                "executable_sha256": before_hashes["executable"],
@@ -278,7 +289,7 @@ def _valid(row):
         s = row.get("summary")
         try:
             parsed, error = _summary(json.dumps(s, allow_nan=False), row.get("algorithm"),
-                                     row.get("seed"), row.get("budget_seconds"))
+                                     row.get("seed"), row.get("budget_seconds"), row.get("variant"))
         except (TypeError, ValueError):
             return False
         if (error or parsed is None or parsed.get("feasible") is not True

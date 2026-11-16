@@ -306,3 +306,48 @@ fn trace_creation_refuses_overwrite_and_duplicate_options() {
     assert!(String::from_utf8_lossy(&duplicate.stderr).contains("duplicate option --trace"));
     let _ = std::fs::remove_file(path);
 }
+
+#[test]
+fn b_variants_require_explicit_selection_and_identify_summary_and_trace() {
+    for variant in ["early-penalty", "tight-penalty", "short-restarts"] {
+        let path = temporary_trace();
+        let output = cli()
+            .arg("solve")
+            .arg(fixture("two_unit_circles.in"))
+            .args([
+                "--algorithm",
+                "b",
+                "--variant",
+                variant,
+                "--fixed-work",
+                "--evaluations",
+                "100",
+            ])
+            .arg("--trace")
+            .arg(&path)
+            .output()
+            .unwrap();
+        assert!(
+            output.status.success(),
+            "{}",
+            String::from_utf8_lossy(&output.stderr)
+        );
+        let summary = String::from_utf8(output.stderr).unwrap();
+        assert!(summary.contains(&format!("\"algorithm\":\"b\",\"variant\":\"{variant}\"")));
+        let trace = std::fs::read_to_string(&path).unwrap();
+        assert!(trace
+            .lines()
+            .next()
+            .unwrap()
+            .contains(&format!("\"algorithm\":\"b\",\"variant\":\"{variant}\"")));
+        std::fs::remove_file(path).unwrap();
+    }
+    for args in [
+        vec!["--algorithm", "b"],
+        vec!["--algorithm", "b", "--variant", "unknown"],
+        vec!["--algorithm", "a", "--variant", "early-penalty"],
+    ] {
+        let output = cli().arg("solve").args(args).output().unwrap();
+        assert_eq!(output.status.code(), Some(2));
+    }
+}

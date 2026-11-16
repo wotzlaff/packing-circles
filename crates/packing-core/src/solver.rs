@@ -13,6 +13,18 @@ use std::cell::{Cell, RefCell};
 use std::fmt;
 use std::time::Instant;
 
+/// Explicit algorithm selection. Experimental B candidates each change one policy.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Algorithm {
+    A,
+    /// Raise constraint weights sooner, at squared gradient below 1e-3.
+    EarlyPenalty,
+    /// Continue penalty refinement until relative violation is at most 1e-6.
+    TightPenalty,
+    /// Limit each local optimization to 100 iterations to explore more starts.
+    ShortRestarts,
+}
+
 /// Seed and total limits shared across all initialization/optimization restarts.
 #[derive(Clone, Copy, Debug)]
 pub struct SolveOptions {
@@ -219,7 +231,7 @@ pub fn solve_with_control<C: FnMut() -> bool>(
     options: SolveOptions,
     cancellation: &mut C,
 ) -> Result<SolveResult, PackingError> {
-    run::<false, _, _>(instance, options, cancellation, &mut |_| {})
+    run::<false, _, _>(instance, options, Algorithm::A, cancellation, &mut |_| {})
 }
 
 /// Solve with read-only incumbent snapshots, with initial/final events always emitted.
@@ -247,12 +259,38 @@ where
     C: FnMut() -> bool,
     O: FnMut(ProgressEvent<'_>),
 {
-    run::<true, _, _>(instance, options, cancellation, observer)
+    run::<true, _, _>(instance, options, Algorithm::A, cancellation, observer)
+}
+
+/// Solve using an explicitly selected experimental policy, with cancellation.
+pub fn solve_algorithm_with_control<C: FnMut() -> bool>(
+    instance: &Instance,
+    options: SolveOptions,
+    algorithm: Algorithm,
+    cancellation: &mut C,
+) -> Result<SolveResult, PackingError> {
+    run::<false, _, _>(instance, options, algorithm, cancellation, &mut |_| {})
+}
+
+/// Solve using an explicitly selected policy and observer, with cancellation.
+pub fn solve_algorithm_with_control_and_observer<C, O>(
+    instance: &Instance,
+    options: SolveOptions,
+    algorithm: Algorithm,
+    cancellation: &mut C,
+    observer: &mut O,
+) -> Result<SolveResult, PackingError>
+where
+    C: FnMut() -> bool,
+    O: FnMut(ProgressEvent<'_>),
+{
+    run::<true, _, _>(instance, options, algorithm, cancellation, observer)
 }
 
 fn run<const TRACE: bool, C, O>(
     instance: &Instance,
     options: SolveOptions,
+    algorithm: Algorithm,
     cancellation: &mut C,
     observer: &mut O,
 ) -> Result<SolveResult, PackingError>
@@ -351,6 +389,11 @@ where
         state.extend(points.iter().flat_map(|p| [p.x, p.y]));
         let weights = Cell::new(PenaltyWeights::default());
         let mut schedule = PenaltySchedule::default();
+        match algorithm {
+            Algorithm::EarlyPenalty => schedule.gradient_tolerance_squared = 1e-3,
+            Algorithm::TightPenalty => schedule.violation_tolerance = 1e-6,
+            Algorithm::A | Algorithm::ShortRestarts => (),
+        }
         let mut scalar = |x: &[f64]| {
             control.evaluation()?;
             value(instance, x, weights.get())
@@ -370,7 +413,13 @@ where
             Ok(action)
         };
         let config = BfgsConfig {
-            max_iterations: options.iteration_limit - control.iterations.get(),
+            max_iterations: (options.iteration_limit - control.iterations.get()).min(
+                if algorithm == Algorithm::ShortRestarts {
+                    100
+                } else {
+                    usize::MAX
+                },
+            ),
             max_evaluations: options.evaluation_limit - control.evaluations.get(),
             ..BfgsConfig::default()
         };
