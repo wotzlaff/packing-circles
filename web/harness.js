@@ -23,10 +23,14 @@ solver.addEventListener('message', ({data}) => {
     element('solution').textContent = s.output;
   }
 });
-element('run').onclick = () => solver.start({
-  input: element('input').value,
-  algorithm: Number(element('algorithm').value), seed: '5', timeLimitSeconds: 5,
-});
+element('run').onclick = () => {
+  element('solution').textContent = '';
+  element('status').textContent = 'Starting…';
+  solver.start({
+    input: element('input').value,
+    algorithm: Number(element('algorithm').value), seed: '5', timeLimitSeconds: 5,
+  });
+};
 element('pause').onclick = () => solver.pause();
 element('resume').onclick = () => solver.resume();
 element('cancel').onclick = () => solver.cancel();

@@ -33,6 +33,9 @@ paused intervals and includes scheduling delays while running. It calls at most
 sends progress heartbeats approximately every 100 ms even without improvement.
 Time limits are checked at step boundaries. Atomic initialization can extend
 a pump; the recorded cancellation measurement checks its practical effect.
+Zero-work steps synchronize control-event timestamps without advancing numerical
+state. Browser clock resolution can round an immediate start/cancel interval
+to zero; elapsed time is not artificially increased to hide that rounding.
 
 ```mermaid
 flowchart LR
@@ -93,17 +96,21 @@ development fixtures, two each at N=10/20/30/40/50, across all four policies:
 checks internal geometry and four-decimal output, same-build determinism,
 pause/resume output/work invariance, malformed/oversized inputs, cancellation,
 run replacement, bounded history, and main-thread timer responsiveness.
+Timed tests also pause a 0.4-second run for 0.5 seconds and verify that the pause
+does not consume its deadline. An [early Firefox timestamp assertion](../bench/results/wasm-firefox-clock-resolution.json)
+incorrectly required a strictly positive sub-millisecond interval; the test now
+accepts zero at browser clock resolution. The numerical and latency gates are unchanged.
 Held-out inputs were not used.
 
 Measured on Linux x86-64, Intel i7-8700, Rust 1.100.0, Node 24.22.1,
-Playwright 1.64.1, release WASM (171235 bytes):
+Playwright 1.64.1, release WASM (171236 bytes):
 
 | Browser | Comparisons | Maximum relative radius difference | Cancel latency | Progress in 2 s | Maximum progress gap |
 | --- | ---: | ---: | ---: | ---: | ---: |
-| Chromium 156.0.8078.4 | 40 | 0 | 5.2 ms | 18 | 142.5 ms |
-| Firefox 157.0 | 40 | 0 | 5 ms | 18 | 142 ms |
+| Chromium 156.0.8078.4 | 40 | 0 | 30.7 ms | 19 | 128.9 ms |
+| Firefox 157.0 | 40 | 0 | 15 ms | 18 | 131 ms |
 
-Both browsers retained responsive main-thread 10 ms timers (201/198 ticks) during
+Both browsers retained responsive main-thread 10 ms timers (204/199 ticks) during
 the 50-circle run. These are single-machine integration measurements, not a
 universal latency guarantee or the longer milestone-8 UI performance study.
 Raw reports include checked packings, work counters, input hashes, compiler and

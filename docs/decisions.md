@@ -112,3 +112,7 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   fixed 16 KiB input buffer, checked JSON snapshots, and at most 64 work units
   per call. Expose seed words rather than requiring JavaScript number precision
   for a full 64-bit seed. Browser scheduling and rendering remain outside Rust.
+- Allow zero-work ABI clock checkpoints for pause, resume, and cancellation, so
+  control snapshots use current active time without consuming another optimizer
+  transition. Test real deadline completion after a paused interval; accept the
+  browser's finite clock resolution for immediate cancellation timestamps.

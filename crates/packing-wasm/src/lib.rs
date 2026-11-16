@@ -4,7 +4,8 @@
 //! then call `session_start`. Algorithm IDs are A=0, early=1, tight=2, short=3.
 //! A time limit of -1 selects fixed-work mode; otherwise it must be finite and
 //! nonnegative. All limits may be zero. The seed is split into low/high words.
-//! Call `session_step` with 1..=64 work units and monotonic active elapsed seconds.
+//! Call `session_step` with 0..=64 work units and monotonic active elapsed seconds.
+//! Zero work synchronizes the clock and checks the deadline without optimization.
 //! It returns 0 while running, 1 when finished, or -1 on error. Start and cancel
 //! return 0 on success and -1 on error. After each operation, read the UTF-8 JSON
 //! at `snapshot_ptr()`/`snapshot_len()` before the next operation. Input and
@@ -165,8 +166,8 @@ pub extern "C" fn session_start(
 pub extern "C" fn session_step(max_work: u32, elapsed_seconds: f64) -> i32 {
     RUNTIME.with(|runtime| {
         let mut r = runtime.borrow_mut();
-        if !(1..=64).contains(&max_work) {
-            return r.error("max_work must be between 1 and 64");
+        if max_work > 64 {
+            return r.error("max_work must be between 0 and 64");
         }
         let Some(session) = r.session.as_mut() else {
             return r.error("no active session");
@@ -222,6 +223,8 @@ mod tests {
         );
         assert!(snapshot().contains("\"schema_version\":1"));
         assert!(session_step(1, 0.0) >= 0);
+        assert!(session_step(0, 0.25) >= 0);
+        assert!(snapshot().contains("\"elapsed_seconds\":0.25"));
         assert_eq!(session_cancel(), 0);
         assert!(snapshot().contains("\"finished\":true"));
         assert_eq!(
@@ -234,7 +237,7 @@ mod tests {
     #[test]
     fn rejects_invalid_arguments_and_escapes_json() {
         assert_eq!(json_string("a\"\\\n\u{0001}"), "\"a\\\"\\\\\\n\\u0001\"");
-        assert_eq!(session_step(0, 0.0), -1);
+        assert_eq!(session_step(65, 0.0), -1);
         assert_eq!(session_start(0, 4, 0, 0, 0, 0, 0, -1.0), -1);
         assert_eq!(session_start(0, 0, 0, 0, 0, 0, 0, f64::NAN), -1);
     }

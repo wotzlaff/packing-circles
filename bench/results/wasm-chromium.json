@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "measured_at": "2026-11-16T19:00:31.905Z",
+  "measured_at": "2026-11-16T19:06:30.326Z",
   "math_profile": "portable-libm-0.2.16",
   "seed": "5",
   "evaluation_limit": 5000,
@@ -12,13 +12,13 @@
   "arch": "x64",
   "cpu": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
   "logical_cpus": 12,
-  "wasm_sha256": "aeada6604e6a007093b303955fe8327bc78f05d0fd6cc497918b8799442f81d2",
+  "wasm_sha256": "5cb8356bce4b54ab0b22bc875cb1a57ba5b57ca3c80ab29b1cac7bb8c871443e",
   "records": [
     {
       "fixture": "10_01.txt",
       "input_sha256": "a86c06e2c5e4891817a533b953b55e88a62be04ed94d9f052837a51bbcaf4b52",
       "algorithm": 0,
-      "duration_ms": 33.599998474121094,
+      "duration_ms": 20.5,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -85,7 +85,7 @@
         "restarts": 4,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.028,
+        "elapsed_seconds": 0.018599998474121093,
         "feasible": true
       },
       "native": {
@@ -103,7 +103,7 @@
       "fixture": "10_01.txt",
       "input_sha256": "a86c06e2c5e4891817a533b953b55e88a62be04ed94d9f052837a51bbcaf4b52",
       "algorithm": 1,
-      "duration_ms": 10.299999237060547,
+      "duration_ms": 15.39999771118164,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -170,7 +170,7 @@
         "restarts": 4,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.009,
+        "elapsed_seconds": 0.0125,
         "feasible": true
       },
       "native": {
@@ -188,7 +188,7 @@
       "fixture": "10_01.txt",
       "input_sha256": "a86c06e2c5e4891817a533b953b55e88a62be04ed94d9f052837a51bbcaf4b52",
       "algorithm": 2,
-      "duration_ms": 10.200000762939453,
+      "duration_ms": 10.299999237060547,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -255,7 +255,7 @@
         "restarts": 3,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.00789999771118164,
+        "elapsed_seconds": 0.00989999771118164,
         "feasible": true
       },
       "native": {
@@ -340,7 +340,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.01210000228881836,
+        "elapsed_seconds": 0.012200000762939454,
         "feasible": true
       },
       "native": {
@@ -358,7 +358,7 @@
       "fixture": "10_02.txt",
       "input_sha256": "6cf4305b16297129babc0863ea5ce3d4b1bb16800691b3d1ccd7d7e8784ad6fc",
       "algorithm": 0,
-      "duration_ms": 10.200000762939453,
+      "duration_ms": 10.5,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -425,7 +425,7 @@
         "restarts": 5,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.008799999237060548,
+        "elapsed_seconds": 0.01,
         "feasible": true
       },
       "native": {
@@ -443,7 +443,7 @@
       "fixture": "10_02.txt",
       "input_sha256": "6cf4305b16297129babc0863ea5ce3d4b1bb16800691b3d1ccd7d7e8784ad6fc",
       "algorithm": 1,
-      "duration_ms": 10.300003051757812,
+      "duration_ms": 10.299999237060547,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -510,7 +510,7 @@
         "restarts": 5,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.008599998474121094,
+        "elapsed_seconds": 0.0085,
         "feasible": true
       },
       "native": {
@@ -528,7 +528,7 @@
       "fixture": "10_02.txt",
       "input_sha256": "6cf4305b16297129babc0863ea5ce3d4b1bb16800691b3d1ccd7d7e8784ad6fc",
       "algorithm": 2,
-      "duration_ms": 15.400001525878906,
+      "duration_ms": 10.299999237060547,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -595,7 +595,7 @@
         "restarts": 4,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.014799999237060548,
+        "elapsed_seconds": 0.008200000762939454,
         "feasible": true
       },
       "native": {
@@ -613,7 +613,7 @@
       "fixture": "10_02.txt",
       "input_sha256": "6cf4305b16297129babc0863ea5ce3d4b1bb16800691b3d1ccd7d7e8784ad6fc",
       "algorithm": 3,
-      "duration_ms": 15.5,
+      "duration_ms": 15.200000762939453,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -680,7 +680,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.012700000762939452,
+        "elapsed_seconds": 0.012799999237060548,
         "feasible": true
       },
       "native": {
@@ -815,7 +815,7 @@
         "restarts": 3,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.028299999237060548,
+        "elapsed_seconds": 0.0285,
         "feasible": true
       },
       "native": {
@@ -833,7 +833,7 @@
       "fixture": "20_01.txt",
       "input_sha256": "6cb1acd277e25e78d2ca5d4d5fd3c698ab1322c2d1a622424a3df37b8922ed90",
       "algorithm": 1,
-      "duration_ms": 30.700000762939453,
+      "duration_ms": 30.5,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -950,7 +950,7 @@
         "restarts": 3,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.0275,
+        "elapsed_seconds": 0.02989999771118164,
         "feasible": true
       },
       "native": {
@@ -968,7 +968,7 @@
       "fixture": "20_01.txt",
       "input_sha256": "6cb1acd277e25e78d2ca5d4d5fd3c698ab1322c2d1a622424a3df37b8922ed90",
       "algorithm": 2,
-      "duration_ms": 25.5,
+      "duration_ms": 30.599998474121094,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1085,7 +1085,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.024099998474121094,
+        "elapsed_seconds": 0.02610000228881836,
         "feasible": true
       },
       "native": {
@@ -1103,7 +1103,7 @@
       "fixture": "20_01.txt",
       "input_sha256": "6cb1acd277e25e78d2ca5d4d5fd3c698ab1322c2d1a622424a3df37b8922ed90",
       "algorithm": 3,
-      "duration_ms": 61.39999771118164,
+      "duration_ms": 61.400001525878906,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1220,7 +1220,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.058200000762939456,
+        "elapsed_seconds": 0.057,
         "feasible": true
       },
       "native": {
@@ -1238,7 +1238,7 @@
       "fixture": "20_02.txt",
       "input_sha256": "8645b238a5c0e2867a49e43556fac026b67a92b04fa8de3aaad903350c7eb8fc",
       "algorithm": 0,
-      "duration_ms": 30.700000762939453,
+      "duration_ms": 25.5,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1355,7 +1355,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.0265,
+        "elapsed_seconds": 0.025,
         "feasible": true
       },
       "native": {
@@ -1373,7 +1373,7 @@
       "fixture": "20_02.txt",
       "input_sha256": "8645b238a5c0e2867a49e43556fac026b67a92b04fa8de3aaad903350c7eb8fc",
       "algorithm": 1,
-      "duration_ms": 30.599998474121094,
+      "duration_ms": 30.799999237060547,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1490,7 +1490,7 @@
         "restarts": 3,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.028200000762939454,
+        "elapsed_seconds": 0.0285,
         "feasible": true
       },
       "native": {
@@ -1508,7 +1508,7 @@
       "fixture": "20_02.txt",
       "input_sha256": "8645b238a5c0e2867a49e43556fac026b67a92b04fa8de3aaad903350c7eb8fc",
       "algorithm": 2,
-      "duration_ms": 30.599998474121094,
+      "duration_ms": 25.400001525878906,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1625,7 +1625,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.025700000762939452,
+        "elapsed_seconds": 0.02489999771118164,
         "feasible": true
       },
       "native": {
@@ -1643,7 +1643,7 @@
       "fixture": "20_02.txt",
       "input_sha256": "8645b238a5c0e2867a49e43556fac026b67a92b04fa8de3aaad903350c7eb8fc",
       "algorithm": 3,
-      "duration_ms": 61.20000076293945,
+      "duration_ms": 61.29999923706055,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -1760,7 +1760,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.05959999847412109,
+        "elapsed_seconds": 0.059400001525878904,
         "feasible": true
       },
       "native": {
@@ -1945,7 +1945,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.058200000762939456,
+        "elapsed_seconds": 0.058899997711181644,
         "feasible": true
       },
       "native": {
@@ -1963,7 +1963,7 @@
       "fixture": "30_01.txt",
       "input_sha256": "d7487926c8cb2968afa4690d2fd8f97660d0d6f0e751d45d65cd0e57e417f198",
       "algorithm": 1,
-      "duration_ms": 87,
+      "duration_ms": 61.5,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -2130,7 +2130,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.084,
+        "elapsed_seconds": 0.0584000015258789,
         "feasible": true
       },
       "native": {
@@ -2148,7 +2148,7 @@
       "fixture": "30_01.txt",
       "input_sha256": "d7487926c8cb2968afa4690d2fd8f97660d0d6f0e751d45d65cd0e57e417f198",
       "algorithm": 2,
-      "duration_ms": 71.5,
+      "duration_ms": 56.099998474121094,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -2315,7 +2315,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.06989999771118165,
+        "elapsed_seconds": 0.05490000152587891,
         "feasible": true
       },
       "native": {
@@ -2333,7 +2333,7 @@
       "fixture": "30_01.txt",
       "input_sha256": "d7487926c8cb2968afa4690d2fd8f97660d0d6f0e751d45d65cd0e57e417f198",
       "algorithm": 3,
-      "duration_ms": 189.10000228881836,
+      "duration_ms": 174.3000030517578,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -2500,7 +2500,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.18579999923706056,
+        "elapsed_seconds": 0.17090000152587892,
         "feasible": true
       },
       "native": {
@@ -2518,7 +2518,7 @@
       "fixture": "30_02.txt",
       "input_sha256": "39448263190673a6a02ad6ebcc03e5619ea9653066ceac2a8cf28fb651d8978a",
       "algorithm": 0,
-      "duration_ms": 66.30000305175781,
+      "duration_ms": 61.20000076293945,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -2685,7 +2685,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.06120000076293945,
+        "elapsed_seconds": 0.059799999237060544,
         "feasible": true
       },
       "native": {
@@ -2703,7 +2703,7 @@
       "fixture": "30_02.txt",
       "input_sha256": "39448263190673a6a02ad6ebcc03e5619ea9653066ceac2a8cf28fb651d8978a",
       "algorithm": 1,
-      "duration_ms": 66.0999984741211,
+      "duration_ms": 61.400001525878906,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -2870,7 +2870,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.06329999923706055,
+        "elapsed_seconds": 0.05970000076293945,
         "feasible": true
       },
       "native": {
@@ -2888,7 +2888,7 @@
       "fixture": "30_02.txt",
       "input_sha256": "39448263190673a6a02ad6ebcc03e5619ea9653066ceac2a8cf28fb651d8978a",
       "algorithm": 2,
-      "duration_ms": 61.29999923706055,
+      "duration_ms": 56.099998474121094,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -3073,7 +3073,7 @@
       "fixture": "30_02.txt",
       "input_sha256": "39448263190673a6a02ad6ebcc03e5619ea9653066ceac2a8cf28fb651d8978a",
       "algorithm": 3,
-      "duration_ms": 168.4000015258789,
+      "duration_ms": 169.39999771118164,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -3240,7 +3240,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.16820000076293945,
+        "elapsed_seconds": 0.168,
         "feasible": true
       },
       "native": {
@@ -3258,7 +3258,7 @@
       "fixture": "40_01.txt",
       "input_sha256": "6c9d528fd99fefef3b280601bab0d6249bdf04262d82852ae3d29d4e3d21efc1",
       "algorithm": 0,
-      "duration_ms": 122.5999984741211,
+      "duration_ms": 123,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -3475,7 +3475,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.11820000076293945,
+        "elapsed_seconds": 0.11779999923706054,
         "feasible": true
       },
       "native": {
@@ -3493,7 +3493,7 @@
       "fixture": "40_01.txt",
       "input_sha256": "6c9d528fd99fefef3b280601bab0d6249bdf04262d82852ae3d29d4e3d21efc1",
       "algorithm": 1,
-      "duration_ms": 127.60000228881836,
+      "duration_ms": 123.20000076293945,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -3710,7 +3710,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.12529999923706053,
+        "elapsed_seconds": 0.11889999771118163,
         "feasible": true
       },
       "native": {
@@ -3728,7 +3728,7 @@
       "fixture": "40_01.txt",
       "input_sha256": "6c9d528fd99fefef3b280601bab0d6249bdf04262d82852ae3d29d4e3d21efc1",
       "algorithm": 2,
-      "duration_ms": 122.5,
+      "duration_ms": 123.10000228881836,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -3945,7 +3945,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.11920000076293945,
+        "elapsed_seconds": 0.12,
         "feasible": true
       },
       "native": {
@@ -3963,7 +3963,7 @@
       "fixture": "40_01.txt",
       "input_sha256": "6c9d528fd99fefef3b280601bab0d6249bdf04262d82852ae3d29d4e3d21efc1",
       "algorithm": 3,
-      "duration_ms": 331.29999923706055,
+      "duration_ms": 316.39999771118164,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -4180,7 +4180,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.3264000015258789,
+        "elapsed_seconds": 0.31120000076293947,
         "feasible": true
       },
       "native": {
@@ -4198,7 +4198,7 @@
       "fixture": "40_02.txt",
       "input_sha256": "0308d2601e2a5c4a7d500e7b22d054bf82cc7c34362a031447b398c5e9de9ee9",
       "algorithm": 0,
-      "duration_ms": 137.8000030517578,
+      "duration_ms": 122.5999984741211,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -4415,7 +4415,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.13230000305175782,
+        "elapsed_seconds": 0.11779999923706054,
         "feasible": true
       },
       "native": {
@@ -4433,7 +4433,7 @@
       "fixture": "40_02.txt",
       "input_sha256": "0308d2601e2a5c4a7d500e7b22d054bf82cc7c34362a031447b398c5e9de9ee9",
       "algorithm": 1,
-      "duration_ms": 122.29999923706055,
+      "duration_ms": 122.89999771118164,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -4650,7 +4650,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.12159999847412109,
+        "elapsed_seconds": 0.11810000228881835,
         "feasible": true
       },
       "native": {
@@ -4668,7 +4668,7 @@
       "fixture": "40_02.txt",
       "input_sha256": "0308d2601e2a5c4a7d500e7b22d054bf82cc7c34362a031447b398c5e9de9ee9",
       "algorithm": 2,
-      "duration_ms": 122.0999984741211,
+      "duration_ms": 148.39999771118164,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -4885,7 +4885,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.1169000015258789,
+        "elapsed_seconds": 0.143,
         "feasible": true
       },
       "native": {
@@ -4903,7 +4903,7 @@
       "fixture": "40_02.txt",
       "input_sha256": "0308d2601e2a5c4a7d500e7b22d054bf82cc7c34362a031447b398c5e9de9ee9",
       "algorithm": 3,
-      "duration_ms": 305.6999969482422,
+      "duration_ms": 306.5999984741211,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -5120,7 +5120,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.3032999992370605,
+        "elapsed_seconds": 0.3036999969482422,
         "feasible": true
       },
       "native": {
@@ -5138,7 +5138,7 @@
       "fixture": "50_01.txt",
       "input_sha256": "f4bccca42e157fbb2b0f1a27f923bbbac72b2e1f7f40bd125d57ab28127fee52",
       "algorithm": 0,
-      "duration_ms": 235.0999984741211,
+      "duration_ms": 204.9000015258789,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -5405,7 +5405,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.23279999923706055,
+        "elapsed_seconds": 0.203,
         "feasible": true
       },
       "native": {
@@ -5423,7 +5423,7 @@
       "fixture": "50_01.txt",
       "input_sha256": "f4bccca42e157fbb2b0f1a27f923bbbac72b2e1f7f40bd125d57ab28127fee52",
       "algorithm": 1,
-      "duration_ms": 208.89999771118164,
+      "duration_ms": 240.10000228881836,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -5690,7 +5690,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.20479999923706055,
+        "elapsed_seconds": 0.23829999923706055,
         "feasible": true
       },
       "native": {
@@ -5708,7 +5708,7 @@
       "fixture": "50_01.txt",
       "input_sha256": "f4bccca42e157fbb2b0f1a27f923bbbac72b2e1f7f40bd125d57ab28127fee52",
       "algorithm": 2,
-      "duration_ms": 234.39999771118164,
+      "duration_ms": 219.0999984741211,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -5975,7 +5975,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.2325999984741211,
+        "elapsed_seconds": 0.2185,
         "feasible": true
       },
       "native": {
@@ -5993,7 +5993,7 @@
       "fixture": "50_01.txt",
       "input_sha256": "f4bccca42e157fbb2b0f1a27f923bbbac72b2e1f7f40bd125d57ab28127fee52",
       "algorithm": 3,
-      "duration_ms": 581.7000007629395,
+      "duration_ms": 561.1000022888184,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -6260,7 +6260,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.5767999992370606,
+        "elapsed_seconds": 0.5587999992370606,
         "feasible": true
       },
       "native": {
@@ -6278,7 +6278,7 @@
       "fixture": "50_02.txt",
       "input_sha256": "7930127b0469b81ed4d721077e71165837e710f8fd5452a54ca5ed1c898096bc",
       "algorithm": 0,
-      "duration_ms": 199,
+      "duration_ms": 205.20000076293945,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -6545,7 +6545,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.1960999984741211,
+        "elapsed_seconds": 0.20429999923706055,
         "feasible": true
       },
       "native": {
@@ -6563,7 +6563,7 @@
       "fixture": "50_02.txt",
       "input_sha256": "7930127b0469b81ed4d721077e71165837e710f8fd5452a54ca5ed1c898096bc",
       "algorithm": 1,
-      "duration_ms": 224.70000076293945,
+      "duration_ms": 209,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -6830,7 +6830,7 @@
         "restarts": 2,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.21979999923706053,
+        "elapsed_seconds": 0.2045,
         "feasible": true
       },
       "native": {
@@ -6848,7 +6848,7 @@
       "fixture": "50_02.txt",
       "input_sha256": "7930127b0469b81ed4d721077e71165837e710f8fd5452a54ca5ed1c898096bc",
       "algorithm": 2,
-      "duration_ms": 178.8000030517578,
+      "duration_ms": 163.79999923706055,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -7115,7 +7115,7 @@
         "restarts": 1,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.17629999923706055,
+        "elapsed_seconds": 0.15870000076293944,
         "feasible": true
       },
       "native": {
@@ -7133,7 +7133,7 @@
       "fixture": "50_02.txt",
       "input_sha256": "7930127b0469b81ed4d721077e71165837e710f8fd5452a54ca5ed1c898096bc",
       "algorithm": 3,
-      "duration_ms": 551.4000015258789,
+      "duration_ms": 566.7999992370605,
       "browser": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -7400,7 +7400,7 @@
         "restarts": 12,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 0.5483999977111816,
+        "elapsed_seconds": 0.5607000007629395,
         "feasible": true
       },
       "native": {
@@ -7416,13 +7416,838 @@
     }
   ],
   "browser_version": "156.0.8078.4",
-  "maximum_progress_gap_ms": 142.5,
+  "timed_pause": {
+    "paused": {
+      "type": "paused",
+      "runId": 44,
+      "snapshot": {
+        "schema_version": 1,
+        "math_profile": "portable-libm-0.2.16",
+        "finished": false,
+        "termination": "running",
+        "radius": 545.6098699293252,
+        "points": [
+          [
+            74.77414015286413,
+            247.89496559839742
+          ],
+          [
+            65.47198591615945,
+            -294.1317151496188
+          ],
+          [
+            239.93660315778249,
+            -55.70495386545651
+          ],
+          [
+            322.76049573650647,
+            366.9354595395739
+          ],
+          [
+            -157.90257898888188,
+            385.6025939494137
+          ],
+          [
+            -98.85698835615807,
+            -442.93098364206264
+          ],
+          [
+            324.99469869877714,
+            82.1781301171304
+          ],
+          [
+            -131.06148194609403,
+            -182.58313378290845
+          ],
+          [
+            379.0618513462874,
+            -32.745130996159524
+          ],
+          [
+            -346.3914041983848,
+            22.003585673516472
+          ],
+          [
+            86.35710501824181,
+            507.9401542063223
+          ],
+          [
+            369.5583673797969,
+            294.73457052157175
+          ],
+          [
+            74.77414015286404,
+            -38.96827310017161
+          ],
+          [
+            283.92972554706955,
+            -218.88724871953633
+          ],
+          [
+            -246.17286512042554,
+            316.6561580907309
+          ],
+          [
+            -0.809560298484952,
+            -168.54201381306
+          ],
+          [
+            10.551219771936866,
+            408.5418126653962
+          ],
+          [
+            434.32149282341146,
+            101.41050431358293
+          ],
+          [
+            106.34814203222648,
+            -462.5413564197913
+          ],
+          [
+            212.05011570171348,
+            335.7981140262798
+          ],
+          [
+            -99.92780527065227,
+            482.6036379862828
+          ],
+          [
+            319.4576581062875,
+            312.03196446730254
+          ],
+          [
+            -170.09713386482395,
+            -369.9249421529218
+          ],
+          [
+            410.69144123380266,
+            -146.4331315870648
+          ],
+          [
+            -264.0020235023771,
+            -102.3611782380928
+          ],
+          [
+            -194.86888727768562,
+            34.1377244470967
+          ],
+          [
+            181.1261094243126,
+            223.9900129360845
+          ],
+          [
+            226.33889936154583,
+            196.3298514558232
+          ],
+          [
+            -66.83179421314705,
+            -49.63484718649496
+          ],
+          [
+            -364.3214751270932,
+            201.28534923027033
+          ],
+          [
+            -214.3241135304686,
+            203.02935906439527
+          ],
+          [
+            199.3058750087412,
+            -349.9492095659495
+          ],
+          [
+            385.3838567278474,
+            164.38634149865857
+          ],
+          [
+            -23.74691468584573,
+            104.46334624911294
+          ],
+          [
+            -265.0879226628152,
+            -264.3656389440359
+          ],
+          [
+            -74.29033698867323,
+            264.68876537004434
+          ],
+          [
+            228.25372974770318,
+            448.64643047069404
+          ],
+          [
+            310.6814951305354,
+            221.4515742930183
+          ],
+          [
+            -297.5770451230071,
+            113.84170398557755
+          ],
+          [
+            -421.42769187574515,
+            -115.91313011258036
+          ],
+          [
+            -161.79999922724514,
+            -89.52345411783327
+          ],
+          [
+            -461.4745309799243,
+            96.34570615112098
+          ],
+          [
+            -76.33792431746996,
+            -301.6127451549079
+          ],
+          [
+            -332.1620437651977,
+            318.2688497808855
+          ],
+          [
+            417.26294830340714,
+            38.685480842710106
+          ],
+          [
+            1.5880420812358302,
+            -398.07559499497756
+          ],
+          [
+            139.95749312279924,
+            -176.7654450185789
+          ],
+          [
+            -275.7859954597853,
+            390.97777357037523
+          ],
+          [
+            148.59732240925055,
+            456.096046966227
+          ],
+          [
+            162.26238531415464,
+            104.46334624911294
+          ]
+        ],
+        "radii": [
+          78,
+          70,
+          88,
+          30,
+          75,
+          58,
+          74,
+          59,
+          53,
+          63,
+          30,
+          28,
+          78,
+          81,
+          37,
+          72,
+          95,
+          37,
+          71,
+          85,
+          38,
+          25,
+          44,
+          65,
+          64,
+          89,
+          31,
+          22,
+          64,
+          69,
+          81,
+          75,
+          28,
+          96,
+          98,
+          72,
+          29,
+          66,
+          41,
+          94,
+          39,
+          74,
+          72,
+          49,
+          28,
+          52,
+          69,
+          43,
+          51,
+          90
+        ],
+        "output": "545.6099\n78 74.7741 247.8950\n70 65.4720 -294.1317\n88 239.9366 -55.7050\n30 322.7605 366.9355\n75 -157.9026 385.6026\n58 -98.8570 -442.9310\n74 324.9947 82.1781\n59 -131.0615 -182.5831\n53 379.0619 -32.7451\n63 -346.3914 22.0036\n30 86.3571 507.9402\n28 369.5584 294.7346\n78 74.7741 -38.9683\n81 283.9297 -218.8872\n37 -246.1729 316.6562\n72 -0.8096 -168.5420\n95 10.5512 408.5418\n37 434.3215 101.4105\n71 106.3481 -462.5414\n85 212.0501 335.7981\n38 -99.9278 482.6036\n25 319.4577 312.0320\n44 -170.0971 -369.9249\n65 410.6914 -146.4331\n64 -264.0020 -102.3612\n89 -194.8689 34.1377\n31 181.1261 223.9900\n22 226.3389 196.3299\n64 -66.8318 -49.6348\n69 -364.3215 201.2853\n81 -214.3241 203.0294\n75 199.3059 -349.9492\n28 385.3839 164.3863\n96 -23.7469 104.4633\n98 -265.0879 -264.3656\n72 -74.2903 264.6888\n29 228.2537 448.6464\n66 310.6815 221.4516\n41 -297.5770 113.8417\n94 -421.4277 -115.9131\n39 -161.8000 -89.5235\n74 -461.4745 96.3457\n72 -76.3379 -301.6127\n49 -332.1620 318.2688\n28 417.2629 38.6855\n52 1.5880 -398.0756\n69 139.9575 -176.7654\n43 -275.7860 390.9778\n51 148.5973 456.0960\n90 162.2624 104.4633\n",
+        "evaluations": 43,
+        "iterations": 10,
+        "restarts": 1,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "elapsed_seconds": 0.04239999771118164,
+        "feasible": true
+      },
+      "received": 10441.79999923706
+    },
+    "resumed": {
+      "type": "resumed",
+      "runId": 44,
+      "snapshot": {
+        "schema_version": 1,
+        "math_profile": "portable-libm-0.2.16",
+        "finished": false,
+        "termination": "running",
+        "radius": 545.6098699293252,
+        "points": [
+          [
+            74.77414015286413,
+            247.89496559839742
+          ],
+          [
+            65.47198591615945,
+            -294.1317151496188
+          ],
+          [
+            239.93660315778249,
+            -55.70495386545651
+          ],
+          [
+            322.76049573650647,
+            366.9354595395739
+          ],
+          [
+            -157.90257898888188,
+            385.6025939494137
+          ],
+          [
+            -98.85698835615807,
+            -442.93098364206264
+          ],
+          [
+            324.99469869877714,
+            82.1781301171304
+          ],
+          [
+            -131.06148194609403,
+            -182.58313378290845
+          ],
+          [
+            379.0618513462874,
+            -32.745130996159524
+          ],
+          [
+            -346.3914041983848,
+            22.003585673516472
+          ],
+          [
+            86.35710501824181,
+            507.9401542063223
+          ],
+          [
+            369.5583673797969,
+            294.73457052157175
+          ],
+          [
+            74.77414015286404,
+            -38.96827310017161
+          ],
+          [
+            283.92972554706955,
+            -218.88724871953633
+          ],
+          [
+            -246.17286512042554,
+            316.6561580907309
+          ],
+          [
+            -0.809560298484952,
+            -168.54201381306
+          ],
+          [
+            10.551219771936866,
+            408.5418126653962
+          ],
+          [
+            434.32149282341146,
+            101.41050431358293
+          ],
+          [
+            106.34814203222648,
+            -462.5413564197913
+          ],
+          [
+            212.05011570171348,
+            335.7981140262798
+          ],
+          [
+            -99.92780527065227,
+            482.6036379862828
+          ],
+          [
+            319.4576581062875,
+            312.03196446730254
+          ],
+          [
+            -170.09713386482395,
+            -369.9249421529218
+          ],
+          [
+            410.69144123380266,
+            -146.4331315870648
+          ],
+          [
+            -264.0020235023771,
+            -102.3611782380928
+          ],
+          [
+            -194.86888727768562,
+            34.1377244470967
+          ],
+          [
+            181.1261094243126,
+            223.9900129360845
+          ],
+          [
+            226.33889936154583,
+            196.3298514558232
+          ],
+          [
+            -66.83179421314705,
+            -49.63484718649496
+          ],
+          [
+            -364.3214751270932,
+            201.28534923027033
+          ],
+          [
+            -214.3241135304686,
+            203.02935906439527
+          ],
+          [
+            199.3058750087412,
+            -349.9492095659495
+          ],
+          [
+            385.3838567278474,
+            164.38634149865857
+          ],
+          [
+            -23.74691468584573,
+            104.46334624911294
+          ],
+          [
+            -265.0879226628152,
+            -264.3656389440359
+          ],
+          [
+            -74.29033698867323,
+            264.68876537004434
+          ],
+          [
+            228.25372974770318,
+            448.64643047069404
+          ],
+          [
+            310.6814951305354,
+            221.4515742930183
+          ],
+          [
+            -297.5770451230071,
+            113.84170398557755
+          ],
+          [
+            -421.42769187574515,
+            -115.91313011258036
+          ],
+          [
+            -161.79999922724514,
+            -89.52345411783327
+          ],
+          [
+            -461.4745309799243,
+            96.34570615112098
+          ],
+          [
+            -76.33792431746996,
+            -301.6127451549079
+          ],
+          [
+            -332.1620437651977,
+            318.2688497808855
+          ],
+          [
+            417.26294830340714,
+            38.685480842710106
+          ],
+          [
+            1.5880420812358302,
+            -398.07559499497756
+          ],
+          [
+            139.95749312279924,
+            -176.7654450185789
+          ],
+          [
+            -275.7859954597853,
+            390.97777357037523
+          ],
+          [
+            148.59732240925055,
+            456.096046966227
+          ],
+          [
+            162.26238531415464,
+            104.46334624911294
+          ]
+        ],
+        "radii": [
+          78,
+          70,
+          88,
+          30,
+          75,
+          58,
+          74,
+          59,
+          53,
+          63,
+          30,
+          28,
+          78,
+          81,
+          37,
+          72,
+          95,
+          37,
+          71,
+          85,
+          38,
+          25,
+          44,
+          65,
+          64,
+          89,
+          31,
+          22,
+          64,
+          69,
+          81,
+          75,
+          28,
+          96,
+          98,
+          72,
+          29,
+          66,
+          41,
+          94,
+          39,
+          74,
+          72,
+          49,
+          28,
+          52,
+          69,
+          43,
+          51,
+          90
+        ],
+        "output": "545.6099\n78 74.7741 247.8950\n70 65.4720 -294.1317\n88 239.9366 -55.7050\n30 322.7605 366.9355\n75 -157.9026 385.6026\n58 -98.8570 -442.9310\n74 324.9947 82.1781\n59 -131.0615 -182.5831\n53 379.0619 -32.7451\n63 -346.3914 22.0036\n30 86.3571 507.9402\n28 369.5584 294.7346\n78 74.7741 -38.9683\n81 283.9297 -218.8872\n37 -246.1729 316.6562\n72 -0.8096 -168.5420\n95 10.5512 408.5418\n37 434.3215 101.4105\n71 106.3481 -462.5414\n85 212.0501 335.7981\n38 -99.9278 482.6036\n25 319.4577 312.0320\n44 -170.0971 -369.9249\n65 410.6914 -146.4331\n64 -264.0020 -102.3612\n89 -194.8689 34.1377\n31 181.1261 223.9900\n22 226.3389 196.3299\n64 -66.8318 -49.6348\n69 -364.3215 201.2853\n81 -214.3241 203.0294\n75 199.3059 -349.9492\n28 385.3839 164.3863\n96 -23.7469 104.4633\n98 -265.0879 -264.3656\n72 -74.2903 264.6888\n29 228.2537 448.6464\n66 310.6815 221.4516\n41 -297.5770 113.8417\n94 -421.4277 -115.9131\n39 -161.8000 -89.5235\n74 -461.4745 96.3457\n72 -76.3379 -301.6127\n49 -332.1620 318.2688\n28 417.2629 38.6855\n52 1.5880 -398.0756\n69 139.9575 -176.7654\n43 -275.7860 390.9778\n51 148.5973 456.0960\n90 162.2624 104.4633\n",
+        "evaluations": 43,
+        "iterations": 10,
+        "restarts": 1,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "elapsed_seconds": 0.04239999771118164,
+        "feasible": true
+      },
+      "received": 10946.29999923706
+    },
+    "end": {
+      "type": "done",
+      "runId": 44,
+      "snapshot": {
+        "schema_version": 1,
+        "math_profile": "portable-libm-0.2.16",
+        "finished": true,
+        "termination": "time_limit",
+        "radius": 506.95278031042113,
+        "points": [
+          [
+            71.11076709741569,
+            254.72199082197648
+          ],
+          [
+            93.22938940374983,
+            -290.4956177440734
+          ],
+          [
+            287.67361981731983,
+            -69.72741779807428
+          ],
+          [
+            336.29079290917457,
+            338.2169890036791
+          ],
+          [
+            -170.28658951316615,
+            328.0665655497611
+          ],
+          [
+            -71.02216610017992,
+            -443.29321972700046
+          ],
+          [
+            381.24223041127135,
+            62.52937914390155
+          ],
+          [
+            -163.02896228124214,
+            -203.19044619679752
+          ],
+          [
+            448.48641953305633,
+            -45.21643441805271
+          ],
+          [
+            -292.97667756004637,
+            8.050823227406898
+          ],
+          [
+            88.73373415030166,
+            468.6252972811539
+          ],
+          [
+            398.7962702353246,
+            265.24515002732846
+          ],
+          [
+            121.79853687386549,
+            -63.05264337725331
+          ],
+          [
+            325.515120603412,
+            -274.7209545578792
+          ],
+          [
+            -264.99746639451627,
+            268.2734020598744
+          ],
+          [
+            -30.988253448573328,
+            -219.53161100692378
+          ],
+          [
+            -17.761084930371265,
+            403.1611359358685
+          ],
+          [
+            443.95954837109457,
+            154.12038382592482
+          ],
+          [
+            72.20882759884911,
+            -429.9279616578579
+          ],
+          [
+            226.4611467984753,
+            304.1007202179196
+          ],
+          [
+            -146.85256672611604,
+            441.74843888189895
+          ],
+          [
+            349.5466238391638,
+            284.8353955011519
+          ],
+          [
+            -234.07297395286312,
+            -399.41836095936463
+          ],
+          [
+            412.85284242340157,
+            -157.71451184102602
+          ],
+          [
+            -240.39828006339116,
+            -107.56273205636596
+          ],
+          [
+            -140.70422514866468,
+            8.509280766503254
+          ],
+          [
+            167.65246804386211,
+            204.10544666319956
+          ],
+          [
+            247.7352782615061,
+            199.23117152712325
+          ],
+          [
+            -18.684230183205017,
+            -83.8095542585545
+          ],
+          [
+            -392.3021391423553,
+            194.67322124804835
+          ],
+          [
+            -216.3798874602523,
+            160.7473513096632
+          ],
+          [
+            208.73386703943783,
+            -378.1659630342883
+          ],
+          [
+            427.0324214655349,
+            216.88127065481422
+          ],
+          [
+            28.328134488677325,
+            83.7217029621295
+          ],
+          [
+            -302.62660904838793,
+            -275.0534052228955
+          ],
+          [
+            -74.05878077869997,
+            216.92867196239226
+          ],
+          [
+            231.79415021982027,
+            417.9821795462821
+          ],
+          [
+            335.6333292510161,
+            194.90018190969974
+          ],
+          [
+            -325.78572970222785,
+            106.74708923870278
+          ],
+          [
+            -398.40345119685537,
+            -108.63543325477258
+          ],
+          [
+            -116.15458653199472,
+            -117.1217014680948
+          ],
+          [
+            -429.2440496268768,
+            56.51906899350475
+          ],
+          [
+            -139.606669943812,
+            -332.08682354257917
+          ],
+          [
+            -343.97198538967746,
+            302.3288012056936
+          ],
+          [
+            477.99637006621975,
+            30.22158463160316
+          ],
+          [
+            -16.214651081964707,
+            -344.4180232624078
+          ],
+          [
+            196.7651013907148,
+            -197.74063600903244
+          ],
+          [
+            -280.86304144332365,
+            369.2779317510129
+          ],
+          [
+            151.79008345511946,
+            417.77696467573503
+          ],
+          [
+            214.13680258258466,
+            92.38323736059809
+          ]
+        ],
+        "radii": [
+          78,
+          70,
+          88,
+          30,
+          75,
+          58,
+          74,
+          59,
+          53,
+          63,
+          30,
+          28,
+          78,
+          81,
+          37,
+          72,
+          95,
+          37,
+          71,
+          85,
+          38,
+          25,
+          44,
+          65,
+          64,
+          89,
+          31,
+          22,
+          64,
+          69,
+          81,
+          75,
+          28,
+          96,
+          98,
+          72,
+          29,
+          66,
+          41,
+          94,
+          39,
+          74,
+          72,
+          49,
+          28,
+          52,
+          69,
+          43,
+          51,
+          90
+        ],
+        "output": "506.9528\n78 71.1108 254.7220\n70 93.2294 -290.4956\n88 287.6736 -69.7274\n30 336.2908 338.2170\n75 -170.2866 328.0666\n58 -71.0222 -443.2932\n74 381.2422 62.5294\n59 -163.0290 -203.1904\n53 448.4864 -45.2164\n63 -292.9767 8.0508\n30 88.7337 468.6253\n28 398.7963 265.2452\n78 121.7985 -63.0526\n81 325.5151 -274.7210\n37 -264.9975 268.2734\n72 -30.9883 -219.5316\n95 -17.7611 403.1611\n37 443.9595 154.1204\n71 72.2088 -429.9280\n85 226.4611 304.1007\n38 -146.8526 441.7484\n25 349.5466 284.8354\n44 -234.0730 -399.4184\n65 412.8528 -157.7145\n64 -240.3983 -107.5627\n89 -140.7042 8.5093\n31 167.6525 204.1054\n22 247.7353 199.2312\n64 -18.6842 -83.8096\n69 -392.3021 194.6732\n81 -216.3799 160.7474\n75 208.7339 -378.1660\n28 427.0324 216.8813\n96 28.3281 83.7217\n98 -302.6266 -275.0534\n72 -74.0588 216.9287\n29 231.7942 417.9822\n66 335.6333 194.9002\n41 -325.7857 106.7471\n94 -398.4035 -108.6354\n39 -116.1546 -117.1217\n74 -429.2440 56.5191\n72 -139.6067 -332.0868\n49 -343.9720 302.3288\n28 477.9964 30.2216\n52 -16.2147 -344.4180\n69 196.7651 -197.7406\n43 -280.8630 369.2779\n51 151.7901 417.7770\n90 214.1368 92.3832\n",
+        "evaluations": 8519,
+        "iterations": 1977,
+        "restarts": 3,
+        "initialization_fallbacks": 0,
+        "numerical_failures": 0,
+        "elapsed_seconds": 0.4000999946594238,
+        "feasible": true
+      },
+      "received": 11303.79999923706
+    },
+    "wall_ms": 905.8999977111816
+  },
+  "maximum_progress_gap_ms": 128.89999771118164,
   "responsiveness": {
-    "beats": 201,
+    "beats": 204,
     "progress": [
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -7692,11 +8517,11 @@
           "elapsed_seconds": 0,
           "feasible": true
         },
-        "received": 11814
+        "received": 11360.899997711182
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -7958,19 +8783,19 @@
             90
           ],
           "output": "545.6099\n78 74.7741 247.8950\n70 65.4720 -294.1317\n88 239.9366 -55.7050\n30 322.7605 366.9355\n75 -157.9026 385.6026\n58 -98.8570 -442.9310\n74 324.9947 82.1781\n59 -131.0615 -182.5831\n53 379.0619 -32.7451\n63 -346.3914 22.0036\n30 86.3571 507.9402\n28 369.5584 294.7346\n78 74.7741 -38.9683\n81 283.9297 -218.8872\n37 -246.1729 316.6562\n72 -0.8096 -168.5420\n95 10.5512 408.5418\n37 434.3215 101.4105\n71 106.3481 -462.5414\n85 212.0501 335.7981\n38 -99.9278 482.6036\n25 319.4577 312.0320\n44 -170.0971 -369.9249\n65 410.6914 -146.4331\n64 -264.0020 -102.3612\n89 -194.8689 34.1377\n31 181.1261 223.9900\n22 226.3389 196.3299\n64 -66.8318 -49.6348\n69 -364.3215 201.2853\n81 -214.3241 203.0294\n75 199.3059 -349.9492\n28 385.3839 164.3863\n96 -23.7469 104.4633\n98 -265.0879 -264.3656\n72 -74.2903 264.6888\n29 228.2537 448.6464\n66 310.6815 221.4516\n41 -297.5770 113.8417\n94 -421.4277 -115.9131\n39 -161.8000 -89.5235\n74 -461.4745 96.3457\n72 -76.3379 -301.6127\n49 -332.1620 318.2688\n28 417.2629 38.6855\n52 1.5880 -398.0756\n69 139.9575 -176.7654\n43 -275.7860 390.9778\n51 148.5973 456.0960\n90 162.2624 104.4633\n",
-          "evaluations": 2811,
-          "iterations": 674,
+          "evaluations": 2553,
+          "iterations": 611,
           "restarts": 1,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.10270000076293945,
+          "elapsed_seconds": 0.111,
           "feasible": true
         },
-        "received": 11917.399997711182
+        "received": 11472.399997711182
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -8232,19 +9057,19 @@
             90
           ],
           "output": "506.9528\n78 71.1108 254.7220\n70 93.2294 -290.4956\n88 287.6736 -69.7274\n30 336.2908 338.2170\n75 -170.2866 328.0666\n58 -71.0222 -443.2932\n74 381.2422 62.5294\n59 -163.0290 -203.1904\n53 448.4864 -45.2164\n63 -292.9767 8.0508\n30 88.7337 468.6253\n28 398.7963 265.2452\n78 121.7985 -63.0526\n81 325.5151 -274.7210\n37 -264.9975 268.2734\n72 -30.9883 -219.5316\n95 -17.7611 403.1611\n37 443.9595 154.1204\n71 72.2088 -429.9280\n85 226.4611 304.1007\n38 -146.8526 441.7484\n25 349.5466 284.8354\n44 -234.0730 -399.4184\n65 412.8528 -157.7145\n64 -240.3983 -107.5627\n89 -140.7042 8.5093\n31 167.6525 204.1054\n22 247.7353 199.2312\n64 -18.6842 -83.8096\n69 -392.3021 194.6732\n81 -216.3799 160.7474\n75 208.7339 -378.1660\n28 427.0324 216.8813\n96 28.3281 83.7217\n98 -302.6266 -275.0534\n72 -74.0588 216.9287\n29 231.7942 417.9822\n66 335.6333 194.9002\n41 -325.7857 106.7471\n94 -398.4035 -108.6354\n39 -116.1546 -117.1217\n74 -429.2440 56.5191\n72 -139.6067 -332.0868\n49 -343.9720 302.3288\n28 477.9964 30.2216\n52 -16.2147 -344.4180\n69 196.7651 -197.7406\n43 -280.8630 369.2779\n51 151.7901 417.7770\n90 214.1368 92.3832\n",
-          "evaluations": 5146,
-          "iterations": 1201,
+          "evaluations": 4750,
+          "iterations": 1111,
           "restarts": 2,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.20760000228881836,
+          "elapsed_seconds": 0.21179999923706055,
           "feasible": true
         },
-        "received": 12022.20000076294
+        "received": 11573.20000076294
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -8506,19 +9331,19 @@
             90
           ],
           "output": "506.9528\n78 71.1108 254.7220\n70 93.2294 -290.4956\n88 287.6736 -69.7274\n30 336.2908 338.2170\n75 -170.2866 328.0666\n58 -71.0222 -443.2932\n74 381.2422 62.5294\n59 -163.0290 -203.1904\n53 448.4864 -45.2164\n63 -292.9767 8.0508\n30 88.7337 468.6253\n28 398.7963 265.2452\n78 121.7985 -63.0526\n81 325.5151 -274.7210\n37 -264.9975 268.2734\n72 -30.9883 -219.5316\n95 -17.7611 403.1611\n37 443.9595 154.1204\n71 72.2088 -429.9280\n85 226.4611 304.1007\n38 -146.8526 441.7484\n25 349.5466 284.8354\n44 -234.0730 -399.4184\n65 412.8528 -157.7145\n64 -240.3983 -107.5627\n89 -140.7042 8.5093\n31 167.6525 204.1054\n22 247.7353 199.2312\n64 -18.6842 -83.8096\n69 -392.3021 194.6732\n81 -216.3799 160.7474\n75 208.7339 -378.1660\n28 427.0324 216.8813\n96 28.3281 83.7217\n98 -302.6266 -275.0534\n72 -74.0588 216.9287\n29 231.7942 417.9822\n66 335.6333 194.9002\n41 -325.7857 106.7471\n94 -398.4035 -108.6354\n39 -116.1546 -117.1217\n74 -429.2440 56.5191\n72 -139.6067 -332.0868\n49 -343.9720 302.3288\n28 477.9964 30.2216\n52 -16.2147 -344.4180\n69 196.7651 -197.7406\n43 -280.8630 369.2779\n51 151.7901 417.7770\n90 214.1368 92.3832\n",
-          "evaluations": 8433,
-          "iterations": 1956,
-          "restarts": 3,
+          "evaluations": 8170,
+          "iterations": 1897,
+          "restarts": 2,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.3185,
+          "elapsed_seconds": 0.313,
           "feasible": true
         },
-        "received": 12164.70000076294
+        "received": 11674.399997711182
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -8780,19 +9605,19 @@
             90
           ],
           "output": "506.9528\n78 71.1108 254.7220\n70 93.2294 -290.4956\n88 287.6736 -69.7274\n30 336.2908 338.2170\n75 -170.2866 328.0666\n58 -71.0222 -443.2932\n74 381.2422 62.5294\n59 -163.0290 -203.1904\n53 448.4864 -45.2164\n63 -292.9767 8.0508\n30 88.7337 468.6253\n28 398.7963 265.2452\n78 121.7985 -63.0526\n81 325.5151 -274.7210\n37 -264.9975 268.2734\n72 -30.9883 -219.5316\n95 -17.7611 403.1611\n37 443.9595 154.1204\n71 72.2088 -429.9280\n85 226.4611 304.1007\n38 -146.8526 441.7484\n25 349.5466 284.8354\n44 -234.0730 -399.4184\n65 412.8528 -157.7145\n64 -240.3983 -107.5627\n89 -140.7042 8.5093\n31 167.6525 204.1054\n22 247.7353 199.2312\n64 -18.6842 -83.8096\n69 -392.3021 194.6732\n81 -216.3799 160.7474\n75 208.7339 -378.1660\n28 427.0324 216.8813\n96 28.3281 83.7217\n98 -302.6266 -275.0534\n72 -74.0588 216.9287\n29 231.7942 417.9822\n66 335.6333 194.9002\n41 -325.7857 106.7471\n94 -398.4035 -108.6354\n39 -116.1546 -117.1217\n74 -429.2440 56.5191\n72 -139.6067 -332.0868\n49 -343.9720 302.3288\n28 477.9964 30.2216\n52 -16.2147 -344.4180\n69 196.7651 -197.7406\n43 -280.8630 369.2779\n51 151.7901 417.7770\n90 214.1368 92.3832\n",
-          "evaluations": 11037,
-          "iterations": 2574,
+          "evaluations": 10427,
+          "iterations": 2431,
           "restarts": 3,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.4625,
+          "elapsed_seconds": 0.41570000076293945,
           "feasible": true
         },
-        "received": 12277.29999923706
+        "received": 11777.099998474121
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -9059,14 +9884,14 @@
           "restarts": 4,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.5612000007629394,
+          "elapsed_seconds": 0.5117000007629394,
           "feasible": true
         },
-        "received": 12407.5
+        "received": 11903.099998474121
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -9328,19 +10153,19 @@
             90
           ],
           "output": "506.9528\n78 71.1108 254.7220\n70 93.2294 -290.4956\n88 287.6736 -69.7274\n30 336.2908 338.2170\n75 -170.2866 328.0666\n58 -71.0222 -443.2932\n74 381.2422 62.5294\n59 -163.0290 -203.1904\n53 448.4864 -45.2164\n63 -292.9767 8.0508\n30 88.7337 468.6253\n28 398.7963 265.2452\n78 121.7985 -63.0526\n81 325.5151 -274.7210\n37 -264.9975 268.2734\n72 -30.9883 -219.5316\n95 -17.7611 403.1611\n37 443.9595 154.1204\n71 72.2088 -429.9280\n85 226.4611 304.1007\n38 -146.8526 441.7484\n25 349.5466 284.8354\n44 -234.0730 -399.4184\n65 412.8528 -157.7145\n64 -240.3983 -107.5627\n89 -140.7042 8.5093\n31 167.6525 204.1054\n22 247.7353 199.2312\n64 -18.6842 -83.8096\n69 -392.3021 194.6732\n81 -216.3799 160.7474\n75 208.7339 -378.1660\n28 427.0324 216.8813\n96 28.3281 83.7217\n98 -302.6266 -275.0534\n72 -74.0588 216.9287\n29 231.7942 417.9822\n66 335.6333 194.9002\n41 -325.7857 106.7471\n94 -398.4035 -108.6354\n39 -116.1546 -117.1217\n74 -429.2440 56.5191\n72 -139.6067 -332.0868\n49 -343.9720 302.3288\n28 477.9964 30.2216\n52 -16.2147 -344.4180\n69 196.7651 -197.7406\n43 -280.8630 369.2779\n51 151.7901 417.7770\n90 214.1368 92.3832\n",
-          "evaluations": 15630,
-          "iterations": 3636,
+          "evaluations": 16240,
+          "iterations": 3779,
           "restarts": 4,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.6942000007629394,
+          "elapsed_seconds": 0.6455999984741211,
           "feasible": true
         },
-        "received": 12509.599998474121
+        "received": 12007
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -9607,14 +10432,14 @@
           "restarts": 5,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.7787999992370606,
+          "elapsed_seconds": 0.7302999992370606,
           "feasible": true
         },
-        "received": 12627.79999923706
+        "received": 12127.70000076294
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -9876,19 +10701,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 21067,
-          "iterations": 4916,
+          "evaluations": 21595,
+          "iterations": 5036,
           "restarts": 5,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 0.9142000007629395,
+          "elapsed_seconds": 0.8670999984741211,
           "feasible": true
         },
-        "received": 12729
+        "received": 12228.5
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -10150,19 +10975,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 23394,
-          "iterations": 5447,
+          "evaluations": 23824,
+          "iterations": 5552,
           "restarts": 6,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.0177999992370605,
+          "elapsed_seconds": 0.9670999984741211,
           "feasible": true
         },
-        "received": 12832.5
+        "received": 12328.5
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -10424,19 +11249,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 25899,
-          "iterations": 6017,
+          "evaluations": 26379,
+          "iterations": 6129,
           "restarts": 7,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.120900001525879,
+          "elapsed_seconds": 1.068900001525879,
           "feasible": true
         },
-        "received": 12935.70000076294
+        "received": 12430.29999923706
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -10698,19 +11523,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 29345,
-          "iterations": 6822,
+          "evaluations": 29751,
+          "iterations": 6907,
           "restarts": 7,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.2237999992370605,
+          "elapsed_seconds": 1.1702000007629394,
           "feasible": true
         },
-        "received": 13038.599998474121
+        "received": 12531.599998474121
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -10972,19 +11797,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 31572,
-          "iterations": 7339,
+          "evaluations": 31920,
+          "iterations": 7421,
           "restarts": 8,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.329400001525879,
+          "elapsed_seconds": 1.2765999984741212,
           "feasible": true
         },
-        "received": 13144.099998474121
+        "received": 12638
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -11246,19 +12071,19 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 35382,
-          "iterations": 8186,
+          "evaluations": 35517,
+          "iterations": 8215,
           "restarts": 8,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.4412999992370605,
+          "elapsed_seconds": 1.3875999984741212,
           "feasible": true
         },
-        "received": 13255.899997711182
+        "received": 12749.099998474121
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -11525,14 +12350,14 @@
           "restarts": 9,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.5536000022888183,
+          "elapsed_seconds": 1.4932000007629394,
           "feasible": true
         },
-        "received": 13368.20000076294
+        "received": 12854.70000076294
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -11799,14 +12624,14 @@
           "restarts": 10,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.6605,
+          "elapsed_seconds": 1.6017000007629394,
           "feasible": true
         },
-        "received": 13475.099998474121
+        "received": 12963
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -12073,14 +12898,14 @@
           "restarts": 11,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.7577999992370605,
+          "elapsed_seconds": 1.6997999992370605,
           "feasible": true
         },
-        "received": 13603.899997711182
+        "received": 13091.899997711182
       },
       {
         "type": "progress",
-        "runId": 49,
+        "runId": 51,
         "snapshot": {
           "schema_version": 1,
           "math_profile": "portable-libm-0.2.16",
@@ -12342,20 +13167,294 @@
             90
           ],
           "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-          "evaluations": 46759,
-          "iterations": 10812,
+          "evaluations": 46367,
+          "iterations": 10721,
+          "restarts": 11,
+          "initialization_fallbacks": 0,
+          "numerical_failures": 0,
+          "elapsed_seconds": 1.8335999984741211,
+          "feasible": true
+        },
+        "received": 13195
+      },
+      {
+        "type": "progress",
+        "runId": 51,
+        "snapshot": {
+          "schema_version": 1,
+          "math_profile": "portable-libm-0.2.16",
+          "finished": false,
+          "termination": "running",
+          "radius": 505.48585224169904,
+          "points": [
+            [
+              208.12607097239683,
+              -172.78992606787716
+            ],
+            [
+              29.597961444865387,
+              166.69811053671262
+            ],
+            [
+              -106.08668095675128,
+              -397.36842454667106
+            ],
+            [
+              463.7090942072249,
+              105.16819027421847
+            ],
+            [
+              364.43715047865305,
+              139.3919969143007
+            ],
+            [
+              -249.74964870839003,
+              -371.30467530364825
+            ],
+            [
+              431.4368372089821,
+              6.296110200540329
+            ],
+            [
+              -275.37759504170424,
+              336.5155048998715
+            ],
+            [
+              -201.00081979678706,
+              -271.5754960967804
+            ],
+            [
+              194.45540194555036,
+              121.89279647262195
+            ],
+            [
+              -445.5685172646027,
+              165.99645545561273
+            ],
+            [
+              331.8398281669042,
+              41.67856843586242
+            ],
+            [
+              -143.43581593600607,
+              402.2788639142136
+            ],
+            [
+              292.6671288218559,
+              -307.46198425164505
+            ],
+            [
+              -83.45544582005509,
+              160.41311523333349
+            ],
+            [
+              -366.87327523030433,
+              230.8980236345497
+            ],
+            [
+              380.19332009899597,
+              -154.75753715615133
+            ],
+            [
+              234.70945491867027,
+              213.43856582633916
+            ],
+            [
+              171.4729317013164,
+              -399.21456108266176
+            ],
+            [
+              -405.53809019276383,
+              -111.10994944562843
+            ],
+            [
+              396.4195489387453,
+              247.77784412075482
+            ],
+            [
+              275.96413432956626,
+              -95.27760296098076
+            ],
+            [
+              -293.41132182527025,
+              -47.31042242450356
+            ],
+            [
+              41.276746375585454,
+              -438.5464524681635
+            ],
+            [
+              19.294827124278022,
+              -311.4261017820799
+            ],
+            [
+              41.603402292256106,
+              -160.0527066964808
+            ],
+            [
+              128.48634651718623,
+              188.88380224386935
+            ],
+            [
+              438.6005264649275,
+              203.41178243659388
+            ],
+            [
+              -87.92579351575861,
+              -241.50069482046362
+            ],
+            [
+              244.2078883875456,
+              -6.798908123222107
+            ],
+            [
+              -334.6060620787042,
+              -261.2022940817995
+            ],
+            [
+              -101.89384653978364,
+              -80.63305890679304
+            ],
+            [
+              167.71437746495835,
+              232.971940469532
+            ],
+            [
+              219.64413260610996,
+              345.589886008062
+            ],
+            [
+              35.263804264922015,
+              405.9560936098932
+            ],
+            [
+              -233.30475571651746,
+              -146.53069909082745
+            ],
+            [
+              338.2327534431742,
+              -38.0452032355998
+            ],
+            [
+              -59.12018501012511,
+              54.65514818182952
+            ],
+            [
+              307.8161512452044,
+              240.6419196223323
+            ],
+            [
+              -373.5800803261219,
+              65.02429868127696
+            ],
+            [
+              349.5669979573083,
+              308.8878485472316
+            ],
+            [
+              -203.14082380146556,
+              28.694251661790336
+            ],
+            [
+              -67.38343031258815,
+              270.4324439448729
+            ],
+            [
+              141.39704199014824,
+              -64.72521066785579
+            ],
+            [
+              277.3619821334418,
+              84.36458417626716
+            ],
+            [
+              131.08207614785445,
+              -279.40420248286244
+            ],
+            [
+              89.81902779435747,
+              41.41236515887433
+            ],
+            [
+              6.039178303824603,
+              -32.92629945111497
+            ],
+            [
+              94.12346928914656,
+              269.06549338669396
+            ],
+            [
+              -209.4609201173568,
+              192.5813594787142
+            ]
+          ],
+          "radii": [
+            78,
+            70,
+            88,
+            30,
+            75,
+            58,
+            74,
+            59,
+            53,
+            63,
+            30,
+            28,
+            78,
+            81,
+            37,
+            72,
+            95,
+            37,
+            71,
+            85,
+            38,
+            25,
+            44,
+            65,
+            64,
+            89,
+            31,
+            22,
+            64,
+            69,
+            81,
+            75,
+            28,
+            96,
+            98,
+            72,
+            29,
+            66,
+            41,
+            94,
+            39,
+            74,
+            72,
+            49,
+            28,
+            52,
+            69,
+            43,
+            51,
+            90
+          ],
+          "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
+          "evaluations": 48754,
+          "iterations": 11286,
           "restarts": 12,
           "initialization_fallbacks": 0,
           "numerical_failures": 0,
-          "elapsed_seconds": 1.8887000007629395,
+          "elapsed_seconds": 1.9427000007629394,
           "feasible": true
         },
-        "received": 13737.29999923706
+        "received": 13304.20000076294
       }
     ],
     "first": {
       "type": "progress",
-      "runId": 49,
+      "runId": 51,
       "snapshot": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -12625,11 +13724,11 @@
         "elapsed_seconds": 0,
         "feasible": true
       },
-      "received": 11814
+      "received": 11360.899997711182
     },
     "end": {
       "type": "done",
-      "runId": 49,
+      "runId": 51,
       "snapshot": {
         "schema_version": 1,
         "math_profile": "portable-libm-0.2.16",
@@ -12891,17 +13990,17 @@
           90
         ],
         "output": "505.4859\n78 208.1261 -172.7899\n70 29.5980 166.6981\n88 -106.0867 -397.3684\n30 463.7091 105.1682\n75 364.4372 139.3920\n58 -249.7496 -371.3047\n74 431.4368 6.2961\n59 -275.3776 336.5155\n53 -201.0008 -271.5755\n63 194.4554 121.8928\n30 -445.5685 165.9965\n28 331.8398 41.6786\n78 -143.4358 402.2789\n81 292.6671 -307.4620\n37 -83.4554 160.4131\n72 -366.8733 230.8980\n95 380.1933 -154.7575\n37 234.7095 213.4386\n71 171.4729 -399.2146\n85 -405.5381 -111.1099\n38 396.4195 247.7778\n25 275.9641 -95.2776\n44 -293.4113 -47.3104\n65 41.2767 -438.5465\n64 19.2948 -311.4261\n89 41.6034 -160.0527\n31 128.4863 188.8838\n22 438.6005 203.4118\n64 -87.9258 -241.5007\n69 244.2079 -6.7989\n81 -334.6061 -261.2023\n75 -101.8938 -80.6331\n28 167.7144 232.9719\n96 219.6441 345.5899\n98 35.2638 405.9561\n72 -233.3048 -146.5307\n29 338.2328 -38.0452\n66 -59.1202 54.6551\n41 307.8162 240.6419\n94 -373.5801 65.0243\n39 349.5670 308.8878\n74 -203.1408 28.6943\n72 -67.3834 270.4324\n49 141.3970 -64.7252\n28 277.3620 84.3646\n52 131.0821 -279.4042\n69 89.8190 41.4124\n43 6.0392 -32.9263\n51 94.1235 269.0655\n90 -209.4609 192.5814\n",
-        "evaluations": 49536,
-        "iterations": 11471,
-        "restarts": 12,
+        "evaluations": 50735,
+        "iterations": 11734,
+        "restarts": 13,
         "initialization_fallbacks": 0,
         "numerical_failures": 0,
-        "elapsed_seconds": 2.0087999992370604,
+        "elapsed_seconds": 2.0372000007629394,
         "feasible": true
       },
-      "received": 13824.20000076294
+      "received": 13397.79999923706
     },
-    "cancel_ms": 5.200000762939453
+    "cancel_ms": 30.700000762939453
   },
   "relative_radius_error_max": 0,
   "passed": true

@@ -104,16 +104,27 @@ onmessage = ({data}) => {
     if (data.runId !== runId) return;
     if (data.type === 'pause' && active && !paused) {
       clearTimeout(timer);
+      if (check(wasm.session_step(0, elapsed())) === 1) {
+        active = false;
+        emit('done');
+        return;
+      }
       pausedAt = performance.now();
       paused = true;
       emit('paused');
     } else if (data.type === 'resume' && active && paused) {
       pausedDuration += performance.now() - pausedAt;
       paused = false;
+      if (check(wasm.session_step(0, elapsed())) === 1) {
+        active = false;
+        emit('done');
+        return;
+      }
       emit('resumed');
       timer = setTimeout(pump, 0);
     } else if (data.type === 'cancel' && active) {
       clearTimeout(timer);
+      if (!paused) check(wasm.session_step(0, elapsed()));
       check(wasm.session_cancel());
       active = false;
       paused = false;

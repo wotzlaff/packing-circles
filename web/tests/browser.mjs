@@ -138,6 +138,38 @@ try {
     assert.equal(paused.type, 'done');
     assert.equal(paused.snapshot.output, first.end.snapshot.output);
     for (const key of ['evaluations', 'iterations', 'restarts']) assert.equal(paused.snapshot[key], first.end.snapshot[key]);
+    const timed = await page.evaluate(async input => {
+        window.events.length = 0;
+        const started = performance.now();
+        window.testWorker.start({input, seed: '5', timeLimitSeconds: 0.4});
+        await window.waitEvent(e => e.type === 'progress');
+        window.testWorker.pause();
+        const paused = await window.waitEvent(e => e.type === 'paused');
+        await new Promise(resolve => setTimeout(resolve, 500));
+        if (window.events.some(e => e.type === 'done')) throw new Error('Paused time consumed the deadline');
+        window.testWorker.resume();
+        const resumed = await window.waitEvent(e => e.type === 'resumed');
+        const end = await window.waitEvent(e => e.type === 'done' || e.type === 'error');
+        return {paused, resumed, end, wall_ms: performance.now() - started};
+    }, input);
+    assert.equal(timed.end.type, 'done');
+    assert.equal(timed.end.snapshot.termination, 'time_limit');
+    assert.ok(timed.wall_ms >= 900, `paused run ended after ${timed.wall_ms} ms`);
+    assert.ok(timed.end.snapshot.elapsed_seconds >= 0.4 && timed.end.snapshot.elapsed_seconds < 0.6);
+    assert.ok(timed.resumed.snapshot.elapsed_seconds - timed.paused.snapshot.elapsed_seconds < 0.1);
+    checkSnapshot(timed.end.snapshot, input);
+    report.timed_pause = timed;
+    const immediate = await page.evaluate(async input => {
+        window.events.length = 0;
+        window.testWorker.start({input, timeLimitSeconds: 5});
+        window.testWorker.cancel();
+        return await window.waitEvent(e => e.type === 'done' || e.type === 'error');
+    }, input);
+    assert.equal(immediate.type, 'done');
+    assert.equal(immediate.snapshot.termination, 'cancelled');
+    // Firefox may round a sub-millisecond start/cancel interval to zero.
+    assert.ok(Number.isFinite(immediate.snapshot.elapsed_seconds) && immediate.snapshot.elapsed_seconds >= 0);
+    report.immediate_cancellation = immediate;
     for (const invalid of ['not an instance', `51\n${'1 '.repeat(51)}`, '2\n1 NaN', '0', `100001\n${'1\n'.repeat(100001)}`]) {
         const result = await run(invalid);
         assert.equal(result.end.type, 'error', 'invalid input must fail');
