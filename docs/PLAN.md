@@ -22,7 +22,8 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 5. Experiment harness and traces | Complete | [150 paired trace runs](tracing-results.md): output/work invariant, median runtime +3.25%; 40-run unified demonstration and exact summary reproduction |
 | 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
 | 7. Resumable WASM | Complete | [Session/worker architecture and browser measurements](wasm.md); 40 native/WASM comparisons in each of Chromium/Firefox, identical radii; cancellation 30.7/15 ms |
-| 8–9 | Pending | Interactive comparison site and deployment remain |
+| 8. Interactive comparison site | In progress | Layout, worker integration, replay and import/export drafted; browser acceptance and performance checks underway |
+| 9. GitHub Pages | Pending | Deployment follows the interactive site |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.

@@ -244,3 +244,61 @@ fn portable_math_is_chunk_invariant() {
         }
     }
 }
+
+#[test]
+fn diagnostics_describe_accepted_state_without_changing_solver() {
+    use packing_core::numerics::{evaluate, PenaltyWeights};
+    let instance = Instance::new(vec![1., 2., 1.5]).unwrap();
+    let options = SolveOptions {
+        time_limit_seconds: None,
+        evaluation_limit: 500,
+        ..SolveOptions::default()
+    };
+    let mut observed = SolverSession::new(instance.clone(), options, Algorithm::A).unwrap();
+    let mut control = SolverSession::new(instance.clone(), options, Algorithm::A).unwrap();
+    assert!(observed.diagnostics().is_none());
+    let mut snapshots = 0;
+    while !observed.is_finished() {
+        observed.step(1, 0.).unwrap();
+        control.step(1, 0.).unwrap();
+        if let Some(d) = observed.diagnostics() {
+            snapshots += 1;
+            assert_eq!(d.points.len(), instance.len());
+            let mut state = vec![d.trial_radius];
+            state.extend(d.points.iter().flat_map(|p| [p.x, p.y]));
+            let evaluation = evaluate(
+                &instance,
+                &state,
+                PenaltyWeights {
+                    containment: d.containment_weight,
+                    pairwise: d.pairwise_weight,
+                },
+            )
+            .unwrap();
+            assert_eq!(d.objective, evaluation.value);
+            assert_eq!(
+                d.gradient_squared,
+                evaluation.gradient.iter().fold(0., |s, x| s + x * x)
+            );
+        }
+        let a = observed.result();
+        let b = control.result();
+        assert_eq!(
+            (
+                a.output,
+                a.evaluations,
+                a.iterations,
+                a.restarts,
+                a.numerical_failures
+            ),
+            (
+                b.output,
+                b.evaluations,
+                b.iterations,
+                b.restarts,
+                b.numerical_failures
+            )
+        );
+    }
+    assert!(snapshots > 0);
+}

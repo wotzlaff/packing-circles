@@ -116,3 +116,21 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   control snapshots use current active time without consuming another optimizer
   transition. Test real deadline completion after a paused interval; accept the
   browser's finite clock resolution for immediate cancellation timestamps.
+
+## Interactive search diagnostics
+
+- Expose a read-only copy of the current accepted local iterate, objective,
+  squared gradient, and evaluated penalty weights. Reading diagnostics performs
+  no objective calls and consumes no randomness. Hide diagnostics while a
+  penalty refresh is pending so coordinates, value, and weights describe the
+  same evaluation. Keep the checked feasible incumbent separate from raw trial
+  geometry; a low penalized objective is not an optimality certificate.
+- Keep the site buildless, using the existing worker client, canvas geometry,
+  SVG history, and native browser controls. Compare A and an explicitly selected
+  B policy sequentially with identical input, seed, and active-time budget.
+  Replay recorded feasible frames at a shared active time; do not interpolate
+  coordinates, which could create collisions between feasible endpoints.
+- Independently validate imported geometry and four-decimal output. Bound run
+  recordings to two runs, 512 frames per run and 4 MiB of serialized snapshot
+  payload; disclose any evicted intermediate frames. Retain the first and latest
+  frames. The worker client retains at most another 1 MiB of recent snapshots.

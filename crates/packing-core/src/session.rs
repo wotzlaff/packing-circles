@@ -2,7 +2,7 @@
 //! one bounded transition; accepted BFGS and line-search state survives yields.
 use crate::numerics::{
     evaluate, initialize, initialize_portable, min_scale, min_scale_portable, repair,
-    repair_portable, value, Evaluation, PenaltySchedule, SplitMix64,
+    repair_portable, value, Evaluation, PenaltySchedule, PenaltyWeights, SplitMix64,
 };
 use crate::solver::{
     consider, export_candidate, line_fallback, Algorithm, SolveOptions, SolveResult, StopReason,
@@ -37,6 +37,7 @@ enum Phase {
 struct Local {
     x: Vec<f64>,
     current: Option<Evaluation>,
+    current_weights: Option<PenaltyWeights>,
     norm: f64,
     h: Vec<f64>,
     previous: Option<f64>,
@@ -68,6 +69,7 @@ impl Local {
         Self {
             x,
             current: None,
+            current_weights: None,
             norm: 0.,
             h: identity(n),
             previous: None,
@@ -96,6 +98,20 @@ impl Local {
             .collect()
     }
 }
+/// Read-only description of the accepted local optimization state.
+///
+/// The trial radius and points need not form a feasible packing. The objective
+/// and squared gradient correspond to the given penalty weights.
+#[derive(Debug, Clone)]
+pub struct SessionDiagnostics {
+    pub objective: f64,
+    pub trial_radius: f64,
+    pub points: Vec<Point>,
+    pub containment_weight: f64,
+    pub pairwise_weight: f64,
+    pub gradient_squared: f64,
+}
+
 /// An incrementally driven optimization with a checked incumbent at all times.
 pub struct SolverSession {
     instance: Instance,
@@ -217,6 +233,39 @@ impl SolverSession {
         r.solution = self.best.0.clone();
         r.output = self.best.1.clone();
         r
+    }
+    /// Clone the accepted local state when its evaluation matches current weights.
+    /// Returns `None` before evaluation, during a pending refresh, or for
+    /// non-finite diagnostic values. This performs no objective evaluation.
+    pub fn diagnostics(&self) -> Option<SessionDiagnostics> {
+        let l = self.local.as_ref()?;
+        let e = l.current.as_ref()?;
+        let weights = l.current_weights?;
+        if weights != l.schedule.weights {
+            return None;
+        }
+        let gradient_squared = dot(&e.gradient, &e.gradient);
+        if !e.value.is_finite()
+            || !gradient_squared.is_finite()
+            || !weights.containment.is_finite()
+            || !weights.pairwise.is_finite()
+            || l.x.iter().any(|x| !x.is_finite())
+        {
+            return None;
+        }
+        Some(SessionDiagnostics {
+            objective: e.value,
+            trial_radius: l.x[0],
+            points: l.x[1..]
+                .as_chunks::<2>()
+                .0
+                .iter()
+                .map(|p| Point::new(p[0], p[1]))
+                .collect(),
+            containment_weight: weights.containment,
+            pairwise_weight: weights.pairwise,
+            gradient_squared,
+        })
     }
     /// Return the instance being solved.
     pub fn instance(&self) -> &Instance {
@@ -457,6 +506,7 @@ impl SolverSession {
                             self.fail();
                         } else {
                             l.current = Some(e);
+                            l.current_weights = Some(l.schedule.weights);
                             self.phase = if l.norm == 0. {
                                 Phase::FinishLocal
                             } else {
@@ -466,6 +516,7 @@ impl SolverSession {
                     }
                     Phase::Refresh(terminate) => {
                         l.current = Some(e);
+                        l.current_weights = Some(l.schedule.weights);
                         self.phase = if terminate {
                             Phase::FinishLocal
                         } else {
@@ -586,6 +637,7 @@ impl SolverSession {
                         l.previous = Some(old.value);
                         l.x = point;
                         l.current = Some(e);
+                        l.current_weights = Some(l.schedule.weights);
                         l.norm = next_norm;
                         self.phase = if next_norm == 0. {
                             Phase::FinishLocal

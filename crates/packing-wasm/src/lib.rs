@@ -62,7 +62,12 @@ impl Runtime {
             .map(ToString::to_string)
             .collect::<Vec<_>>()
             .join(",");
-        self.snapshot = format!("{{\"schema_version\":1,\"math_profile\":\"portable-libm-0.2.16\",\"finished\":{},\"termination\":{},\"radius\":{},\"points\":[{}],\"radii\":[{}],\"output\":{},\"evaluations\":{},\"iterations\":{},\"restarts\":{},\"initialization_fallbacks\":{},\"numerical_failures\":{},\"elapsed_seconds\":{},\"feasible\":true}}", finished, json_string(&termination), result.solution.radius, points, radii, json_string(&result.output), result.evaluations, result.iterations, result.restarts, result.initialization_fallbacks, result.numerical_failures, result.elapsed_seconds);
+        let diagnostics = session.diagnostics().map(|d| {
+            let points = d.points.iter().map(|p| format!("[{},{}]", p.x, p.y))
+                .collect::<Vec<_>>().join(",");
+            format!("{{\"objective\":{},\"trial_radius\":{},\"points\":[{}],\"containment_weight\":{},\"pairwise_weight\":{},\"gradient_squared\":{}}}", d.objective, d.trial_radius, points, d.containment_weight, d.pairwise_weight, d.gradient_squared)
+        }).unwrap_or_else(|| "null".to_owned());
+        self.snapshot = format!("{{\"schema_version\":1,\"math_profile\":\"portable-libm-0.2.16\",\"finished\":{},\"termination\":{},\"radius\":{},\"points\":[{}],\"radii\":[{}],\"output\":{},\"evaluations\":{},\"iterations\":{},\"restarts\":{},\"initialization_fallbacks\":{},\"numerical_failures\":{},\"elapsed_seconds\":{},\"feasible\":true,\"diagnostics\":{}}}", finished, json_string(&termination), result.solution.radius, points, radii, json_string(&result.output), result.evaluations, result.iterations, result.restarts, result.initialization_fallbacks, result.numerical_failures, result.elapsed_seconds, diagnostics);
     }
 }
 
@@ -222,6 +227,10 @@ mod tests {
             0
         );
         assert!(snapshot().contains("\"schema_version\":1"));
+        assert!(snapshot().contains("\"diagnostics\":null"));
+        assert!(session_step(1, 0.0) >= 0);
+        assert!(session_step(1, 0.0) >= 0);
+        assert!(snapshot().contains("\"diagnostics\":{\"objective\":"));
         assert!(session_step(1, 0.0) >= 0);
         assert!(session_step(0, 0.25) >= 0);
         assert!(snapshot().contains("\"elapsed_seconds\":0.25"));
