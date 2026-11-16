@@ -20,7 +20,7 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 | 3. Numerical components | Complete | [426 fixed comparisons and 128 finite-difference states](numerical-parity.md); 49 Rust/21 Python tests; safe initialization and repair |
 | 4. Complete version A | Complete | [750-run qualification](version-a-results.md): all valid/on time; 1.95 s mean radius ratio 1.001543, worst 1.008245; fixed-work/cancellation tests pass |
 | 5. Experiment harness and traces | Complete | [150 paired trace runs](tracing-results.md): output/work invariant, median runtime +3.25%; 40-run unified demonstration and exact summary reproduction |
-| 6. Develop version B | Next | Select at least three independent candidates, run development ablations, then freeze a candidate before held-out qualification |
+| 6. Develop version B | Experimental; release pending | [Three development ablations](version-b-experiments.md) completed; none meets the quality target; held-out qualification remains untouched |
 | 7–9 | Pending | No WASM app or deployment yet |
 
 Milestones 1–5 were completed on 2026-11-16. Foundation code was drafted while
@@ -225,5 +225,4 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. Next: milestone 6's measured candidate
-experiments and ablations, retaining qualified A as the baseline.
+qualified A, a measured B status, and 8. Next: develop a stronger B candidate and repeat development ablations before held-out qualification, retaining qualified A as the baseline.

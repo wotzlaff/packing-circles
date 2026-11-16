@@ -21,8 +21,6 @@ def report(a_path, b_path):
         key = ('a', row['budget_seconds'], Path(row['instance']).name)
         groups[key].append(row)
     for row in b_rows:
-        if not _valid(row):
-            raise ValueError(f"invalid B run {row['run_id']}")
         key = (row['solver'], row['budget_seconds'], Path(row['instance']).name)
         groups[key].append(row)
     names = sorted({r['solver'] for r in b_rows})
@@ -32,14 +30,16 @@ def report(a_path, b_path):
         raise ValueError('incomplete cohort')
     lines = ['# Version B development comparisons', '',
              'Per-instance medians of five seeds; ratios compare against historical A. '
-             'Bootstrap uses 10,000 resamples of the 50 instance ratios, seed 20261116.', '',
-             '| Candidate | Budget (s) | Geometric mean B/A | 95% bootstrap interval | Worst ratio | Regressions |',
-             '| --- | ---: | ---: | ---: | ---: | ---: |']
+             'Bootstrap uses 10,000 resamples of complete instance ratios, seed 20261116. '
+             'Only instances with five valid, on-time runs enter ratios.', '',
+             '| Candidate | Budget (s) | Complete instances | Valid runs | Geometric mean B/A | 95% bootstrap interval | Worst ratio | Regressions |',
+             '| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |']
     details = []
     for name in names:
         for budget in budgets:
             ratios = []
             regressions = []
+            excluded = []
             for instance in instances:
                 a, b = groups[('a', budget, instance)], groups[(name, budget, instance)]
                 for batch in (a, b):
@@ -47,17 +47,29 @@ def report(a_path, b_path):
                         raise ValueError(f'incomplete seeds: {name} {budget} {instance}')
                 if {r['input_sha256'] for r in a} != {r['input_sha256'] for r in b}:
                     raise ValueError(f'input hash mismatch: {instance}')
+                if not all(_valid(r) for r in b):
+                    if all(r['successful'] for r in b):
+                        ratio = statistics.median(r['validation']['enclosing_radius'] for r in b) / statistics.median(r['validation']['enclosing_radius'] for r in a)
+                        excluded.append((instance, ratio))
+                    continue
                 ratio = statistics.median(r['validation']['enclosing_radius'] for r in b) / statistics.median(r['validation']['enclosing_radius'] for r in a)
                 ratios.append(ratio)
                 if ratio > 1:
                     regressions.append((instance, ratio))
+            valid = sum(_valid(r) for r in b_rows if r['solver'] == name and r['budget_seconds'] == budget)
+            if not ratios:
+                lines.append(f'| {name} | {budget:g} | 0 | {valid}/250 | — | — | — | — |')
+                continue
             logs = [math.log(x) for x in ratios]
             gm = math.exp(statistics.mean(logs))
             rng = random.Random(20261116)
-            boot = sorted(math.exp(statistics.mean(rng.choices(logs, k=50))) for _ in range(10000))
-            lines.append(f'| {name} | {budget:g} | {gm:.8f} | [{boot[249]:.8f}, {boot[9749]:.8f}] | {max(ratios):.8f} | {len(regressions)} |')
+            boot = sorted(math.exp(statistics.mean(rng.choices(logs, k=len(logs)))) for _ in range(10000))
+            lines.append(f'| {name} | {budget:g} | {len(ratios)} | {valid}/250 | {gm:.8f} | [{boot[249]:.8f}, {boot[9749]:.8f}] | {max(ratios):.8f} | {len(regressions)} |')
             details.extend(['', f'## {name}, {budget:g} s regressions', '',
                             ', '.join(f'{instance}: {ratio:.8f}' for instance, ratio in regressions) or 'None.'])
+            if excluded:
+                details.extend(['', 'Excluded late cohorts, diagnostic ratios only: ' +
+                                ', '.join(f'{instance}: {ratio:.8f}' for instance, ratio in excluded)])
     return '\n'.join(lines + details) + '\n'
 
 
