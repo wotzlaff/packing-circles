@@ -1,0 +1,28 @@
+name: Checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  rust-and-bench:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select stable Rust and components
+        run: |
+          rustup default stable
+          rustup component add rustfmt clippy
+      - name: Check formatting
+        run: cargo fmt --all --check
+      - name: Check lints
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Test Rust
+        run: cargo test --workspace --locked
+      - name: Test independent benchmark checker
+        run: python3 -m unittest discover -s bench -v
+      - name: Verify frozen synthetic inputs
+        run: python3 bench/generate_instances.py --check

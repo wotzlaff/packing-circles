@@ -1,0 +1,7 @@
+[package]
+name = "packing-cli"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+packing-core = { path = "../packing-core" }

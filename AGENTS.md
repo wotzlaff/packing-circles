@@ -2,48 +2,42 @@
 
 ## Purpose & Architecture
 
-Reimplement the contest-winning circle-packing solver in Rust with clear module boundaries. See the [contest](https://incyb.kiev.ua/en/event/glushkov-cyber-2022-11-01) and [problem definition](https://incyb.kiev.ua/storage/editor/files/problem-2022-10-17-en.pdf).
+Reimplement the contest-winning circle-packing solver in Rust. See the [contest](https://incyb.kiev.ua/en/event/glushkov-cyber-2022-11-01) and [problem definition](https://incyb.kiev.ua/storage/editor/files/problem-2022-10-17-en.pdf).
 
 - **Version A:** preserve the legacy algorithm; random initialization and minor numerical differences may vary.
 - **Version B:** improve solution quality, performance, or robustness, with measured comparisons against A.
 
-The eventual GitHub Pages site should execute through WASM, visualize optimization live, and plot improvement history. Propose useful mathematical explanations and interactive experiments.
+The GitHub Pages site should execute through WASM, visualize optimization, and plot improvement history. Propose mathematical explanations and interactive experiments.
 
 ## Project Structure & Module Organization
 
-Work in the root repository. Keep `legacy/` in place as a separate reference checkout of C++ solvers, Python utilities, and notebooks. Never add it to the root repository or as a submodule; avoid unrelated edits.
+Work in the root repository. Keep `legacy/` as a separate reference checkout. Never add it to the root repository or as a submodule; avoid unrelated edits.
 
-Rust, website, tests, and assets belong in the root repository; none exist yet. Document locations and commands when introducing them. Keep solver logic independent of browser rendering; record decisions and issues in Markdown under `docs/`.
+`crates/packing-core/` owns geometry, validation, and I/O; `crates/packing-cli/` owns file commands. Rust integration tests live beside each crate, with shared data in `tests/fixtures/`. `bench/` contains independent Python checks, frozen synthetic inputs, and archived results. Browser work is planned under `web/`. Record decisions and milestone evidence in `docs/`; follow `docs/PLAN.md`.
 
 ## Build, Test & Development Commands
 
-No root build or test command exists yet. With GCC installed, build the legacy solver from the repository root:
+Use stable Rust, Python 3.10+, and GCC; run from the root:
 
-```sh
-g++ -O2 -std=c++17 legacy/main.cpp -o /tmp/circles-legacy-main
-printf '2\n1 1\n' | /tmp/circles-legacy-main
-```
+- `cargo build --workspace --locked` — compile Rust tools.
+- `cargo test --workspace --locked` — run unit and integration tests.
+- `cargo fmt --all --check` — verify formatting.
+- `cargo clippy --workspace --all-targets --locked -- -D warnings` — reject lint warnings.
+- `python3 -m unittest discover -s bench -v` — test independent benchmark tooling.
+- `python3 bench/generate_instances.py --check` — verify frozen data.
+- `python3 bench/legacy.py build --variant contest` — build the selected legacy reference outside its checkout.
 
-This smoke input packs two unit circles. From `legacy/`, `python3 run_benchmark.py` requires a compiled `./main` and matching files under `data/`; benchmark inputs are not currently included.
-
-Once a Cargo package exists, use:
-
-- `cargo build` — compile the Rust implementation.
-- `cargo test` — run unit and integration tests.
-- `cargo fmt --check` — verify standard Rust formatting.
-- `cargo clippy --all-targets -- -D warnings` — reject lint warnings.
-
-Document browser/WASM commands when that tooling is introduced.
+See `README.md` and `bench/README.md` for CLI examples and measurement commands. Optimization and WASM execution are not implemented yet.
 
 ## Coding Style & Testing Guidelines
 
-Use rustfmt's four-space indentation, `snake_case` functions/modules, and `PascalCase` types. Document public APIs, mathematical assumptions, tolerances, and stopping criteria.
+Use rustfmt, four-space indentation, `snake_case` functions/modules, and `PascalCase` types. Document APIs, mathematical assumptions, tolerances, and stopping criteria.
 
-Use Rust's built-in test framework with descriptive names such as `rejects_overlapping_circles`. Cover containment, pairwise separation, objective calculation, and numerical edge cases. Use fixed seeds for reproducibility and explicit floating-point tolerances. Compare A against legacy behavior and benchmark B under equivalent time budgets; record quality and runtime. No coverage percentage is established.
+Use Rust's built-in tests with descriptive names such as `rejects_overlapping_circles`. Cover containment, separation, objective calculation, and numerical edge cases. Use fixed seeds and explicit tolerances. Compare A against legacy behavior and benchmark B under equal time budgets. Preserve raw failures; document necessary safe departures from legacy undefined behavior. No coverage percentage is established.
 
 ## Commit, Review & Agent Workflow
 
 Commit each coherent step and push after each commit. Use short imperative commit subjects, such as `Add packing feasibility checks`.
 
-PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions and unresolved questions in Markdown. Use cheaper subagents for bounded implementation, tests, or reviews whenever reasonable; the primary agent integrates and verifies their work.
+PRs should explain changes, validation, numerical effects, and relevant issues; include screenshots for visual changes. Record decisions in Markdown. Use cheaper subagents for bounded implementation, tests, or reviews whenever reasonable; the primary agent integrates and verifies results.
 

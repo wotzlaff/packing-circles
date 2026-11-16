@@ -1,0 +1,8 @@
+[package]
+name = "packing-core"
+version.workspace = true
+edition.workspace = true
+
+[lib]
+name = "packing_core"
+path = "src/lib.rs"

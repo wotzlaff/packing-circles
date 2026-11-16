@@ -2,3 +2,4 @@
 /legacy/
 /bench/build/
 __pycache__/
+/target/

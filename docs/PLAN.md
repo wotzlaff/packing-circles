@@ -8,9 +8,22 @@ version A, an experimentally improved version B, and a browser application on
 GitHub Pages. Commit each coherent step using short imperative subjects and push
 after each commit. Each milestone may take several commits.
 
-All milestones below are pending. Completion requires the listed evidence, not
-just implementation. Record decisions, numerical exceptions, and experiment
-results in `docs/`; update this plan when a gate passes or scope changes.
+Completion requires the listed evidence, not just implementation. Record
+decisions, numerical exceptions, and experiment results in `docs/`.
+
+## Progress
+
+| Milestone | Status | Evidence |
+| --- | --- | --- |
+| 1. Legacy baseline | Complete | [Source map and findings](legacy-baseline.md); [750-run report](../bench/results/contest-development.md); committed datasets and sanitizer evidence |
+| 2. Rust foundations | Complete | Geometry/I/O/configuration modules, inspection CLI, 18 Rust tests, formatting/Clippy/build pass; GitHub Actions workflow configured |
+| 3. Numerical components | Next | [Fidelity and safety contract](version-a.md) prepared; optimizer implementation and parity probes pending |
+| 4–9 | Pending | No end-to-end Rust solver, improvement claims, WASM app, or deployment yet |
+
+Milestones 1–2 were completed on 2026-11-16. Foundation code was drafted while
+the serial baseline ran; compilation was deferred until measurements finished.
+The independent Python tooling has 18 passing tests. Held-out inputs remain
+unevaluated. Local checks passed; remote CI status must be assessed separately.
 
 ## Measurement contract
 
@@ -51,7 +64,8 @@ strong-Wolfe search, BFGS, penalty scheduling, repair, and output. Record
 defaults, termination conditions, and suspected quirks before deciding how A
 handles them. `circles-hackbfgs.tr.cpp` is the provisional winning entry point
 based on notebook and benchmark usage; retain `main.cpp` as a comparison baseline.
-See [selection evidence](legacy-selection.md); confirm provenance before porting.
+See [selection evidence](legacy-selection.md). This is the accepted working
+reference; historical submission provenance remains unproven.
 
 **Done when:** both datasets and their hashes exist; checker tests reject overlap,
 out-of-bounds circles, missing circles, and nonfinite values; legacy runs complete
@@ -183,9 +197,9 @@ Record the release URL and commit in this document.
 
 ## Review points and unresolved inputs
 
-- Confirm the historical winning entry point before freezing A; meanwhile inspect
-  and measure `circles-hackbfgs.tr.cpp` as the provisional reference and `main.cpp`
-  as a comparison baseline.
+- Use `circles-hackbfgs.tr.cpp` as the accepted working reference for A and retain
+  `main.cpp` as a comparison baseline. Do not claim the historical submission is
+  confirmed without additional evidence.
 - If original contest inputs/results become available, archive provenance and add
   a separate evaluation track; never substitute synthetic data without labeling it.
 - Select frontend tooling during milestone 8 based on worker, chart, and static
@@ -195,4 +209,5 @@ Record the release URL and commit in this document.
 
 Dependencies: 1 → 2 → 3 → 4 → 5. Milestone 6 follows 5; milestone 7 can proceed
 after 5 while B experiments continue. Milestone 8 needs 7; milestone 9 needs
-qualified A, a measured B status, and 8. The next concrete action is milestone 1.
+qualified A, a measured B status, and 8. Next: milestone 3's root-owned C++
+objective/gradient probe and Rust numerical kernel, then fixed-state parity tests.
