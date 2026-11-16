@@ -1,4 +1,4 @@
-# Packing circles into a circle
+# Dense Packing of Circles into a Circle of Minimal Radius
 
 Rust reimplementation of a contest-winning circle-packing solver, with a measured
 improvement track and a planned interactive WASM visualization.
