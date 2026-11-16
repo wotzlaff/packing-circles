@@ -22,8 +22,10 @@ decisions, numerical exceptions, and experiment results in `docs/`.
 
 Milestones 1–2 were completed on 2026-11-16. Foundation code was drafted while
 the serial baseline ran; compilation was deferred until measurements finished.
-The independent Python tooling has 18 passing tests. Held-out inputs remain
-unevaluated. Local checks passed; remote CI status must be assessed separately.
+The independent Python tooling has 18 passing tests. The Rust CLI also accepted
+all 750 archived packings independently. Held-out inputs remain unevaluated.
+Local checks and [GitHub Actions](https://github.com/wotzlaff/packing-circles/actions/runs/43847491218)
+passed for implementation commit `dd30185`.
 
 ## Measurement contract
 
