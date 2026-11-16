@@ -51,6 +51,8 @@ try {
     await page.waitForFunction(() => !document.querySelector('#run').disabled);
     await page.evaluate(async () => { window.__packingState = (await import('./app.js')).getAppState; });
     const state = () => page.evaluate(() => window.__packingState());
+    assert.equal(await page.locator('#time-scale').inputValue(), 'late');
+    assert.equal(await page.locator('#trial').isChecked(), false);
     const stats = () => page.evaluate(async () => (await import('./app.js')).getPerformanceStats());
     const wait = (predicate, timeout = 30000) => page.waitForFunction(predicate, null, { timeout });
     async function test(name, fn) {
@@ -242,38 +244,49 @@ try {
         await page.waitForFunction(() => window.__packingState().phase === 'complete', null, { timeout: 30000 });
         const s = await state(); assert.equal(s.runs.length, 1); assert.equal(Number(s.runs[0].algorithm), 3);
     });
-    await test('early search detail and slow checkpoint replay', async () => {
-        const recorded = await state();
-        const early = recorded.runs[0].snapshots.filter(s => s.elapsed_seconds < 0.1 && s.diagnostics);
-        assert.ok(early.length >= 2, `early accepted search positions must be retained: ${JSON.stringify({phase: recorded.phase, activeIndex: recorded.activeIndex, config: recorded.runs[0].config, status: recorded.runs[0].status, frames: recorded.runs[0].snapshots.map(s => ({t: s.elapsed_seconds, iterations: s.iterations, diagnostics: !!s.diagnostics, finished: s.finished, termination: s.termination}))})}`);
-        assert.ok(new Set(early.map(s => s.diagnostics.objective)).size >= 2);
-        await page.locator('#time-scale').selectOption('early');
-        await page.locator('#replay').click();
-        await page.waitForTimeout(500);
-        assert.equal((await state()).phase, 'replaying', 'a short solve needs a watchable replay');
-        await page.locator('#replay').click();
+    await test('late refinements isolate tiny changes and report flat windows', async () => {
+        await page.locator('#time-scale').selectOption('late');
         const original = await download('#export-run');
-        const duplicateTimes = JSON.parse(original);
-        duplicateTimes.runs[0].snapshots.forEach(s => { s.elapsed_seconds = 0; });
-        const referenceRun = structuredClone(duplicateTimes.runs[0]); referenceRun.algorithm = 0; referenceRun.config.algorithm = 0;
-        duplicateTimes.runs.unshift(referenceRun);
-        duplicateTimes.view = {selectedIndex: 1, selectedTime: 0, selectedFrameIndex: 0};
-        await page.locator('#import-run').setInputFiles({name: 'same-millisecond.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(duplicateTimes))});
-        await page.waitForFunction(() => window.__packingState().selectedIndex === 1 && window.__packingState().selectedFrameIndex === 0);
+        const fixture = JSON.parse(original);
+        const template = fixture.runs[0].snapshots.at(-1);
+        const baseRadius = template.radius;
+        const times = [0, 0.01, 0.075, 0.1];
+        function makeFrame(i, radius) {
+            const frame = structuredClone(template);
+            frame.radius = radius; frame.elapsed_seconds = times[i]; frame.evaluations = i; frame.iterations = i; frame.restarts = 1;
+            frame.finished = i === 3; frame.termination = frame.finished ? 'time_limit' : 'running'; frame.diagnostics = null;
+            const lines = frame.output.split('\n'); lines[0] = (Math.ceil(radius * 10000) / 10000).toFixed(4); frame.output = lines.join('\n');
+            return frame;
+        }
+        fixture.runs[0].snapshots = [makeFrame(0, baseRadius + 10), makeFrame(1, baseRadius + 0.000001), makeFrame(2, baseRadius + 0.0000005), makeFrame(3, baseRadius)];
+        fixture.view = {selectedIndex: 0, selectedTime: 0.05, selectedFrameIndex: 1};
+        await page.locator('#import-run').setInputFiles({name: 'late-refinements.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(fixture))});
+        await page.waitForFunction(() => window.__packingState().selectedFrameIndex === 1);
+        await page.waitForFunction(() => {
+            const values = [...document.querySelectorAll('#history .radius-tick')].map(t => Number(t.textContent));
+            const span = Math.max(...values) - Math.min(...values);
+            return values.length === 4 && span > 0.0000005 && span < 0.00001;
+        });
+        const labels = await page.locator('#history .radius-tick').allTextContents();
+        assert.equal(new Set(labels).size, 4, 'sub-millionth radius labels must remain distinct');
+        const values = labels.map(Number);
+        assert.ok(Math.max(...values) - Math.min(...values) < 0.00001, 'initial ten-unit drop must not set the late radius scale');
+        assert.match(await page.locator('#window-info').textContent(), /0\.05.*0\.10/);
+        await page.locator('#replay').click(); await page.waitForTimeout(500);
+        const replay = await state(); assert.equal(replay.phase, 'replaying'); assert.ok(replay.selectedTime >= 0.05);
+        assert.ok(replay.selectedFrameIndex >= 1, 'late replay must skip early checkpoints');
         await page.locator('#replay').click();
-        await page.waitForTimeout(300);
-        assert.equal((await state()).selectedFrameIndex, 0, 'replay must not jump ahead to future equal-time checkpoints in the other run');
-        await page.locator('#replay').click();
-        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 0.0001, duplicateTimes.runs[1].snapshots[0].radius);
+        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 1e-8, baseRadius + 0.000001);
         const first = await page.locator('#radius').textContent();
         await page.locator('#next-frame').click();
-        assert.equal((await state()).selectedFrameIndex, 1);
-        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 0.0001, duplicateTimes.runs[1].snapshots[1].radius);
-        assert.notEqual(await page.locator('#radius').textContent(), first, 'same-time checkpoints must remain separately inspectable');
-        await page.locator('#previous-frame').click();
-        assert.equal((await state()).selectedFrameIndex, 0);
-        const restored = JSON.parse(original); restored.view = {selectedIndex: 0, selectedTime: recorded.runs[0].snapshots.at(-1).elapsed_seconds};
-        await page.locator('#import-run').setInputFiles({name: 'original.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(restored))});
+        await page.waitForFunction(expected => Math.abs(Number(document.querySelector('#radius').textContent) - expected) < 1e-8, baseRadius + 0.0000005);
+        assert.notEqual(await page.locator('#radius').textContent(), first, 'precise best-radius readout must show late changes');
+        await page.locator('#previous-frame').click(); assert.equal((await state()).selectedFrameIndex, 1);
+        assert.ok(await page.locator('#previous-frame').isDisabled(), 'late stepping must stay within the late window');
+        fixture.runs[0].snapshots = times.map((_, i) => makeFrame(i, i ? baseRadius : baseRadius + 10));
+        await page.locator('#import-run').setInputFiles({name: 'flat-late-window.json', mimeType: 'application/json', buffer: Buffer.from(JSON.stringify(fixture))});
+        await page.waitForFunction(() => /No radius improvement in this window/.test(document.querySelector('#history').textContent));
+        await page.locator('#import-run').setInputFiles({name: 'original.json', mimeType: 'application/json', buffer: Buffer.from(original)});
         await page.waitForFunction(() => window.__packingState().selectedFrameIndex === null);
     });
     await test('accessible responsive controls', async () => {

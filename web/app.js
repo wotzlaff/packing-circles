@@ -1,7 +1,7 @@
 import {PackingWorker} from './solver.js';
 import {drawPacking, drawHistory} from './render.js';
 import {presets} from './presets.js';
-import {timeFraction, fractionTime, replayDuration} from './timeline.js';
+import {timeFraction, fractionTime, replayDuration, windowStart} from './timeline.js';
 import {parseInput, validateSnapshot, validateConfig, appendSnapshot, traceStats, parseRecording,
   MAX_INPUT_BYTES, MAX_IMPORT_BYTES, names} from './data.js';
 
@@ -67,7 +67,7 @@ function connectWorker() {
         } else {
           state.phase = 'complete'; state.activeIndex = -1;
           state.selectedTime = maximumTime();
-          $('status').textContent = cancelled ? 'Cancelled. The best checked packing is retained.' : 'Experiment complete. Replay expands the early steps so you can watch the search.';
+          $('status').textContent = cancelled ? 'Cancelled. The best checked packing is retained.' : 'Experiment complete. Late refinements zooms in on the final half of the search.';
         }
       }
       updateControls(); scheduleRender();
@@ -106,7 +106,7 @@ function updateControls() {
   $('replay').disabled = busy || state.runs.every(r => !r.snapshots.length);
   const frames = state.runs[state.selectedIndex]?.snapshots ?? [];
   const frameIndex = selectedFrameIndex();
-  $('previous-frame').disabled = busy || frameIndex <= 0;
+  $('previous-frame').disabled = busy || frameIndex <= firstVisibleFrame(state.selectedIndex);
   $('next-frame').disabled = busy || frameIndex < 0 || frameIndex >= frames.length - 1;
   const selected = selectedSnapshot();
   $('export-solution').disabled = !selected || busy || preview != null;
@@ -144,7 +144,24 @@ function selectedFrameIndex() {
 function visitedReplayFrame(run) {
   const current = Math.floor(replayFraction * Math.max(0, replayCheckpoints.length - 1));
   for (let i = current; i >= 0; i--) if (replayCheckpoints[i].run === run) return replayCheckpoints[i].frame;
-  return 0;
+  return firstVisibleFrame(run);
+}
+
+function firstVisibleFrame(index) {
+  const frames = state.runs[index]?.snapshots ?? [];
+  const start = windowStart(maximumTime(), $('time-scale').value);
+  return Math.max(0, frames.findLastIndex(s => s.elapsed_seconds <= start));
+}
+
+function prepareReplay() {
+  const start = windowStart(maximumTime(), $('time-scale').value);
+  replayCheckpoints = state.runs.flatMap((run, index) => run.snapshots
+    .map((s, frame) => ({time: s.elapsed_seconds, run: index, frame}))
+    .filter((s, frame) => $('time-scale').value !== 'late' || frame >= firstVisibleFrame(index))
+    .map(s => ({...s, time: Math.max(start, s.time)})))
+    .sort((a, b) => a.time - b.time || a.run - b.run || a.frame - b.frame);
+  state.selectedTime = start; state.selectedFrameIndex = null;
+  replayFraction = 0; replayStart = performance.now();
 }
 
 function scheduleRender() {
@@ -157,6 +174,7 @@ function number(value, digits = 4) {
   if (!Number.isFinite(value)) return '—';
   return Math.abs(value) >= 1e8 || Math.abs(value) > 0 && Math.abs(value) < 1e-4 ? value.toExponential(3) : value.toFixed(digits);
 }
+const radiusText = value => number(value, $('time-scale').value === 'late' ? 8 : 4);
 
 function render() {
   framePending = false;
@@ -178,7 +196,7 @@ function render() {
   drawHistory($('history'), state.runs, state.selectedTime, {objective: $('objective').checked,
     timeScale: $('time-scale').value, zoom: $('zoom-improvements').checked});
   if (snapshot) {
-    $('radius').textContent = number(snapshot.radius);
+    $('radius').textContent = radiusText(snapshot.radius);
     $('area-ratio').textContent = number(snapshot.radius / instance.lowerBound, 3);
     $('elapsed').textContent = snapshot.elapsed_seconds < 0.1 ? `${number(snapshot.elapsed_seconds * 1000, 1)} ms` : `${number(snapshot.elapsed_seconds, 2)} s`;
     $('work').textContent = new Intl.NumberFormat('en').format(snapshot.evaluations);
@@ -186,7 +204,7 @@ function render() {
     const raw = $('trial').checked && snapshot.diagnostics;
     $('canvas-mode').textContent = raw ? 'GEOMETRY / RAW TRIAL' : 'GEOMETRY / BEST KNOWN';
     $('feasible').textContent = raw ? 'Raw trial · may be infeasible' : '✓ Checked feasible';
-    $('packing-summary').textContent = `${preview ? 'Recorded example' : run?.name ?? 'Packing'}: ${instance.radii.length} circles, best feasible radius ${number(snapshot.radius)}, ratio to area lower bound ${number(snapshot.radius / instance.lowerBound, 3)}. ${raw ? 'Showing raw accepted trial.' : 'Showing checked feasible geometry.'} ${geometry.contacts} near contacts, ${geometry.overlaps} overlapping pairs, ${geometry.containmentViolations} boundary violations in this view.`;
+    $('packing-summary').textContent = `${preview ? 'Recorded example' : run?.name ?? 'Packing'}: ${instance.radii.length} circles, best feasible radius ${radiusText(snapshot.radius)}, ratio to area lower bound ${number(snapshot.radius / instance.lowerBound, 3)}. ${raw ? 'Showing raw accepted trial.' : 'Showing checked feasible geometry.'} ${geometry.contacts} near contacts, ${geometry.overlaps} overlapping pairs, ${geometry.containmentViolations} boundary violations in this view.`;
   } else {
     for (const id of ['radius', 'area-ratio', 'elapsed', 'work']) $(id).textContent = '—';
     $('solution').textContent = ''; $('feasible').textContent = 'Awaiting solution';
@@ -196,14 +214,21 @@ function render() {
   const stats = traceStats(state.runs);
   $('trace-info').textContent = `${stats.snapshotCount} retained frames · ${(stats.traceBytes / 1024).toFixed(0)} KiB / 4096 KiB history · ${stats.dropped} frames evicted. Replay uses recorded feasible frames without interpolating geometry.`;
   const max = maximumTime();
+  const startTime = windowStart(max, $('time-scale').value);
+  const selectedFrames = run?.snapshots ?? [];
+  const initial = selectedFrames.findLast(s => s.elapsed_seconds <= startTime) ?? selectedFrames[0];
+  const latest = selectedFrames.at(-1);
+  $('window-info').textContent = !latest ? 'Run an experiment to inspect late refinements.' : latest.elapsed_seconds < startTime
+    ? `Late window ${number(startTime, 2)}–${number(max, 2)} s · this run has not reached the window yet.`
+    : `Window ${number(startTime, 2)}–${number(max, 2)} s · best-radius reduction ${number(initial.radius - latest.radius, 8)} (${number((initial.radius - latest.radius) / initial.radius * 100, 5)}%).`;
   $('timeline').value = max ? Math.round(timeFraction(state.selectedTime, max, $('time-scale').value) * 1000) : 1000;
   const frames = state.runs[state.selectedIndex]?.snapshots ?? [];
   $('frame-status').textContent = frames.length ? `Checkpoint ${selectedFrameIndex() + 1} / ${frames.length}` : 'No recorded checkpoints';
-  $('history-summary').textContent = state.runs.filter(r => r.snapshots.length).map(r => `${r.name}: ${r.snapshots.length} retained frames, latest feasible radius ${number(r.snapshots.at(-1).radius)} at ${number(r.snapshots.at(-1).elapsed_seconds, 2)} seconds.`).join(' ') || 'No run history yet.';
+  $('history-summary').textContent = state.runs.filter(r => r.snapshots.length).map(r => `${r.name}: ${r.snapshots.length} retained frames, latest feasible radius ${radiusText(r.snapshots.at(-1).radius)} at ${number(r.snapshots.at(-1).elapsed_seconds, 2)} seconds.`).join(' ') || 'No run history yet.';
   const rows = document.createDocumentFragment();
   for (const r of state.runs) for (const s of r.snapshots.slice(-12)) {
     const row = document.createElement('tr');
-    for (const value of [r.name, `${number(s.elapsed_seconds, 2)} s`, number(s.radius)]) {
+    for (const value of [r.name, `${number(s.elapsed_seconds, 2)} s`, radiusText(s.radius)]) {
       const cell = document.createElement('td'); cell.textContent = value; row.append(cell);
     }
     rows.append(row);
@@ -248,7 +273,7 @@ function runExperiment() {
     const seed = $('seed').value.trim();
     const timeLimitSeconds = Number($('budget').value);
     state.runs = algorithms.map(algorithm => {
-      const config = validateConfig({input: instance.input, algorithm, seed, timeLimitSeconds}, instance.input, algorithm);
+      const config = validateConfig({input: instance.input, algorithm, seed, timeLimitSeconds, captureEarly: $('time-scale').value === 'early'}, instance.input, algorithm);
       return {name: names[algorithm], algorithm, config, snapshots: [], dropped: 0, status: 'queued'};
     });
     startRun(0); updateControls(); scheduleRender();
@@ -307,6 +332,9 @@ $('import-run').onchange = async () => {
     state.selectedTime = Number.isFinite(data.view?.selectedTime) ? Math.max(0, Math.min(maximumTime(), data.view.selectedTime)) : maximumTime();
     const frameIndex = data.view?.selectedFrameIndex;
     state.selectedFrameIndex = Number.isInteger(frameIndex) && frameIndex >= 0 ? Math.min(frameIndex, state.runs[state.selectedIndex].snapshots.length - 1) : null;
+    const start = windowStart(maximumTime(), $('time-scale').value);
+    if (state.selectedTime < start) { state.selectedTime = start; state.selectedFrameIndex = null; }
+    if (state.selectedFrameIndex != null && state.selectedFrameIndex < firstVisibleFrame(state.selectedIndex)) state.selectedFrameIndex = null;
     $('status').textContent = 'Validated recording loaded. Replay and export are available.';
     updateControls(); scheduleRender();
   } catch (error) { state.runs = []; showError(error); }
@@ -323,14 +351,17 @@ $('replay').onclick = () => {
   if (active()) return;
   if (state.phase === 'replaying') { state.phase = 'complete'; replayStart = null; }
   else {
-    replayCheckpoints = state.runs.flatMap((run, index) => run.snapshots.map((s, frame) => ({time: s.elapsed_seconds, run: index, frame})))
-      .sort((a, b) => a.time - b.time || a.run - b.run || a.frame - b.frame);
-    state.phase = 'replaying'; state.selectedTime = 0; state.selectedFrameIndex = null; replayFraction = 0; replayStart = performance.now();
+    prepareReplay(); state.phase = 'replaying';
   }
   updateControls(); scheduleRender();
 };
 for (const id of ['contacts', 'trial', 'objective']) $(id).onchange = scheduleRender;
-for (const id of ['time-scale', 'replay-pace']) $(id).onchange = () => {
+$('time-scale').onchange = () => {
+  if (state.phase === 'replaying') prepareReplay();
+  else if (!active()) { state.selectedTime = Math.max(state.selectedTime, windowStart(maximumTime(), $('time-scale').value)); state.selectedFrameIndex = null; }
+  updateControls(); scheduleRender();
+};
+$('replay-pace').onchange = () => {
   if (state.phase === 'replaying') replayStart = performance.now() - replayFraction * replayDuration(maximumTime(), Number($('replay-pace').value), replayCheckpoints.length) * 1000;
   scheduleRender();
 };
@@ -341,7 +372,7 @@ function stepFrame(direction) {
   const frames = state.runs[state.selectedIndex]?.snapshots;
   if (!frames?.length) return;
   state.phase = 'complete'; replayStart = null;
-  state.selectedFrameIndex = Math.max(0, Math.min(frames.length - 1, index + direction));
+  state.selectedFrameIndex = Math.max(firstVisibleFrame(state.selectedIndex), Math.min(frames.length - 1, index + direction));
   state.selectedTime = frames[state.selectedFrameIndex].elapsed_seconds;
   updateControls(); scheduleRender();
 }

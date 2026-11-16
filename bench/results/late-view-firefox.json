@@ -1,0 +1,124 @@
+{
+  "browser": "firefox",
+  "measured_at": "2026-11-16T20:36:14.727Z",
+  "node": "v24.22.1",
+  "platform": "linux",
+  "kernel": "6.1.0-44-amd64",
+  "cpu": "Intel(R) Core(TM) i7-8700 CPU @ 3.20GHz",
+  "logical_cpus": 12,
+  "stress_seconds": 3,
+  "performance_qualified": false,
+  "cases": [
+    {
+      "name": "valid and invalid uploads",
+      "passed": true
+    },
+    {
+      "name": "comparison is sequential with equal settings and replay",
+      "passed": true
+    },
+    {
+      "name": "solution and run export round trip",
+      "passed": true
+    },
+    {
+      "name": "pause, resume, cancel queued comparison and reset",
+      "passed": true
+    },
+    {
+      "name": "pure B variant",
+      "passed": true
+    },
+    {
+      "name": "late refinements isolate tiny changes and report flat windows",
+      "passed": true
+    },
+    {
+      "name": "accessible responsive controls",
+      "passed": true
+    },
+    {
+      "name": "performance and bounded trace",
+      "passed": true
+    }
+  ],
+  "wasm_sha256": "1930b1343266b5d5d9d4e849cd7b64a15f7977c898068a4c40c487ac3f5f9841",
+  "source_sha256": {
+    "app.js": "5b31f9df2791cd4f64a22a67aad2171f17d053bb9760dcf4d817f753caed9751",
+    "render.js": "4705e5685e9e4e5854678ce4e8e52dad3846fb70be5ceead91ebeb12568e0b36",
+    "data.js": "3b6da24a76b1b4d4b33c32c720cf02796b56bffd209472cc63e8e38e9e4a5ad5",
+    "styles.css": "9b0b914f092c3e4de044586257986d8a1ce9585b696b7ad511288bc23193b8a1"
+  },
+  "build_info": {
+    "version": "0.1.0",
+    "source_commit": "8210fa0ac604e8b7fc9972f5718847ded072d21c",
+    "dirty": true,
+    "math_profile": "portable-libm-0.2.16",
+    "rustc": "rustc 1.100.0 (0ef1bc386 2026-11-09)",
+    "wasm_sha256": "1930b1343266b5d5d9d4e849cd7b64a15f7977c898068a4c40c487ac3f5f9841"
+  },
+  "browser_version": "157.0",
+  "performance": {
+    "frames": [
+      1,
+      2,
+      4,
+      5,
+      3,
+      3,
+      2,
+      3,
+      2,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      4,
+      3,
+      3,
+      3,
+      3,
+      3,
+      3,
+      4,
+      3,
+      4,
+      3,
+      3,
+      2,
+      4,
+      3,
+      7,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "controls": [
+      0,
+      7,
+      3,
+      5,
+      2,
+      9,
+      2,
+      9,
+      4,
+      6,
+      1
+    ],
+    "traceBytes": 195498,
+    "snapshotCount": 35,
+    "dropped": 0,
+    "operations": 10,
+    "viewport": {
+      "width": 1440,
+      "height": 900
+    },
+    "memory": null
+  },
+  "passed": true
+}

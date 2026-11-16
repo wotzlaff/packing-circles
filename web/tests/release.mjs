@@ -50,10 +50,10 @@ async function smoke(driver, label) {
     for (let i = 0; i < 2; i++) { await driver.evaluate(i => document.querySelectorAll('#run-tabs button')[i].click(), i); const output = await driver.download(); checkSolution(output, input); }
     return result;
   });
-  await test(`${label}: early-detail replay and checkpoint stepping`, async () => {
+  await test(`${label}: late-refinement replay and checkpoint stepping`, async () => {
     const controls = await driver.evaluate(() => ({scale: document.querySelector('#time-scale').value,
       zoom: document.querySelector('#zoom-improvements').checked, steps: document.querySelector('#frame-status').textContent}));
-    assert.equal(controls.scale, 'early'); assert.equal(controls.zoom, true);
+    assert.equal(controls.scale, 'late'); assert.equal(controls.zoom, true);
     await driver.evaluate(() => document.querySelector('#replay').click());
     await sleep(500);
     assert.match(await driver.evaluate(() => document.querySelector('#replay').textContent), /Stop replay/);

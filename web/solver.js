@@ -41,11 +41,11 @@ export class PackingWorker extends EventTarget {
     this.#trace = [];
     this.#traceBytes = 0;
     this.#dropped = 0;
-    const {input, algorithm, seed, evaluationLimit, iterationLimit, restartLimit, timeLimitSeconds} = options ?? {};
+    const {input, algorithm, seed, evaluationLimit, iterationLimit, restartLimit, timeLimitSeconds, captureEarly} = options ?? {};
     // Reject huge input before copying it across threads. Send only scalar config.
     const safeOptions = typeof input !== 'string' || input.length > 16 * 1024
       ? {validationError: 'Input must be text of at most 16 KiB'}
-      : {input, algorithm, seed, evaluationLimit, iterationLimit, restartLimit, timeLimitSeconds};
+      : {input, algorithm, seed, evaluationLimit, iterationLimit, restartLimit, timeLimitSeconds, captureEarly};
     this.#worker.postMessage({type: 'start', runId: ++this.#runId, options: safeOptions});
     return this.#runId;
   }

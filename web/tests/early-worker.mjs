@@ -19,7 +19,7 @@ try {
     await new Promise((resolve, reject) => {
       worker.addEventListener('message', ({data}) => {
         messages.push(data);
-        if (data.type === 'ready') worker.start({input: '10\n23 67 24 56 47 60 77 82 22 92\n', seed: '5', evaluationLimit: 5000});
+        if (data.type === 'ready') worker.start({input: '10\n23 67 24 56 47 60 77 82 22 92\n', seed: '5', evaluationLimit: 5000, captureEarly: true});
         if (data.type === 'done') resolve();
         if (data.type === 'error') reject(new Error(data.error));
       });
@@ -31,7 +31,8 @@ try {
   const initial = result.messages.find(m => m.type === 'progress');
   assert.deepEqual(initial.history, []);
   const frames = result.messages.flatMap(m => m.history ?? []);
-  assert.ok(frames.length >= 1 && frames.length <= 64);
+  assert.ok(frames.length >= 1);
+  assert.ok(result.messages.every(m => (m.history?.length ?? 0) <= 64));
   assert.ok(frames[0].elapsed_seconds < 0.1);
   assert.ok(frames[0].radius < initial.snapshot.radius);
   assert.ok(result.messages.at(-1).snapshot.radius < frames[0].radius);
@@ -55,6 +56,28 @@ try {
   }
   assert.ok(result.trace.snapshots.length >= frames.length);
   assert.equal(result.messages.at(-1).snapshot.evaluations, 5000);
+  const fast = await page.evaluate(async () => {
+    const {PackingWorker} = await import('./solver.js');
+    const worker = new PackingWorker();
+    const messages = [];
+    await new Promise((resolve, reject) => {
+      worker.addEventListener('message', ({data}) => {
+        messages.push(data);
+        if (data.type === 'ready') worker.start({input: '10\n23 67 24 56 47 60 77 82 22 92\n', seed: '5', evaluationLimit: 5000});
+        if (data.type === 'done') resolve();
+        if (data.type === 'error') reject(new Error(data.error));
+      });
+    });
+    worker.dispose();
+    return messages;
+  });
+  const fastFrames = fast.flatMap(m => m.history ?? []);
+  assert.ok(fastFrames.length > 0, 'default run records incumbent improvements');
+  assert.ok(fastFrames[0].radius < fast.find(m => m.type === 'progress').snapshot.radius);
+  assert.ok(fastFrames.every((frame, i) => frame.elapsed_seconds >= 0 &&
+    (!i || (frame.radius < fastFrames[i - 1].radius && frame.elapsed_seconds >= fastFrames[i - 1].elapsed_seconds))));
+  assert.equal(fast.at(-1).snapshot.evaluations, result.messages.at(-1).snapshot.evaluations);
+  assert.equal(fast.at(-1).snapshot.radius, result.messages.at(-1).snapshot.radius);
   const terminalTrace = await page.evaluate(async base => {
     const {PackingWorker} = await import('./solver.js');
     const OriginalWorker = window.Worker;

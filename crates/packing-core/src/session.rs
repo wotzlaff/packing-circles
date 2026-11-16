@@ -227,6 +227,10 @@ impl SolverSession {
     pub fn is_finished(&self) -> bool {
         self.finished
     }
+    /// Return the radius of the current checked incumbent without cloning it.
+    pub fn incumbent_radius(&self) -> f64 {
+        self.best.0.radius
+    }
     /// Return the current checked incumbent and counters.
     pub fn result(&self) -> SolveResult {
         let mut r = self.result.clone();

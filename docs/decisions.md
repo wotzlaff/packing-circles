@@ -155,3 +155,16 @@ that belong in B. See the full source map in `legacy-baseline.md`.
   hold recorded geometry between checkpoints, and provide previous/next controls
   for changes sharing a rounded timestamp. Preserve the first 64 checkpoints
   when the bounded history evicts later intermediate frames.
+
+## Prioritize late refinements
+
+- The user clarified that the desired view is late progress. Default to the
+  final half of elapsed time, scale radius from that window alone, and use
+  precise labels/readouts so initialization cannot flatten tiny late changes.
+  Carry the last known state into the window and state explicitly when it is flat.
+- Replay and stepping follow the selected window. Show the best feasible
+  packing by default; dense early trial capture remains optional. Prefer recent
+  recording history over early detail when the memory cap is reached.
+- Record true incumbent changes throughout execution using a read-only radius
+  getter; unchanged steps avoid JSON parsing. This preserves change timestamps
+  without adding optimizer evaluations or random draws.

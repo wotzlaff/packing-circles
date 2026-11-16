@@ -1,4 +1,4 @@
-import { timeFraction } from "./timeline.js";
+import { timeFraction, windowStart, visibleSnapshots } from "./timeline.js";
 
 const colors = { a: "#df806e", b: "#59b5ac", ink: "#20384e", red: "#c34e41" };
 const finite = (x) => Number.isFinite(x);
@@ -127,12 +127,20 @@ function element(name, attrs, text) {
   if (text != null) node.textContent = text;
   return node;
 }
+/** Format radius ticks distinctly even for very small improvements. */
+export function radiusTickFormatter(span, values) {
+  const step = Math.abs(span) / 3;
+  let digits = Math.max(0, Math.min(12, Math.ceil(-Math.log10(step || 1)) + 1));
+  while (digits < 12 && new Set(values.map((v) => v.toFixed(digits))).size < values.length) digits++;
+  return (v) => Math.abs(v) >= 1e9 ? v.toExponential(Math.min(12, digits + 2)) : v.toFixed(digits);
+}
+
 /** Plot recorded best feasible radii as steps against active elapsed time. */
 export function drawHistory(
   svg,
   runs,
   selectedTime,
-  { objective = false, timeScale = "early", zoom = true } = {},
+  { objective = false, timeScale = "late", zoom = true } = {},
 ) {
   svg.replaceChildren();
   const width = Math.max(
@@ -173,39 +181,53 @@ export function drawHistory(
   }
   const all = series.flatMap((r) => r.snapshots),
     maxX = Math.max(...all.map((s) => s.elapsed_seconds), 0);
-  const detail = zoom
+  const start = windowStart(maxX, timeScale);
+  const visibleSeries = series.map((run) => ({ ...run, snapshots: visibleSnapshots(run.snapshots, start) }))
+    .filter((run) => run.snapshots.length);
+  const visible = visibleSeries.flatMap((run) => run.snapshots);
+  const detail = zoom && timeScale !== "late"
     ? series.flatMap((run) => {
         const real = run.snapshots.filter((s) => !(s.evaluations === 0 && s.restarts === 0));
         return real.length ? real : run.snapshots;
       })
-    : all;
+    : visible;
   let minY = Math.min(...detail.map((s) => s.radius)),
     maxY = Math.max(...detail.map((s) => s.radius));
-  const pad = Math.max((maxY - minY) * 0.15, Math.abs(maxY) * 0.01, 0.001);
+  const flat = visibleSeries.every((run) =>
+    run.snapshots.every((snapshot) => snapshot.radius === run.snapshots[0].radius),
+  );
+  const pad = zoom
+    ? Math.max((maxY - minY) * 0.15, Math.max(1, Math.abs(maxY)) * 1e-12)
+    : Math.max((maxY - minY) * 0.15, Math.abs(maxY) * 0.01, 0.001);
   minY -= pad;
   maxY += pad;
+  const tickValues = Array.from({ length: 4 }, (_, i) => minY + ((maxY - minY) * i) / 3);
+  const formatRadius = radiusTickFormatter(maxY - minY, tickValues);
+  const left = Math.min(140, Math.max(56, ...tickValues.map((v) => formatRadius(v).length * 6 + 12)));
   const right = width - (objective ? 85 : 26);
-  const x = (t) => 56 + timeFraction(t, maxX, timeScale) * (right - 56),
+  const x = (t) => left + timeFraction(t, maxX, timeScale) * (right - left),
     y = (v) => bottom - ((v - minY) / (maxY - minY)) * 145;
   for (let i = 0; i <= 3; i++) {
     const v = minY + ((maxY - minY) * i) / 3,
       yy = y(v);
-    add("line", { x1: 56, y1: yy, x2: right, y2: yy, stroke: "#e6eae5" });
+    add("line", { x1: left, y1: yy, x2: right, y2: yy, stroke: "#e6eae5" });
     add(
       "text",
       {
-        x: 47,
+        x: left - 9,
+        class: "radius-tick",
         y: yy + 4,
         "text-anchor": "end",
         fill: "#84928d",
         "font-size": 10,
       },
-      v.toPrecision(3),
+      formatRadius(v),
     );
   }
-  const ticks = [0];
-  if (timeScale === "linear") {
-    for (let i = 1; i <= 4; i++) ticks.push((maxX * i) / 4);
+  const ticks = [start];
+  if (timeScale === "linear" || timeScale === "late") {
+    const intervals = timeScale === "late" ? 3 : 4;
+    for (let i = 1; i <= intervals; i++) ticks.push(start + ((maxX - start) * i) / intervals);
   } else {
     for (let t = 0.001; t < maxX && Number.isFinite(t); t *= 10) ticks.push(t);
     if (maxX > 0) ticks.push(maxX);
@@ -225,14 +247,17 @@ export function drawHistory(
   const clipId = `${svg.id || 'history'}-plot-clip`;
   const defs = add("defs", {});
   const clip = element("clipPath", { id: clipId });
-  clip.append(element("rect", { x: 56, y: top, width: right - 56, height: 145 }));
+  clip.append(element("rect", { x: left, y: top, width: right - left, height: 145 }));
   defs.append(clip);
   const plot = add("g", { "clip-path": `url(#${clipId})` });
-  if (all.some((s) => s.radius < minY || s.radius > maxY)) {
-    add("text", { x: 56, y: bottom + 36, fill: "#84928d", "font-size": 10 },
+  if (timeScale !== "late" && all.some((s) => s.radius < minY || s.radius > maxY)) {
+    add("text", { x: left, y: bottom + 36, fill: "#84928d", "font-size": 10 },
       "Starting fallback outside detail range");
   }
-  series.forEach((run, index) => {
+  if (flat && timeScale === "late") {
+    add("text", { x: left, y: bottom + 36, fill: "#84928d", "font-size": 10 }, "No radius improvement in this window");
+  }
+  visibleSeries.forEach((run, index) => {
     const color = run.algorithm === 0 ? colors.a : colors.b;
     let best = Infinity,
       path = "";
@@ -246,7 +271,7 @@ export function drawHistory(
     add(
       "text",
       {
-        x: mobile ? 56 : 65 + index * 150,
+        x: mobile ? left : left + 9 + index * 150,
         y: mobile ? 15 + index * 16 : 14,
         fill: color,
         "font-size": 11,
@@ -264,12 +289,12 @@ export function drawHistory(
       "stroke-dasharray": "3 4",
     });
   if (objective) {
-    const vals = all.map((s) => s.diagnostics?.objective).filter(finite);
+    const vals = visible.map((s) => s.diagnostics?.objective).filter(finite);
     if (vals.length) {
       const transform = (v) => Math.sign(v) * Math.log1p(Math.abs(v));
       const lo = Math.min(...vals.map(transform)),
         hi = Math.max(...vals.map(transform));
-      series.forEach((run) => {
+      visibleSeries.forEach((run) => {
         let path = "";
         run.snapshots.forEach((s) => {
           const v = s.diagnostics?.objective;
@@ -277,14 +302,14 @@ export function drawHistory(
           path += `${path ? " L" : "M"} ${x(s.elapsed_seconds)} ${bottom - ((transform(v) - lo) / (hi - lo || 1)) * 145}`;
         });
         if (path)
-          add("path", {
+          plot.append(element("path", {
             d: path,
             fill: "none",
             stroke: run.algorithm === 0 ? colors.a : colors.b,
             "stroke-width": 1.5,
             "stroke-dasharray": "4 4",
             opacity: 0.65,
-          });
+          }));
       });
       for (let i = 0; i <= 3; i++) {
         const t = lo + ((hi - lo) * i) / 3;
@@ -299,7 +324,7 @@ export function drawHistory(
       add(
         "text",
         {
-          x: mobile ? 56 : width - 10,
+          x: mobile ? left : width - 10,
           y: mobile ? 15 + series.length * 16 : 14,
           "text-anchor": mobile ? "start" : "end",
           fill: "#84928d",

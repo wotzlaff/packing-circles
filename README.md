@@ -38,9 +38,10 @@ python3 -m http.server 8000 --bind 127.0.0.1 --directory web
 Open `http://127.0.0.1:8000`. Run A, an explicit B experiment, or an equal-budget
 sequential comparison. Pause/resume the search, replay recorded progress, inspect
 contacts and raw trial geometry, and export solutions or complete recordings.
-The default early-detail timeline expands the first milliseconds. Replay holds
-each recorded checkpoint long enough to watch, with previous/next step controls
-and slower/faster playback. Turn off Search geometry to view only checked packings.
+The default Late refinements view shows the final half of the run, with a tight
+radius scale and precise values to expose small late improvements. Replay and
+step controls stay in that window; Entire run and Early detail remain optional.
+The default geometry is the best feasible packing.
 Optimization executes
 entirely in a worker. Input is limited to 50 circles and 16 KiB; retained history
 is bounded. The binary is generated locally and ignored by Git.

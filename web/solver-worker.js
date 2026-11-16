@@ -3,7 +3,8 @@ const encoder = new TextEncoder();
 const decoder = new TextDecoder('utf-8', {fatal: true});
 let wasm, runId, timer, active = false, paused = false;
 let started = 0, pausedAt = 0, pausedDuration = 0, lastProgress = 0;
-let history = [], earlyCalls = 0, earlyFrames = 0, earlyBest = Infinity;
+let history = [], earlyCalls = 0, earlyFrames = 0, lastBestRadius = Infinity;
+let captureEarly = false, firstStep = true;
 let lastTrialIteration = -1, lastTrialObjective, lastTrialRadius;
 const loaded = (async () => {
   const response = await fetch(new URL('./packing_wasm.wasm', import.meta.url));
@@ -42,29 +43,33 @@ function pump() {
   try {
     const until = performance.now() + 8;
     do {
-      // Probe early incumbents without changing the solver's work or random stream.
-      // The first single transition preserves the rolling initializer candidate.
-      const probe = earlyCalls < 256 && earlyFrames < 64 && elapsed() < 0.25;
-      const status = check(wasm.session_step(probe ? (earlyCalls === 0 ? 1 : 8) : 64, elapsed()));
-      if (probe) {
-        earlyCalls++;
+      // The first transition preserves the rolling initializer candidate.
+      const probe = captureEarly && earlyCalls < 256 && earlyFrames < 64 && elapsed() < 0.25;
+      const status = check(wasm.session_step(firstStep ? 1 : (probe ? 8 : 64), elapsed()));
+      firstStep = false;
+      const radius = wasm.session_radius();
+      const improved = radius < lastBestRadius;
+      if (probe) earlyCalls++;
+      if (improved || probe) {
         const frame = snapshot();
         const trial = frame.diagnostics;
         const trialChanged = trial && (trial.objective !== lastTrialObjective ||
           trial.trial_radius !== lastTrialRadius);
-        const trialMilestone = trialChanged &&
+        const trialMilestone = probe && trialChanged &&
           (lastTrialIteration < 0 || frame.iterations >= lastTrialIteration + 4);
-        if (frame.feasible && (frame.radius < earlyBest || trialMilestone)) {
+        if (frame.feasible && (improved || trialMilestone)) {
+          // Keep the first and most recent records if a heartbeat interval overflows.
+          if (history.length === 64) history.splice(1, 1);
           history.push(frame);
-          earlyFrames++;
-          earlyBest = frame.radius;
-          if (trial) {
+          if (probe) earlyFrames++;
+          if (trial && probe) {
             lastTrialIteration = frame.iterations;
             lastTrialObjective = trial.objective;
             lastTrialRadius = trial.trial_radius;
           }
         }
       }
+      if (improved) lastBestRadius = radius;
       if (status === 1) {
         active = false;
         emit('done');
@@ -93,7 +98,12 @@ function start(options) {
   history = [];
   earlyCalls = 0;
   earlyFrames = 0;
-  earlyBest = Infinity;
+  lastBestRadius = Infinity;
+  firstStep = true;
+  captureEarly = options?.captureEarly === true;
+  if (options?.captureEarly !== undefined && typeof options.captureEarly !== 'boolean') {
+    throw new Error('captureEarly must be a boolean');
+  }
   lastTrialIteration = -1;
   lastTrialObjective = undefined;
   lastTrialRadius = undefined;
@@ -119,7 +129,9 @@ function start(options) {
   pausedDuration = 0;
   check(wasm.session_start(bytes.length, algorithm,
     Number(seed & 0xffffffffn), Number(seed >> 32n), evaluations, iterations, restarts, time));
-  active = !snapshot().finished;
+  const initial = snapshot();
+  lastBestRadius = initial.radius;
+  active = !initial.finished;
   lastProgress = performance.now();
   emit('progress');
   if (active) timer = setTimeout(pump, 0);

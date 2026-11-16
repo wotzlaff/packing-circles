@@ -80,6 +80,7 @@ export function validateConfig(config, input, algorithm) {
   require(config && config.input === input && config.algorithm === algorithm, 'Run settings do not match the input or algorithm.');
   require(typeof config.seed === 'string' && /^\d{1,20}$/.test(config.seed) && BigInt(config.seed) <= 0xffffffffffffffffn, 'Seed must be a decimal unsigned 64-bit integer.');
   require(Number.isFinite(config.timeLimitSeconds) && config.timeLimitSeconds >= 0.1 && config.timeLimitSeconds <= 60, 'Budget must be between 0.1 and 60 seconds.');
+  require(config.captureEarly === undefined || typeof config.captureEarly === 'boolean', 'Invalid recording detail option.');
   return config;
 }
 
@@ -88,7 +89,7 @@ export function traceStats(runs) {
     snapshotCount: runs.reduce((n, run) => n + run.snapshots.length, 0), dropped: runs.reduce((n, run) => n + run.dropped, 0)};
 }
 
-/** Keep early detail and the latest frame; disclose evicted middle history. */
+/** Preserve the initial state and recent refinement history within the cap. */
 export function appendSnapshot(runs, index, snapshot) {
   const run = runs[index];
   const last = run.snapshots.at(-1);
@@ -97,7 +98,7 @@ export function appendSnapshot(runs, index, snapshot) {
     for (const key of ['evaluations', 'iterations', 'restarts', 'initialization_fallbacks', 'numerical_failures']) require(snapshot[key] >= last[key], 'Progress work counters decreased.');
   }
   run.snapshots.push(snapshot);
-  const evictionIndex = candidate => candidate.snapshots.length > 65 ? 64 : 1;
+  const evictionIndex = () => 1;
   while (run.snapshots.length > MAX_FRAMES) { run.snapshots.splice(evictionIndex(run), 1); run.dropped++; }
   let stats = traceStats(runs);
   while (stats.traceBytes > MAX_TRACE_BYTES) {

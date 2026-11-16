@@ -109,6 +109,17 @@ pub extern "C" fn snapshot_len() -> u32 {
     RUNTIME.with(|r| r.borrow().snapshot.len() as u32)
 }
 
+/// Return the incumbent radius, or NaN when no session exists.
+#[no_mangle]
+pub extern "C" fn session_radius() -> f64 {
+    RUNTIME.with(|r| {
+        r.borrow()
+            .session
+            .as_ref()
+            .map_or(f64::NAN, SolverSession::incumbent_radius)
+    })
+}
+
 #[no_mangle]
 pub extern "C" fn session_start(
     input_len: u32,
@@ -226,6 +237,7 @@ mod tests {
             session_start(input.len() as u32, 0, 5, 0, 1000, 1000, 100, -1.0),
             0
         );
+        assert!(session_radius().is_finite());
         assert!(snapshot().contains("\"schema_version\":1"));
         assert!(snapshot().contains("\"diagnostics\":null"));
         assert!(session_step(1, 0.0) >= 0);
@@ -241,6 +253,7 @@ mod tests {
             -1
         );
         assert!(snapshot().starts_with("{\"error\":"));
+        assert!(session_radius().is_nan());
         assert_eq!(session_step(1, 0.0), -1);
     }
     #[test]

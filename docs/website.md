@@ -31,9 +31,12 @@ displayed ratio is `R / sqrt(sum(r_i²))`, at least one for a feasible packing;
 it is not a certificate of optimality.
 
 The history plots feasible radius against active elapsed time. Its default
-early-detail scale expands the first milliseconds; elapsed-time mode restores
-a linear axis. Zoom improvements excludes the initial line fallback from the
-vertical range, with an explicit off-scale note; the fallback remains recorded.
+Late refinements view shows the last half of the elapsed run. Both axes use only
+that window, carrying in the last known state at its start. The radius axis
+automatically tightens around late values with adaptive tick precision, while
+the best-radius readout shows eight decimals. The window readout reports actual
+radius reduction; a flat search is explicitly labeled. Entire run and Early
+detail remain available.
 Optional dashed
 curves show the penalized objective on a separately labeled signed-log axis.
 Penalty weights can change, so decreases across weight changes are not comparable
@@ -59,8 +62,7 @@ monotonic time/radius. Invalid imports clear prior runs instead of showing stale
 results as a newly imported recording. Import files are limited to 8 MiB.
 
 The app retains at most two runs, 512 frames per run and 4 MiB of serialized
-snapshot payload. It preserves early detail (up to the first 64 frames) and the
-latest frame, evicts later intermediate frames
+snapshot payload. It preserves the initial state and recent refinements, and evicts older intermediate frames
 when necessary and displays the eviction count. The worker client retains at
 most another 1 MiB; WASM linear memory is capped at 64 MiB. These are payload
 bounds, not a claim about total browser heap. Source presets are synthetic
@@ -132,10 +134,12 @@ versions, WASM and frontend source hashes:
 Early recording additionally samples up to 64 incumbent/trial checkpoints during
 at most 256 small worker probes in the first 250 ms. Batched delivery preserves
 the regular heartbeat, and recording overhead counts toward the time budget.
-Search geometry is shown by default so accepted trial movement is visible even
-before a new feasible incumbent is saved; the metric remains best feasible radius.
+Dense early recording is optional, enabled only when Early detail is selected
+before starting a run. The default records incumbent improvements throughout
+the run using a read-only radius accessor, and shows the best feasible geometry.
+Late replay and stepping skip the initial phase.
 
-The Rust suite has 85 passing tests, Node validation/timeline has nine, and Python has 47.
+The Rust suite has 85 passing tests, Node validation/timeline has twelve, and Python has 47.
 All 50 archived native-A fixed-work outputs/counters and 426 numerical reference
 cases still pass. The original 40-case worker/native browser regression also
 passes with the additional read-only diagnostics.
