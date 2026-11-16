@@ -17,7 +17,14 @@ The root has no Rust package, website, dedicated test directory, or asset pipeli
 
 ## Build, Test & Development Commands
 
-No root build or test command exists yet. From `legacy/`, `python3 run_benchmark.py` runs benchmarks but requires a compiled `./main` executable and matching files under `data/`; these inputs are not currently included.
+No root build or test command exists yet. With GCC installed, build the legacy solver from the repository root:
+
+```sh
+g++ -O2 -std=c++17 legacy/main.cpp -o /tmp/circles-legacy-main
+printf '2\n1 1\n' | /tmp/circles-legacy-main
+```
+
+This smoke input packs two unit circles. From `legacy/`, `python3 run_benchmark.py` requires a compiled `./main` and matching files under `data/`; benchmark inputs are not currently included.
 
 Once a Cargo package exists, use:
 
